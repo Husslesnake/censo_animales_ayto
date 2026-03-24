@@ -12,6 +12,9 @@ services:
       DB_USER: root
       DB_PASSWORD: "123"
       DB_NAME: censo_animales
+      LOG_DIR: /app/logs
+    volumes:
+      - ./logs:/app/logs
     networks:
       - red_censo
 

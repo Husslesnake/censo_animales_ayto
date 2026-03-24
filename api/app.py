@@ -58,19 +58,9 @@ def _log_startup_message():
     logger.info("=" * 80)
 
 
-# Ejecutar logs de startup y limpieza una sola vez
-_startup_executed = False
-
-@app.before_first_request
-def _execute_startup():
-    """Ejecuta startup tasks la primera vez que la app recibe una petición."""
-    global _startup_executed
-    if _startup_executed:
-        return
-    _startup_executed = True
-    
-    _log_startup_message()
-    _cleanup_old_logs()
+# Registrar startup y limpiar logs al importar el módulo (executes before first request)
+_log_startup_message()
+_cleanup_old_logs()
 
 
 def _cleanup_old_logs():
@@ -1643,18 +1633,7 @@ def recibir_log():
 
 # Arranque
 
-# Flag para registrar startup una sola vez
-_startup_from_main = False
-
 if __name__ == "__main__":
-    _startup_from_main = True
-    
-    # Registrar inicio de aplicación
-    _log_startup_message()
-    
-    # Limpiar logs antiguos sin errores
-    _cleanup_old_logs()
-    
     # Scheduler diario a las 01:00
     scheduler = BackgroundScheduler()
     scheduler.add_job(
@@ -1687,14 +1666,10 @@ if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=5000)
 
 
-# Cuando se ejecuta con gunicorn (Docker), también registrar startup
-# Se ejecuta cuando el módulo es importado
-if not _startup_from_main:
-    _log_startup_message()
-    _cleanup_old_logs()
-    
-    # Inicializar scheduler
-    try:
+# Inicializar scheduler también para Docker/gunicorn
+try:
+    # Evitar crear múltiples schedulers
+    if not hasattr(app, '_scheduler_initialized'):
         scheduler = BackgroundScheduler()
         scheduler.add_job(
             baja_automatica_por_edad,
@@ -1714,17 +1689,17 @@ if not _startup_from_main:
         )
         scheduler.start()
         atexit.register(lambda: scheduler.shutdown())
-    except Exception as e:
-        logger.error(f"Error initializing scheduler: {e}")
-    
-    # Aplicar restricción UNIQUE
-    try:
-        aplicar_unique_chip()
-    except Exception as e:
-        logger.error(f"Error applying unique chip constraint: {e}")
-    
-    # Procesar pendientes
-    try:
-        baja_automatica_por_edad()
-    except Exception as e:
-        logger.error(f"Error processing age-based withdrawals: {e}")
+        app._scheduler_initialized = True
+except Exception as e:
+    logger.error(f"Error initializing scheduler: {e}")
+
+# Aplicar restricción UNIQUE y procesar pendientes
+try:
+    aplicar_unique_chip()
+except Exception as e:
+    logger.error(f"Error applying unique chip constraint: {e}")
+
+try:
+    baja_automatica_por_edad()
+except Exception as e:
+    logger.error(f"Error processing age-based withdrawals: {e}")
