@@ -2,36 +2,16 @@ version: "3.8"
 
 services:
 
-  mariadb:
-    image: mariadb:10.11
-    container_name: censo_mariadb
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: "123"
-      MYSQL_DATABASE: censo_animales
-    volumes:
-      - mariadb_data:/var/lib/mysql
-    networks:
-      - red_censo
-    healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
   api:
     build: ./api
     container_name: censo_api
     restart: unless-stopped
     environment:
-      DB_HOST: mariadb
-      DB_PORT: "3306"
+      DB_HOST: host.docker.internal
+      DB_PORT: "3307"
       DB_USER: root
       DB_PASSWORD: "123"
       DB_NAME: censo_animales
-    depends_on:
-      mariadb:
-        condition: service_healthy
     networks:
       - red_censo
 
@@ -48,9 +28,6 @@ services:
       - api
     networks:
       - red_censo
-
-volumes:
-  mariadb_data:
 
 networks:
   red_censo:
