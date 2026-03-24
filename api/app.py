@@ -58,11 +58,6 @@ def _log_startup_message():
     logger.info("=" * 80)
 
 
-# Registrar startup y limpiar logs al importar el módulo (executes before first request)
-_log_startup_message()
-_cleanup_old_logs()
-
-
 def _cleanup_old_logs():
     """
     Elimina automáticamente archivos de log con más de 30 días
@@ -105,6 +100,11 @@ def _cleanup_old_logs():
     
     except Exception as e:
         logger.error("Error during log cleanup: %s\n%s", str(e), traceback.format_exc())
+
+
+# Registrar startup y limpiar logs al importar el módulo
+_log_startup_message()
+_cleanup_old_logs()
 
 
 def _log_request_error(endpoint: str, exc: Exception):
