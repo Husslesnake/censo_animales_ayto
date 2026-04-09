@@ -1632,6 +1632,16 @@ body.dark-mode .login-error {
 }
 #stats-print-wrap {
   display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #fff;
+  color: #000;
+  padding: 2.5cm 2.5cm 2cm;
+  font-family: sans-serif;
+  font-size: 11pt;
+  line-height: 1.6;
+  overflow-y: auto;
 }
 </style>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -5945,19 +5955,12 @@ Seleccione un fichero de la lista para visualizarlo.</pre
       }
 
       function generarInformeStats() {
-
-        let wrap = document.getElementById("stats-print-wrap");
-        if (!wrap) {
-          wrap = document.createElement("div");
-          wrap.id = "stats-print-wrap";
-          document.body.appendChild(wrap);
-        }
         const hoy = new Date().toLocaleDateString("es-ES", {
           day: "2-digit",
           month: "long",
           year: "numeric",
         });
-        let html = `<div style="font-family:'Times New Roman',serif;padding:1.5cm 2cm;">
+        let html = `<div>
     <div style="display:flex;justify-content:space-between;margin-bottom:1cm;border-bottom:2px solid #7B2D40;padding-bottom:.5cm;">
       <div>
         <div style="font-size:14pt;font-weight:700;color:#7B2D40;">Ayuntamiento de Navalcarnero</div>
@@ -6007,14 +6010,14 @@ Seleccione un fichero de la lista para visualizarlo.</pre
         });
 
         html += "</div></div>";
-        wrap.innerHTML =
-          '<div class="no-print" style="position:sticky;top:0;background:#f0f0f0;' +
-          'padding:.5rem 1rem;display:flex;gap:.75rem;border-bottom:1px solid #ccc;font-family:sans-serif;font-size:.85rem;">' +
-          '<button onclick="window.print()" style="background:#7B2D40;color:#fff;border:none;padding:.4rem 1rem;font-weight:700;cursor:pointer;">Imprimir / PDF</button>' +
-          "<button onclick=\"document.getElementById('stats-print-wrap').style.display='none'\" style=\"background:none;border:1px solid #999;padding:.4rem 1rem;cursor:pointer;\">Cerrar</button>" +
-          "</div>" +
-          html;
-        wrap.style.display = "block";
+        document.getElementById("stats-contenido").innerHTML = html;
+        document.getElementById("stats-print-wrap").style.display = "block";
+        document.body.style.overflow = "hidden";
+      }
+
+      function cerrarStats() {
+        document.getElementById("stats-print-wrap").style.display = "none";
+        document.body.style.overflow = "";
       }
 
       const _mostrarPaginaStats = mostrarPagina;
@@ -6494,7 +6497,7 @@ Seleccione un fichero de la lista para visualizarlo.</pre
  aria-label="Tema oscuro"
  >
  ◑
- </button><div id="carta-print"><div
+ </button><div id="stats-print-wrap"><div class="no-print" style="position:sticky;top:0;background:#f0f0f0;padding:0.5rem 1rem;display:flex;gap:0.75rem;align-items:center;font-family:sans-serif;font-size:0.85rem;border-bottom:1px solid #ccc;margin:-2.5cm -2.5cm 1.5cm;"><button onclick="window.print()" style="background:#7b2d40;color:#fff;border:none;padding:0.4rem 1rem;font-weight:700;cursor:pointer;font-family:sans-serif;">Imprimir / Guardar PDF</button><button onclick="cerrarStats()" style="background:none;border:1px solid #999;padding:0.4rem 1rem;cursor:pointer;font-family:sans-serif;">Cerrar</button></div><div id="stats-contenido"></div></div><div id="carta-print"><div
  class="no-print"
  style="
  position: sticky;
