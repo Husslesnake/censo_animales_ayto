@@ -184,3 +184,18 @@ SyntaxError: Failed to execute 'querySelector' on 'Document': '.tab-btn[onclick*
 [2026-04-09 12:00:29] INFO     >>> GET /api/sexos
 [2026-04-09 12:00:59] INFO     >>> GET /api/sexos
 [2026-04-09 12:02:13] INFO     >>> GET /api/sexos
+[2026-04-09 12:03:13] INFO     >>> GET /api/sexos
+[2026-04-09 12:04:13] INFO     >>> GET /api/sexos
+[2026-04-09 12:04:35] INFO     ================================================================================
+[2026-04-09 12:04:35] INFO     APPLICATION STARTUP - Timestamp: 2026-04-09T12:04:35.362088
+[2026-04-09 12:04:35] INFO     ================================================================================
+[2026-04-09 12:04:52] INFO     >>> GET /api/sexos
+[2026-04-09 12:04:54] INFO     >>> GET /api/sexos
+[2026-04-09 12:04:54] INFO     >>> GET /api/motivos_baja
+[2026-04-09 12:04:54] INFO     >>> GET /api/sexos
+[2026-04-09 12:04:55] INFO     >>> GET /api/estadisticas
+[2026-04-09 12:04:56] INFO     >>> GET /api/estadisticas
+[2026-04-09 12:05:24] INFO     >>> GET /api/sexos
+[2026-04-09 12:05:54] INFO     >>> GET /api/sexos
+[2026-04-09 12:06:24] INFO     >>> GET /api/sexos
+[2026-04-09 12:06:54] INFO     >>> GET /api/sexos
