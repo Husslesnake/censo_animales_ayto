@@ -1597,7 +1597,6 @@ def descargar_log(nombre):
 
 # Endpoint — Logging desde frontend
 
-
 @app.route("/api/log", methods=["POST"])
 def recibir_log():
     """Endpoint para recibir y registrar errores desde el frontend."""
