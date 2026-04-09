@@ -5784,6 +5784,7 @@ Seleccione un fichero de la lista para visualizarlo.</pre
       }
 
       let _statsRaw = null;
+      let _statsFilterTimer = null;
 
       const _cargarEstadisticasOrig = cargarEstadisticas;
       cargarEstadisticas = async function () {
@@ -5823,47 +5824,113 @@ Seleccione un fichero de la lista para visualizarlo.</pre
       }
 
       function aplicarFiltrosStats() {
-        if (!_statsRaw) {
-          cargarEstadisticas();
-          return;
-        }
-        const especie = (
-          document.getElementById("filtro-especie")?.value || ""
-        ).toLowerCase();
+        clearTimeout(_statsFilterTimer);
+        _statsFilterTimer = setTimeout(_aplicarFiltrosStatsNow, 300);
+      }
+
+      async function _aplicarFiltrosStatsNow() {
+        const especie = document.getElementById("filtro-especie")?.value || "";
         const anioDesde =
-          parseInt(document.getElementById("filtro-anio-desde")?.value) || 0;
+          document.getElementById("filtro-anio-desde")?.value || "";
         const anioHasta =
-          parseInt(document.getElementById("filtro-anio-hasta")?.value) || 9999;
+          document.getElementById("filtro-anio-hasta")?.value || "";
 
-        const nac = _statsRaw.nacimientos;
-        const nacFiltrado = {
-          labels: nac.labels.filter((y) => y >= anioDesde && y <= anioHasta),
-          values: [],
-        };
-        nacFiltrado.values = nacFiltrado.labels.map((y) => {
-          const idx = nac.labels.indexOf(y);
-          return idx >= 0 ? nac.values[idx] : 0;
-        });
+        const noFilters = !especie && !anioDesde && !anioHasta;
+        let data;
 
-        const tot = document.getElementById("stat-total");
-        if (tot) {
-          if (especie) {
-            const idx = _statsRaw.especies.labels.findIndex(
-              (l) => l.toLowerCase() === especie,
+        if (noFilters && _statsRaw) {
+          data = _statsRaw;
+        } else {
+          if (!_statsRaw) await _fetchStatsRaw();
+          const params = new URLSearchParams();
+          if (especie) params.set("especie", especie);
+          if (anioDesde) params.set("anio_desde", anioDesde);
+          if (anioHasta) params.set("anio_hasta", anioHasta);
+
+          const loading = document.getElementById("stats-loading");
+          const grid = document.getElementById("stats-grid");
+          if (loading) loading.style.display = "block";
+          if (grid) grid.style.opacity = "0.3";
+          try {
+            const json = await (
+              await fetch(`${API}/estadisticas?${params}`)
+            ).json();
+            if (!json.ok) {
+              mostrarAlerta(
+                "alert-estadisticas",
+                "error",
+                json.error || "Error al filtrar datos.",
+              );
+              return;
+            }
+            data = json;
+          } catch (e) {
+            logError(
+              e?.message || "Error filtrando estadísticas",
+              "_aplicarFiltrosStatsNow",
+              e?.stack,
             );
-            const n = idx >= 0 ? _statsRaw.especies.values[idx] : 0;
-            tot.textContent = `${n} registrados (filtro: ${_statsRaw.especies.labels[idx] || especie})`;
-          } else {
-            tot.textContent = `${_statsRaw.total_registrados} registrados · ${_statsRaw.total_activos} activos`;
+            return;
+          } finally {
+            if (loading) loading.style.display = "none";
+            if (grid) grid.style.opacity = "1";
           }
         }
 
+        const tot = document.getElementById("stat-total");
+        if (tot) {
+          const lbl = especie ? ` (${especie})` : "";
+          tot.textContent = `${data.total_registrados} registrados · ${data.total_activos} activos${lbl}`;
+        }
+
+        _mkDonut("chart-especies", data.especies.labels, data.especies.values);
+        _mkDonut(
+          "chart-sexos",
+          data.sexos.labels,
+          data.sexos.values,
+          PALETA2,
+        );
+        _mkDonut(
+          "chart-peligrosos",
+          data.peligrosos.labels,
+          data.peligrosos.values,
+          ["#7B2D40", "#1E6B3C"],
+        );
+        _mkDonut(
+          "chart-esterilizados",
+          data.esterilizados.labels,
+          data.esterilizados.values,
+          ["#1A4A8A", "#C8922A"],
+        );
+        _mkDonut(
+          "chart-anim-prop",
+          data.anim_por_prop.labels,
+          data.anim_por_prop.values,
+          [
+            "#1A4A8A",
+            "#C8922A",
+            "#7B2D40",
+            "#1E6B3C",
+            "#C05820",
+            "#6B3FA0",
+            "#2E8B8B",
+          ],
+        );
         _mkBar(
           "chart-nacimientos",
-          nacFiltrado.labels,
-          nacFiltrado.values,
+          data.nacimientos.labels,
+          data.nacimientos.values,
           "Animales",
           "rgba(26,74,138,0.75)",
+        );
+        _mkEvolucion(data.altas_por_anio, data.bajas_por_anio);
+        _mkBar(
+          "chart-motivos",
+          data.motivos_baja.labels,
+          data.motivos_baja.values,
+          "Registros",
+          "rgba(192,88,32,0.75)",
+          true,
         );
       }
 
