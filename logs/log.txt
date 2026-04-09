@@ -70,3 +70,4 @@
 [2026-04-09 11:30:04] INFO     >>> GET /api/sexos
 [2026-04-09 11:30:34] INFO     >>> GET /api/sexos
 [2026-04-09 11:31:04] INFO     >>> GET /api/sexos
+[2026-04-09 11:32:13] INFO     >>> GET /api/sexos
