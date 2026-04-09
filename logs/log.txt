@@ -149,3 +149,11 @@
 [2026-04-09 11:52:35] INFO     >>> GET /api/estadisticas
 [2026-04-09 11:52:36] INFO     >>> GET /api/estadisticas
 [2026-04-09 11:52:37] INFO     >>> GET /api/estadisticas
+[2026-04-09 11:53:04] INFO     >>> GET /api/sexos
+[2026-04-09 11:53:34] INFO     >>> GET /api/sexos
+[2026-04-09 11:54:04] INFO     >>> GET /api/sexos
+[2026-04-09 11:54:34] INFO     >>> GET /api/sexos
+[2026-04-09 11:55:04] INFO     >>> GET /api/sexos
+[2026-04-09 11:55:34] INFO     >>> GET /api/sexos
+[2026-04-09 11:56:13] INFO     >>> GET /api/sexos
+[2026-04-09 11:57:13] INFO     >>> GET /api/sexos
