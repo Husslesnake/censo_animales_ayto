@@ -1069,28 +1069,54 @@ def estadisticas():
         c = cur(conn)
         chip_col = detectar_chip(c)
 
+        # Filtros opcionales
+        especie_filtro = (request.args.get("especie") or "").strip()
+        try:
+            anio_desde = int(request.args.get("anio_desde") or 0) or None
+        except (ValueError, TypeError):
+            anio_desde = None
+        try:
+            anio_hasta = int(request.args.get("anio_hasta") or 0) or None
+        except (ValueError, TypeError):
+            anio_hasta = None
+
         def filas(q, params=()):
             c.execute(q, params)
             return c.fetchall()
 
-        # -- Todos los animales registrados (para distribuciones globales) --
+        # -- Todos los animales registrados (filtrados por especie si se indica) --
+        where_especie = " WHERE LOWER(TRIM(a.ESPECIE)) = LOWER(%s)" if especie_filtro else ""
+        params_main = [especie_filtro] if especie_filtro else []
+
         c.execute(
             f"""SELECT a.ESPECIE, a.SEXO, a.PELIGROSO, a.ESTERILIZADO,
                        a.`{chip_col}` AS N_CHIP,
                        a.AÑO_DE_NACIMIENTO
-                FROM ANIMALES a"""
+                FROM ANIMALES a{where_especie}""",
+            params_main,
         )
         animales = c.fetchall()
         cols_a = [d[0] for d in c.description]
 
-        # Número de activos (sin baja) para el contador del encabezado
-        c.execute(
-            f"""SELECT COUNT(*) FROM ANIMALES a
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM BAJA_ANIMAL b
-                    WHERE b.`{chip_col}` = a.`{chip_col}`
-                )"""
-        )
+        # Número de activos (sin baja), con filtro de especie si se indica
+        if especie_filtro:
+            c.execute(
+                f"""SELECT COUNT(*) FROM ANIMALES a
+                    WHERE LOWER(TRIM(a.ESPECIE)) = LOWER(%s)
+                    AND NOT EXISTS (
+                        SELECT 1 FROM BAJA_ANIMAL b
+                        WHERE b.`{chip_col}` = a.`{chip_col}`
+                    )""",
+                [especie_filtro],
+            )
+        else:
+            c.execute(
+                f"""SELECT COUNT(*) FROM ANIMALES a
+                    WHERE NOT EXISTS (
+                        SELECT 1 FROM BAJA_ANIMAL b
+                        WHERE b.`{chip_col}` = a.`{chip_col}`
+                    )"""
+            )
         total_activos = c.fetchone()[0]
 
         from collections import defaultdict, Counter
@@ -1133,23 +1159,41 @@ def estadisticas():
             if anio:
                 try:
                     y = int(str(anio).strip()[:4])
-                    if 1900 <= y <= anio_actual:  # filtrar años imposibles
-                        nacimientos[y] += 1
+                    if 1900 <= y <= anio_actual:
+                        if (anio_desde is None or y >= anio_desde) and (
+                            anio_hasta is None or y <= anio_hasta
+                        ):
+                            nacimientos[y] += 1
                 except Exception:
                     pass
 
-        # -- Bajas por año y por motivo --
-        c.execute(
-            """
-            SELECT YEAR(b.FECHA) AS anio, COUNT(*) AS total,
-                   mb.MOTIVO_BAJA AS motivo
-            FROM BAJA_ANIMAL b
-            LEFT JOIN MOTIVO_BAJA mb ON b.MOTIVO = mb.CLAVE
-            WHERE b.FECHA IS NOT NULL
-            GROUP BY YEAR(b.FECHA), b.MOTIVO
-            ORDER BY anio
-        """
-        )
+        # -- Bajas por año y por motivo (con filtro de especie si se indica) --
+        if especie_filtro:
+            c.execute(
+                f"""
+                SELECT YEAR(b.FECHA) AS anio, COUNT(*) AS total,
+                       mb.MOTIVO_BAJA AS motivo
+                FROM BAJA_ANIMAL b
+                INNER JOIN ANIMALES a ON b.`{chip_col}` = a.`{chip_col}`
+                LEFT JOIN MOTIVO_BAJA mb ON b.MOTIVO = mb.CLAVE
+                WHERE b.FECHA IS NOT NULL AND LOWER(TRIM(a.ESPECIE)) = LOWER(%s)
+                GROUP BY YEAR(b.FECHA), b.MOTIVO
+                ORDER BY anio
+                """,
+                [especie_filtro],
+            )
+        else:
+            c.execute(
+                """
+                SELECT YEAR(b.FECHA) AS anio, COUNT(*) AS total,
+                       mb.MOTIVO_BAJA AS motivo
+                FROM BAJA_ANIMAL b
+                LEFT JOIN MOTIVO_BAJA mb ON b.MOTIVO = mb.CLAVE
+                WHERE b.FECHA IS NOT NULL
+                GROUP BY YEAR(b.FECHA), b.MOTIVO
+                ORDER BY anio
+                """
+            )
         bajas_raw = c.fetchall()
         bajas_por_anio = defaultdict(int)
         motivos_counter = Counter()
@@ -1160,15 +1204,28 @@ def estadisticas():
 
         # -- Altas por año (tabla CENSO) --
         try:
-            c.execute(
-                """
-                SELECT YEAR(FECHA_ALTA) AS anio, COUNT(*) AS total
-                FROM CENSO
-                WHERE FECHA_ALTA IS NOT NULL
-                GROUP BY YEAR(FECHA_ALTA)
-                ORDER BY anio
-            """
-            )
+            if especie_filtro:
+                c.execute(
+                    f"""
+                    SELECT YEAR(cs.FECHA_ALTA) AS anio, COUNT(*) AS total
+                    FROM CENSO cs
+                    INNER JOIN ANIMALES a ON cs.`{chip_col}` = a.`{chip_col}`
+                    WHERE cs.FECHA_ALTA IS NOT NULL AND LOWER(TRIM(a.ESPECIE)) = LOWER(%s)
+                    GROUP BY YEAR(cs.FECHA_ALTA)
+                    ORDER BY anio
+                    """,
+                    [especie_filtro],
+                )
+            else:
+                c.execute(
+                    """
+                    SELECT YEAR(FECHA_ALTA) AS anio, COUNT(*) AS total
+                    FROM CENSO
+                    WHERE FECHA_ALTA IS NOT NULL
+                    GROUP BY YEAR(FECHA_ALTA)
+                    ORDER BY anio
+                    """
+                )
             altas_raw = c.fetchall()
             altas_por_anio = {int(a): int(t) for a, t in altas_raw if a}
         except Exception:

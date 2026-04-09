@@ -34,3 +34,39 @@
 [2026-03-24 11:16:18] INFO     ================================================================================
 [2026-03-24 11:16:18] INFO     APPLICATION STARTUP - Timestamp: 2026-03-24T11:16:18.076483
 [2026-03-24 11:16:18] INFO     ================================================================================
+[2026-04-09 11:25:57] INFO     ================================================================================
+[2026-04-09 11:25:57] INFO     APPLICATION STARTUP - Timestamp: 2026-04-09T11:25:57.583005
+[2026-04-09 11:25:57] INFO     ================================================================================
+[2026-04-09 11:26:01] INFO     >>> GET /api/sexos
+[2026-04-09 11:26:04] INFO     >>> GET /api/sexos
+[2026-04-09 11:26:04] INFO     >>> GET /api/motivos_baja
+[2026-04-09 11:26:04] INFO     >>> GET /api/sexos
+[2026-04-09 11:26:06] INFO     >>> GET /api/estadisticas
+[2026-04-09 11:26:07] INFO     >>> GET /api/estadisticas
+[2026-04-09 11:26:08] INFO     >>> GET /api/estadisticas
+[2026-04-09 11:26:13] INFO     >>> GET /api/estadisticas
+[2026-04-09 11:26:18] INFO     >>> GET /api/estadisticas
+[2026-04-09 11:26:20] INFO     >>> GET /api/estadisticas
+[2026-04-09 11:26:32] INFO     >>> GET /api/logs
+[2026-04-09 11:26:33] INFO     >>> GET /api/logs/log.txt
+[2026-04-09 11:26:34] INFO     >>> GET /api/sexos
+[2026-04-09 11:26:40] INFO     >>> GET /api/logs/log.txt
+[2026-04-09 11:26:40] INFO     >>> GET /api/logs/log.txt
+[2026-04-09 11:26:40] INFO     >>> GET /api/logs/log.txt
+[2026-04-09 11:26:41] INFO     >>> GET /api/logs/log.txt
+[2026-04-09 11:26:41] INFO     >>> GET /api/logs/log.txt
+[2026-04-09 11:26:45] INFO     >>> GET /api/propietarios
+[2026-04-09 11:26:46] INFO     >>> GET /api/animales
+[2026-04-09 11:26:47] INFO     >>> GET /api/bajas
+[2026-04-09 11:26:49] INFO     >>> GET /api/alertas
+[2026-04-09 11:27:04] INFO     >>> GET /api/sexos
+[2026-04-09 11:27:05] INFO     >>> GET /api/ficha_propietario/54334567b
+[2026-04-09 11:27:34] INFO     >>> GET /api/sexos
+[2026-04-09 11:28:04] INFO     >>> GET /api/sexos
+[2026-04-09 11:28:34] INFO     >>> GET /api/sexos
+[2026-04-09 11:29:04] INFO     >>> GET /api/sexos
+[2026-04-09 11:29:37] INFO     >>> GET /api/sexos
+[2026-04-09 11:29:39] INFO     >>> GET /api/alertas
+[2026-04-09 11:30:04] INFO     >>> GET /api/sexos
+[2026-04-09 11:30:34] INFO     >>> GET /api/sexos
+[2026-04-09 11:31:04] INFO     >>> GET /api/sexos
