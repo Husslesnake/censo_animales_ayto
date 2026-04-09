@@ -98,3 +98,16 @@
 [2026-04-09 11:41:08] INFO     APPLICATION STARTUP - Timestamp: 2026-04-09T11:41:08.422999
 [2026-04-09 11:41:08] INFO     ================================================================================
 [2026-04-09 11:41:13] INFO     >>> GET /api/sexos
+[2026-04-09 11:41:39] INFO     >>> GET /api/sexos
+[2026-04-09 11:41:54] INFO     >>> GET /api/sexos
+[2026-04-09 11:41:54] INFO     >>> GET /api/motivos_baja
+[2026-04-09 11:41:55] INFO     >>> GET /api/sexos
+[2026-04-09 11:41:56] INFO     >>> GET /api/logs
+[2026-04-09 11:41:56] INFO     >>> GET /api/estadisticas
+[2026-04-09 11:41:57] INFO     >>> GET /api/estadisticas
+[2026-04-09 11:42:25] INFO     >>> GET /api/sexos
+[2026-04-09 11:42:55] INFO     >>> GET /api/sexos
+[2026-04-09 11:43:25] INFO     >>> GET /api/sexos
+[2026-04-09 11:43:55] INFO     >>> GET /api/sexos
+[2026-04-09 11:44:25] INFO     >>> GET /api/sexos
+[2026-04-09 11:44:55] INFO     >>> GET /api/sexos
