@@ -167,3 +167,20 @@
 [2026-04-09 11:57:59] INFO     >>> GET /api/estadisticas
 [2026-04-09 11:58:00] INFO     >>> GET /api/estadisticas
 [2026-04-09 11:58:02] INFO     >>> GET /api/estadisticas
+[2026-04-09 11:58:17] INFO     >>> POST /api/log
+[2026-04-09 11:58:17] ERROR    FRONTEND | ERROR | Uncaught SyntaxError: Failed to execute 'querySelector' on 'Document': '.tab-btn[onclick*='logs']]' is not a valid selector. | Contexto: http://localhost/:3322:28
+SyntaxError: Failed to execute 'querySelector' on 'Document': '.tab-btn[onclick*='logs']]' is not a valid selector.
+    at irA (http://localhost/:3322:28)
+    at HTMLButtonElement.onclick (http://localhost/:2579:3)
+[2026-04-09 11:58:18] INFO     >>> POST /api/log
+[2026-04-09 11:58:18] ERROR    FRONTEND | ERROR | Uncaught SyntaxError: Failed to execute 'querySelector' on 'Document': '.tab-btn[onclick*='logs']]' is not a valid selector. | Contexto: http://localhost/:3322:28
+SyntaxError: Failed to execute 'querySelector' on 'Document': '.tab-btn[onclick*='logs']]' is not a valid selector.
+    at irA (http://localhost/:3322:28)
+    at HTMLButtonElement.onclick (http://localhost/:2579:3)
+[2026-04-09 11:58:29] INFO     >>> GET /api/sexos
+[2026-04-09 11:58:59] INFO     >>> GET /api/sexos
+[2026-04-09 11:59:29] INFO     >>> GET /api/sexos
+[2026-04-09 11:59:59] INFO     >>> GET /api/sexos
+[2026-04-09 12:00:29] INFO     >>> GET /api/sexos
+[2026-04-09 12:00:59] INFO     >>> GET /api/sexos
+[2026-04-09 12:02:13] INFO     >>> GET /api/sexos
