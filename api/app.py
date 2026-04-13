@@ -117,10 +117,21 @@ _cleanup_old_logs()
 
 AUTH_FILE = Path(os.environ.get("AUTH_FILE", "auth.json"))
 # IPs que se consideran locales (el propio servidor)
-_LOCAL_IPS = {"127.0.0.1", "::1", "localhost", "172.18.64.1","172.16.1.173"}
+_LOCAL_IPS = {"127.0.0.1", "::1", "localhost", "172.18.64.1"}
 
 # ── Logger de accesos por IP ──────────────────────────────────────────────────
 _IP_LOG_FILE = LOG_DIR / "log-ip.txt"
+
+# Crear el fichero al arrancar si no existe (garantiza que el directorio y fichero están listos)
+try:
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    if not _IP_LOG_FILE.exists():
+        _IP_LOG_FILE.write_text(
+            f"# Registro de accesos por IP — creado {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n",
+            encoding="utf-8"
+        )
+except Exception as _e:
+    print(f"WARN: No se pudo crear log-ip.txt: {_e}")
 
 def _log_ip(ip: str, rol: str, evento: str, exito: bool):
     """Registra en log-ip.txt cada intento de acceso con su IP, rol y resultado."""
@@ -130,6 +141,7 @@ def _log_ip(ip: str, rol: str, evento: str, exito: bool):
         f"ip={ip:<20} rol={rol:<10} evento={evento}\n"
     )
     try:
+        LOG_DIR.mkdir(parents=True, exist_ok=True)
         with open(_IP_LOG_FILE, "a", encoding="utf-8") as f:
             f.write(linea)
     except Exception as e:
