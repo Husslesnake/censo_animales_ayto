@@ -12,10 +12,10 @@ services:
       DB_PASSWORD: "123"
       DB_NAME: censo_animales
       LOG_DIR: /app/logs
-      - AUTH_FILE=/app/auth.json     # ← añadir
+      AUTH_FILE: /app/auth.json
     volumes:
       - ./logs:/app/logs
-      - ./auth.json:/app/auth.json   # ← añadir
+      - ./auth.json:/app/auth.json
     networks:
       - red_censo
 
@@ -36,4 +36,3 @@ services:
 networks:
   red_censo:
     driver: bridge
-
