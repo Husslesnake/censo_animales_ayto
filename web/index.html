@@ -3301,15 +3301,15 @@ Seleccione un fichero de la lista para visualizarlo.</pre
           var data = await res.json();
           _loginEstado = data;
           if (data.es_admin_ip) {
-            badge.textContent = "Acceso desde servidor local — Administrador";
+            badge.textContent = "Puerto de administración — Administrador";
             badge.style.borderColor = "var(--rojo)";
             badge.style.color = "var(--rojo)";
             if (label) label.textContent = "Contraseña de administrador";
           } else {
-            badge.textContent = "Acceso remoto — Empleado";
+            badge.textContent = "Acceso de empleado";
             badge.style.borderColor = "var(--azul)";
             badge.style.color = "var(--azul)";
-            if (label) label.textContent = "Contraseña de empleado";
+            if (label) label.textContent = "Tu contraseña";
           }
           if (!data.configurado) {
             var desc = document.getElementById("setup-desc");

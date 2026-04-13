@@ -966,3 +966,42 @@ SyntaxError: Failed to execute 'querySelector' on 'Document': '.tab-btn[onclick*
 [2026-04-13 10:10:13] INFO     >>> GET /api/logs/log.txt
 [2026-04-13 10:10:13] INFO     >>> GET /api/logs/log.txt
 [2026-04-13 10:10:30] INFO     >>> GET /api/sexos
+[2026-04-13 10:10:36] INFO     >>> GET /api/sexos
+[2026-04-13 10:10:37] INFO     >>> GET /api/sexos
+[2026-04-13 10:10:42] INFO     >>> POST /api/auth/logout
+[2026-04-13 10:10:42] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:10:59] INFO     >>> GET /api/sexos
+[2026-04-13 10:10:59] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:10:59] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:10:59] INFO     >>> GET /api/sexos
+[2026-04-13 10:11:00] INFO     >>> GET /api/sexos
+[2026-04-13 10:11:03] INFO     >>> POST /api/auth/login
+[2026-04-13 10:11:03] INFO     AUTH: Login exitoso desde 172.19.0.1 (rol=admin)
+[2026-04-13 10:11:03] INFO     >>> GET /api/alertas
+[2026-04-13 10:11:04] INFO     >>> GET /api/alertas
+[2026-04-13 10:11:06] INFO     >>> GET /api/sexos
+[2026-04-13 10:11:29] INFO     >>> GET /api/sexos
+[2026-04-13 10:11:30] INFO     >>> GET /api/sexos
+[2026-04-13 10:11:36] INFO     >>> GET /api/sexos
+[2026-04-13 10:11:59] INFO     >>> GET /api/sexos
+[2026-04-13 10:12:01] INFO     >>> GET /api/sexos
+[2026-04-13 10:12:29] INFO     >>> GET /api/sexos
+[2026-04-13 10:12:31] INFO     >>> GET /api/sexos
+[2026-04-13 10:12:41] INFO     >>> GET /api/sexos
+[2026-04-13 10:12:59] INFO     >>> GET /api/sexos
+[2026-04-13 10:13:01] INFO     >>> GET /api/sexos
+[2026-04-13 10:13:29] INFO     >>> GET /api/sexos
+[2026-04-13 10:13:41] INFO     >>> GET /api/sexos
+[2026-04-13 10:13:59] INFO     >>> GET /api/sexos
+[2026-04-13 10:14:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:14:28] INFO     ================================================================================
+[2026-04-13 10:14:28] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T10:14:28.627850
+[2026-04-13 10:14:28] INFO     ================================================================================
+[2026-04-13 10:14:28] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 10:14:28] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-13 10:14:28] INFO     AUTH: 1 token(s) de larga duración restaurados desde auth.json
+[2026-04-13 10:16:42] INFO     ================================================================================
+[2026-04-13 10:16:42] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T10:16:42.783107
+[2026-04-13 10:16:42] INFO     ================================================================================
+[2026-04-13 10:16:42] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 10:16:42] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175

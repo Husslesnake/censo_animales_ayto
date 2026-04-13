@@ -230,30 +230,35 @@ def _cargar_auth() -> dict:
     else:
         return {}
 
-    # Migración: formato antiguo tenía "hash"/"salt" en la raíz para admin
-    # y "empleado": {"hash", "salt"} para empleados. Convertir a "ips".
+    # Migración: formato antiguo usaba "hash"/"salt" en raíz o en "ips".
+    # Nuevo formato: auth["admin"] para el admin, auth["devices"] para empleados.
     migrado = False
-    if "hash" in data and "salt" in data and "ips" not in data:
-        ips = data.get("ips", {})
-        # Migrar contraseña de admin a la IP local principal
-        for ip_local in ("127.0.0.1", "::1"):
-            if ip_local not in ips:
-                ips[ip_local] = {
-                    "hash": data["hash"],
-                    "salt": data["salt"],
-                    "rol": "admin",
-                    "creado": data.get("creado", datetime.now().isoformat()),
-                }
-        data["ips"] = ips
-        # Limpiar campos del formato antiguo
-        for campo in ("hash", "salt", "creado", "modificado", "empleado"):
-            data.pop(campo, None)
+
+    # Formato muy antiguo: hash en raíz
+    if "hash" in data and "salt" in data and "admin" not in data:
+        data["admin"] = {
+            "hash": data.pop("hash"),
+            "salt": data.pop("salt"),
+            "rol": "admin",
+            "creado": data.pop("creado", datetime.now().isoformat()),
+        }
+        data.pop("modificado", None)
+        data.pop("empleado", None)
+        migrado = True
+
+    # Formato intermedio: hash en "ips"
+    if "ips" in data and "admin" not in data:
+        for _entrada in data["ips"].values():
+            if _entrada.get("rol") == "admin":
+                data["admin"] = _entrada
+                break
+        data.pop("ips", None)
         migrado = True
 
     if migrado:
         try:
             AUTH_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
-            logger.info("AUTH: auth.json migrado al formato per-IP")
+            logger.info("AUTH: auth.json migrado al nuevo formato")
         except Exception as e:
             logger.warning("AUTH: No se pudo guardar la migración: %s", e)
 
@@ -315,23 +320,23 @@ def _limpiar_tokens_expirados():
 @app.route("/api/auth/estado", methods=["GET"])
 def auth_estado():
     """
-    Admin  → identificado por IP (172.19.0.1).
-    Empleado → identificado por X-Device-Id (ID único generado en el navegador).
+    Admin  → llega por puerto 8080; nginx pone X-Admin-Access: true.
+    Empleado → llega por puerto 80;   nginx fuerza X-Admin-Access a vacío.
     Devuelve es_admin_ip y si ese usuario ya tiene contraseña creada.
     """
     ip = _get_client_ip()
-    es_admin_ip = _es_ip_local(ip)
+    es_admin = _es_admin_request()
     auth = _cargar_auth()
 
-    if es_admin_ip:
-        configurado = bool(auth.get("ips", {}).get(ip, {}).get("hash"))
+    if es_admin:
+        configurado = bool(auth.get("admin", {}).get("hash"))
     else:
         device_id = _get_device_id()
         configurado = bool(device_id and auth.get("devices", {}).get(device_id, {}).get("hash"))
 
     return jsonify({
         "ok": True,
-        "es_admin_ip": es_admin_ip,
+        "es_admin_ip": es_admin,
         "configurado": configurado,
         "ip": ip,
     })
@@ -341,16 +346,16 @@ def auth_estado():
 def auth_setup():
     """
     Crea la contraseña por primera vez.
-    Admin  → almacenada en auth["ips"][ip].
+    Admin  → almacenada en auth["admin"].
     Empleado → almacenada en auth["devices"][device_id].
     """
     ip = _get_client_ip()
-    es_admin_ip = _es_ip_local(ip)
-    rol = "admin" if es_admin_ip else "empleado"
+    es_admin = _es_admin_request()
+    rol = "admin" if es_admin else "empleado"
     auth = _cargar_auth()
 
-    if es_admin_ip:
-        if auth.get("ips", {}).get(ip, {}).get("hash"):
+    if es_admin:
+        if auth.get("admin", {}).get("hash"):
             return jsonify({"ok": False, "error": "Ya tienes contraseña configurada. Usa cambiar contraseña."})
     else:
         device_id = _get_device_id()
@@ -361,7 +366,7 @@ def auth_setup():
 
     data = request.get_json(silent=True) or {}
     password = data.get("password", "").strip()
-    min_len = 6 if es_admin_ip else 4
+    min_len = 6 if es_admin else 4
     if len(password) < min_len:
         return jsonify({"ok": False, "error": f"La contraseña debe tener al menos {min_len} caracteres."})
 
@@ -369,13 +374,13 @@ def auth_setup():
     hashed = _hash_password(password, sal)
     entrada = {"hash": hashed, "salt": sal, "rol": rol, "creado": datetime.now().isoformat()}
 
-    if es_admin_ip:
-        auth.setdefault("ips", {})[ip] = entrada
+    if es_admin:
+        auth["admin"] = entrada
     else:
         auth.setdefault("devices", {})[device_id] = entrada
 
     _guardar_auth(auth)
-    logger.info("AUTH: Contraseña creada — %s (rol=%s)", ip if es_admin_ip else device_id, rol)
+    logger.info("AUTH: Contraseña creada — %s (rol=%s)", "admin" if es_admin else device_id, rol)
     _log_ip(ip, rol, "setup_password", True)
 
     token = _crear_token(rol, recordar=True)
@@ -389,8 +394,8 @@ def auth_cambiar():
     Requiere token de sesión activo y contraseña actual correcta.
     """
     ip = _get_client_ip()
-    es_admin_ip = _es_ip_local(ip)
-    rol = "admin" if es_admin_ip else "empleado"
+    es_admin = _es_admin_request()
+    rol = "admin" if es_admin else "empleado"
 
     token_header = request.headers.get("X-Token", "")
     if not _validar_token(token_header):
@@ -398,33 +403,39 @@ def auth_cambiar():
 
     auth = _cargar_auth()
 
-    if es_admin_ip:
-        entrada = auth.get("ips", {}).get(ip, {})
-        clave_bucket, clave_key = "ips", ip
+    if es_admin:
+        entrada = auth.get("admin", {})
+        bucket, key = "admin", None
     else:
         device_id = _get_device_id()
         entrada = auth.get("devices", {}).get(device_id, {}) if device_id else {}
-        clave_bucket, clave_key = "devices", device_id
+        bucket, key = "devices", device_id
 
     if not entrada.get("hash"):
-        return jsonify({"ok": False, "error": "No hay contraseña configurada. Usa el formulario de primera vez."})
+        return jsonify({"ok": False, "error": "No hay contraseña configurada."})
 
     data = request.get_json(silent=True) or {}
     actual = data.get("actual", "").strip()
-    nueva = data.get("nueva", "").strip()
+    nueva  = data.get("nueva",  "").strip()
 
     if _hash_password(actual, entrada["salt"]) != entrada["hash"]:
         return jsonify({"ok": False, "error": "La contraseña actual no es correcta."})
 
-    min_len = 6 if es_admin_ip else 4
+    min_len = 6 if es_admin else 4
     if len(nueva) < min_len:
         return jsonify({"ok": False, "error": f"La nueva contraseña debe tener al menos {min_len} caracteres."})
 
     sal = secrets.token_hex(16)
     hashed = _hash_password(nueva, sal)
-    auth[clave_bucket][clave_key].update({"hash": hashed, "salt": sal, "modificado": datetime.now().isoformat()})
+    nuevos = {"hash": hashed, "salt": sal, "modificado": datetime.now().isoformat()}
+
+    if bucket == "admin":
+        auth["admin"].update(nuevos)
+    else:
+        auth["devices"][key].update(nuevos)
+
     _guardar_auth(auth)
-    logger.info("AUTH: Contraseña cambiada — %s (rol=%s)", ip, rol)
+    logger.info("AUTH: Contraseña cambiada — %s (rol=%s)", "admin" if es_admin else device_id, rol)
     _log_ip(ip, rol, "cambio_password", True)
 
     token = _crear_token(rol)
@@ -435,12 +446,12 @@ def auth_cambiar():
 def auth_login():
     """
     Login con contraseña.
-    Admin  → busca por IP en auth["ips"].
-    Empleado → busca por X-Device-Id en auth["devices"].
+    Admin  → busca en auth["admin"].
+    Empleado → busca en auth["devices"][device_id].
     """
     ip = _get_client_ip()
-    es_admin_ip = _es_ip_local(ip)
-    rol = "admin" if es_admin_ip else "empleado"
+    es_admin = _es_admin_request()
+    rol = "admin" if es_admin else "empleado"
     data = request.get_json(silent=True) or {}
     password = data.get("password", "").strip()
     recordar = bool(data.get("recordar", False))
@@ -450,8 +461,8 @@ def auth_login():
 
     auth = _cargar_auth()
 
-    if es_admin_ip:
-        entrada = auth.get("ips", {}).get(ip, {})
+    if es_admin:
+        entrada = auth.get("admin", {})
     else:
         device_id = _get_device_id()
         entrada = auth.get("devices", {}).get(device_id, {}) if device_id else {}
