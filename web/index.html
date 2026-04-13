@@ -220,6 +220,43 @@ header {
 .session-chip.empleado .chip-dot {
   background: var(--azul);
 }
+.session-chip.policia {
+  color: var(--verde);
+  border-color: var(--verde);
+  background: rgba(30, 107, 60, 0.07);
+}
+.session-chip.policia .chip-dot {
+  background: var(--verde);
+}
+/* Visible solo para admin y policia */
+.solo-policia-admin { display: none; }
+body.rol-admin .solo-policia-admin,
+body.rol-policia .solo-policia-admin { display: revert; }
+/* Panel policía */
+.pol-ficha {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 0.8rem;
+}
+@media(max-width:600px){ .pol-ficha { grid-template-columns: 1fr; } }
+.pol-card {
+  border: 1.5px solid var(--borde);
+  padding: 1rem 1.1rem;
+  background: var(--blanco);
+}
+.pol-card h4 {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gris4);
+  margin: 0 0 0.7rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--borde);
+}
+.pol-card dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.7rem; font-size: 0.82rem; }
+.pol-card dt { color: var(--gris4); font-weight: 600; white-space: nowrap; }
+.pol-card dd { margin: 0; color: var(--tinta); }
 .btn-logout {
   background: none;
   border: 1.5px solid var(--gris2);
@@ -2171,6 +2208,8 @@ body.dark-mode .login-error {
  Logs
  </button><button class="tab-btn" onclick="mostrarPagina('consulta', this)">
  Consulta
+ </button><button class="tab-btn solo-policia-admin" id="tab-policia" onclick="mostrarPagina('policia',this);cargarIncidencias();">
+ Policía
  </button></nav><div
  style="
  display: flex;
@@ -2239,7 +2278,7 @@ body.dark-mode .login-error {
  flex-shrink: 0;
  "
  ></span
- ><span id="api-status-txt">API sin conexión</span></div><div class="header-session" id="header-session" style="display: none"><div class="user-menu-wrapper" id="user-menu-wrapper"><span class="session-chip" id="session-chip" onclick="toggleUserMenu()" title="Opciones de cuenta"><span class="chip-dot"></span><span id="session-label"></span><span class="chip-arrow">▾</span></span><div class="user-dropdown" id="user-dropdown"><button class="user-dropdown-btn" onclick="abrirModalCambiarPass();cerrarUserMenu()">Cambiar contraseña</button></div></div><button class="btn-logout" onclick="doLogout()">Salir</button></div><button
+ ><span id="api-status-txt">API sin conexión</span></div><div class="header-session" id="header-session" style="display: none"><div class="user-menu-wrapper" id="user-menu-wrapper"><span class="session-chip" id="session-chip" onclick="toggleUserMenu()" title="Opciones de cuenta"><span class="chip-dot"></span><span id="session-label"></span><span class="chip-arrow">▾</span></span><div class="user-dropdown" id="user-dropdown"><button class="user-dropdown-btn" onclick="abrirModalCambiarPass();cerrarUserMenu()">Cambiar contraseña</button><button class="user-dropdown-btn solo-admin" onclick="cerrarUserMenu();mostrarPagina('policia',document.getElementById('tab-policia'));cargarIncidencias();" style="color:var(--verde);">Panel de Policía</button></div></div><button class="btn-logout" onclick="doLogout()">Salir</button></div><button
  class="nav-hamburger"
  id="nav-hamburger"
  aria-label="Menú"
@@ -3158,7 +3197,87 @@ Seleccione un fichero de la lista para visualizarlo.</pre
  class="btn btn-primary"
  id="btn-guardar-editar"
  onclick="guardarEdicionAnimal()"
- ><div class="spinner" id="sp-editar"></div><span>Guardar cambios</span></button></div></div></div><footer
+ ><div class="spinner" id="sp-editar"></div><span>Guardar cambios</span></button></div></div></div>
+
+<div class="page" id="page-policia">
+  <div class="section-header">
+    <span class="section-num">POL-01</span>
+    <h2>Panel de Policía</h2>
+    <p>Consulta de animales por chip y registro de incidencias</p>
+  </div>
+
+  <!-- Búsqueda por chip -->
+  <div class="bloque" style="margin-bottom:1.25rem;">
+    <div class="bloque-titulo"><h3>Buscar animal por chip</h3></div>
+    <div class="bloque-body">
+      <div style="display:flex;gap:0.7rem;align-items:center;flex-wrap:wrap;">
+        <input type="text" id="pol-chip-input" class="login-input" style="max-width:260px;margin:0;" placeholder="N.º de chip del animal"
+          onkeydown="if(event.key==='Enter')buscarChipPolicia();" />
+        <button class="btn btn-enviar" onclick="buscarChipPolicia()">Buscar</button>
+      </div>
+      <div id="pol-chip-error" style="display:none;color:var(--rojo);font-size:0.82rem;margin-top:0.6rem;"></div>
+      <div id="pol-resultado" style="display:none;" class="pol-ficha">
+        <div class="pol-card">
+          <h4>Animal</h4>
+          <dl id="pol-animal-dl"></dl>
+        </div>
+        <div class="pol-card">
+          <h4>Propietario</h4>
+          <dl id="pol-prop-dl"></dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registrar incidencia -->
+  <div class="bloque" style="margin-bottom:1.25rem;">
+    <div class="bloque-titulo"><h3>Registrar incidencia</h3></div>
+    <div class="bloque-body">
+      <div id="inc-alert" style="display:none;margin-bottom:0.8rem;padding:0.6rem 0.9rem;font-size:0.82rem;font-weight:600;"></div>
+      <div class="form-grid" style="margin-bottom:0.8rem;">
+        <div class="form-group">
+          <label style="font-size:0.8rem;color:var(--gris4);">N.º chip <span class="req">*</span></label>
+          <input type="text" id="inc-chip" class="login-input" style="margin:0;" placeholder="Chip del animal" />
+        </div>
+        <div class="form-group">
+          <label style="font-size:0.8rem;color:var(--gris4);">Tipo de incidencia <span class="req">*</span></label>
+          <select id="inc-tipo" class="login-input" style="margin:0;cursor:pointer;">
+            <option value="">Seleccione…</option>
+            <option value="Animal escapado">Animal escapado</option>
+            <option value="Animal agresivo">Animal agresivo</option>
+            <option value="Abandono">Abandono</option>
+            <option value="Animal sin identificación">Animal sin identificación</option>
+            <option value="Otra">Otra</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label style="font-size:0.8rem;color:var(--gris4);">Descripción / observaciones</label>
+        <textarea id="inc-descripcion" class="login-input" rows="3"
+          style="margin:0;resize:vertical;width:100%;box-sizing:border-box;"
+          placeholder="Detalles de la incidencia…"></textarea>
+      </div>
+      <button class="btn btn-enviar" onclick="registrarIncidencia()">Registrar incidencia</button>
+    </div>
+  </div>
+
+  <!-- Historial de incidencias -->
+  <div class="bloque">
+    <div class="bloque-titulo"><h3>Historial de incidencias</h3></div>
+    <div class="bloque-body">
+      <div class="table-wrap" id="tabla-wrap-incidencias">
+        <table>
+          <thead><tr><th>ID</th><th>Chip</th><th>Tipo</th><th>Descripción</th><th>Fecha</th></tr></thead>
+          <tbody id="tbody-incidencias">
+            <tr class="empty-row"><td colspan="5">No hay incidencias registradas.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer
  style="
  background: var(--rojo);
  color: #fff;
@@ -3503,7 +3622,7 @@ Seleccione un fichero de la lista para visualizarlo.</pre
         document.getElementById("login-screen").classList.remove("oculto");
         document.getElementById("login-pass").value = "";
         document.getElementById("header-session").style.display = "none";
-        document.body.classList.remove("rol-admin", "rol-empleado");
+        document.body.classList.remove("rol-admin", "rol-empleado", "rol-policia");
         document.querySelectorAll(".tab-btn").forEach(function (b) {
           b.classList.remove("active");
         });
@@ -3515,23 +3634,22 @@ Seleccione un fichero de la lista para visualizarlo.</pre
         _initLoginScreen();
       }
       function aplicarRol(rol) {
-        document.body.classList.remove("rol-admin", "rol-empleado");
+        document.body.classList.remove("rol-admin", "rol-empleado", "rol-policia");
         document.body.classList.add("rol-" + rol);
         var chip = document.getElementById("session-chip");
         var lbl = document.getElementById("session-label");
         chip.className = "session-chip " + rol;
-        lbl.textContent = rol === "admin" ? "Administrador" : "Empleado";
+        var labels = { admin: "Administrador", empleado: "Empleado", policia: "Policía" };
+        lbl.textContent = labels[rol] || rol;
         document.getElementById("header-session").style.display = "";
         var s = document.getElementById("inicio-saludo");
         var d = document.getElementById("inicio-desc");
-        if (s)
-          s.textContent =
-            rol === "admin" ? "Panel de Administrador" : "Panel de Empleado";
-        if (d)
-          d.textContent =
-            rol === "admin"
-              ? "Acceso completo al censo municipal"
-              : "Acceso restringido · Búsqueda por DNI requerida";
+        if (s) s.textContent = rol === "admin" ? "Panel de Administrador"
+                              : rol === "policia" ? "Panel de Policía"
+                              : "Panel de Empleado";
+        if (d) d.textContent = rol === "admin" ? "Acceso completo al censo municipal"
+                              : rol === "policia" ? "Consulta de animales y registro de incidencias"
+                              : "Acceso restringido · Búsqueda por DNI requerida";
         if (rol !== "admin") {
           var empty =
             '<tr class="empty-row"><td colspan="10">Introduzca un criterio de búsqueda.</td></tr>';

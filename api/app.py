@@ -2194,3 +2194,123 @@ try:
     _cargar_tokens_persistidos()
 except Exception as e:
     logger.error(f"Error loading persisted tokens: {e}")
+
+
+# ── Tabla INCIDENCIAS ─────────────────────────────────────────────────────────
+def _init_incidencias():
+    """Crea la tabla INCIDENCIAS si no existe."""
+    try:
+        conn = get_conn()
+        c = cur(conn)
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS INCIDENCIAS (
+                ID         INT AUTO_INCREMENT PRIMARY KEY,
+                N_CHIP     VARCHAR(50)  NOT NULL,
+                TIPO       VARCHAR(100) NOT NULL,
+                DESCRIPCION TEXT,
+                FECHA      DATETIME     NOT NULL,
+                ROL_AGENTE VARCHAR(20)  DEFAULT 'admin'
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+        """)
+        conn.commit()
+        conn.close()
+        logger.info("DB: tabla INCIDENCIAS lista")
+    except Exception as e:
+        logger.warning("DB: no se pudo crear INCIDENCIAS: %s", e)
+
+try:
+    _init_incidencias()
+except Exception as e:
+    logger.error(f"Error initializing INCIDENCIAS table: {e}")
+
+
+# ── Endpoints policía ─────────────────────────────────────────────────────────
+
+def _req_policia_o_admin():
+    """Devuelve el payload si el token es de admin o policia, None en caso contrario."""
+    token = request.headers.get("X-Token", "")
+    payload = _validar_token(token)
+    if payload and payload["rol"] in ("admin", "policia"):
+        return payload
+    return None
+
+
+@app.route("/api/policia/chip/<chip>", methods=["GET"])
+def policia_buscar_chip(chip):
+    """Devuelve el animal y su propietario por número de chip."""
+    if not _req_policia_o_admin():
+        return jsonify({"ok": False, "error": "Acceso no autorizado."}), 403
+    try:
+        conn = get_conn()
+        c = cur(conn)
+        chip_col = detectar_chip(c)
+        c.execute(f"SELECT * FROM ANIMALES WHERE `{chip_col}` = %s", (chip,))
+        animal_row = c.fetchone()
+        if not animal_row:
+            conn.close()
+            return jsonify({"ok": False, "error": "Animal no encontrado."})
+        animal = fila_a_dict(c, animal_row)
+        # Buscar propietario
+        propietario = None
+        dni = animal.get("DNI_PROPIETARIO")
+        if dni:
+            c.execute("SELECT * FROM PROPIETARIOS WHERE DNI = %s", (dni,))
+            prop_row = c.fetchone()
+            if prop_row:
+                propietario = fila_a_dict(c, prop_row)
+        conn.close()
+        return jsonify({"ok": True, "animal": animal, "propietario": propietario})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/incidencias", methods=["POST"])
+def registrar_incidencia():
+    """Registra una incidencia. Requiere rol admin o policia."""
+    payload = _req_policia_o_admin()
+    if not payload:
+        return jsonify({"ok": False, "error": "Acceso no autorizado."}), 403
+    data = request.get_json(silent=True) or {}
+    chip = data.get("chip", "").strip()
+    tipo = data.get("tipo", "").strip()
+    descripcion = data.get("descripcion", "").strip()
+    if not chip or not tipo:
+        return jsonify({"ok": False, "error": "Chip y tipo de incidencia son obligatorios."})
+    try:
+        conn = get_conn()
+        c = cur(conn)
+        chip_col = detectar_chip(c)
+        c.execute(f"SELECT COUNT(*) FROM ANIMALES WHERE `{chip_col}` = %s", (chip,))
+        if c.fetchone()[0] == 0:
+            conn.close()
+            return jsonify({"ok": False, "error": "No existe ningún animal con ese chip."})
+        c.execute(
+            "INSERT INTO INCIDENCIAS (N_CHIP, TIPO, DESCRIPCION, FECHA, ROL_AGENTE) VALUES (%s,%s,%s,%s,%s)",
+            (chip, tipo, descripcion, datetime.now(), payload["rol"])
+        )
+        conn.commit()
+        inc_id = c.lastrowid
+        conn.close()
+        logger.info("POL: incidencia #%d registrada — chip=%s tipo=%s", inc_id, chip, tipo)
+        return jsonify({"ok": True, "id": inc_id})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/incidencias", methods=["GET"])
+def listar_incidencias():
+    """Lista las incidencias. Requiere rol admin o policia."""
+    if not _req_policia_o_admin():
+        return jsonify({"ok": False, "error": "Acceso no autorizado."}), 403
+    try:
+        conn = get_conn()
+        c = cur(conn)
+        c.execute("SELECT * FROM INCIDENCIAS ORDER BY FECHA DESC LIMIT 200")
+        rows = c.fetchall()
+        conn.close()
+        return jsonify({"ok": True, "datos": [fila_a_dict(c, r) for r in rows]})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        return jsonify({"ok": False, "error": str(e)}), 500

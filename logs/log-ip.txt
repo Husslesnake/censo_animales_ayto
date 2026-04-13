@@ -4,3 +4,11 @@
 [2026-04-13 10:08:08] OK   ip=172.19.0.1           rol=admin      evento=cambio_password
 [2026-04-13 10:09:41] OK   ip=172.19.0.1           rol=admin      evento=login
 [2026-04-13 10:11:03] OK   ip=172.19.0.1           rol=admin      evento=login
+[2026-04-13 10:23:19] OK   ip=172.19.0.1           rol=empleado   evento=setup_password
+[2026-04-13 10:23:33] OK   ip=172.19.0.1           rol=admin      evento=setup_password
+[2026-04-13 10:23:55] OK   ip=172.19.0.1           rol=empleado   evento=setup_password
+[2026-04-13 10:24:22] OK   ip=172.19.0.1           rol=empleado   evento=setup_password
+[2026-04-13 10:25:44] OK   ip=172.19.0.1           rol=empleado   evento=setup_password
+[2026-04-13 10:26:20] OK   ip=172.19.0.1           rol=empleado   evento=setup_password
+[2026-04-13 10:27:46] OK   ip=172.19.0.1           rol=empleado   evento=cambio_password
+[2026-04-13 10:28:11] OK   ip=172.19.0.1           rol=admin      evento=cambio_password

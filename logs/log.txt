@@ -1046,3 +1046,275 @@ SyntaxError: Failed to execute 'querySelector' on 'Document': '.tab-btn[onclick*
 [2026-04-13 10:18:54] WARNING  <<< POST /api/ -> 404
 [2026-04-13 10:18:54] WARNING  <<< POST /api/ -> 404
 [2026-04-13 10:18:54] WARNING  <<< POST /api/ -> 404
+[2026-04-13 10:18:59] INFO     >>> GET /api/
+[2026-04-13 10:18:59] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:10] INFO     >>> GET /api/
+[2026-04-13 10:19:10] INFO     >>> GET /api/
+[2026-04-13 10:19:10] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:10] INFO     >>> GET /api/
+[2026-04-13 10:19:10] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:10] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:10] INFO     >>> GET /api/
+[2026-04-13 10:19:10] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:10] INFO     >>> POST /api/
+[2026-04-13 10:19:10] INFO     >>> POST /api/
+[2026-04-13 10:19:10] WARNING  <<< POST /api/ -> 404
+[2026-04-13 10:19:10] INFO     >>> POST /api/
+[2026-04-13 10:19:10] WARNING  <<< POST /api/ -> 404
+[2026-04-13 10:19:10] WARNING  <<< POST /api/ -> 404
+[2026-04-13 10:19:17] INFO     >>> GET /api/
+[2026-04-13 10:19:17] INFO     >>> GET /api/
+[2026-04-13 10:19:17] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:17] INFO     >>> GET /api/
+[2026-04-13 10:19:17] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:17] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:17] INFO     >>> GET /api/
+[2026-04-13 10:19:17] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:17] INFO     >>> POST /api/
+[2026-04-13 10:19:17] INFO     >>> POST /api/
+[2026-04-13 10:19:17] INFO     >>> POST /api/
+[2026-04-13 10:19:17] WARNING  <<< POST /api/ -> 404
+[2026-04-13 10:19:17] WARNING  <<< POST /api/ -> 404
+[2026-04-13 10:19:17] WARNING  <<< POST /api/ -> 404
+[2026-04-13 10:19:19] INFO     >>> POST /api/
+[2026-04-13 10:19:19] WARNING  <<< POST /api/ -> 404
+[2026-04-13 10:19:19] INFO     >>> POST /api/
+[2026-04-13 10:19:19] WARNING  <<< POST /api/ -> 404
+[2026-04-13 10:19:25] INFO     >>> GET /api/
+[2026-04-13 10:19:25] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:29] INFO     >>> GET /api/
+[2026-04-13 10:19:29] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:41] INFO     >>> GET /api/
+[2026-04-13 10:19:41] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:41] INFO     >>> GET /api/
+[2026-04-13 10:19:41] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:48] INFO     >>> GET /api/
+[2026-04-13 10:19:48] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:55] INFO     >>> GET /api/
+[2026-04-13 10:19:55] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:19:59] INFO     >>> GET /api/
+[2026-04-13 10:19:59] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:20:11] INFO     >>> GET /api/
+[2026-04-13 10:20:11] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:20:18] INFO     >>> GET /api/
+[2026-04-13 10:20:18] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:20:25] INFO     >>> GET /api/
+[2026-04-13 10:20:25] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:20:29] INFO     >>> GET /api/
+[2026-04-13 10:20:29] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:20:41] INFO     >>> GET /api/
+[2026-04-13 10:20:41] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:20:41] INFO     >>> GET /api/
+[2026-04-13 10:20:41] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:20:48] INFO     >>> GET /api/
+[2026-04-13 10:20:48] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:20:55] INFO     >>> GET /api/
+[2026-04-13 10:20:55] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:20:59] INFO     >>> GET /api/
+[2026-04-13 10:20:59] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:21:11] INFO     >>> GET /api/
+[2026-04-13 10:21:11] WARNING  <<< GET /api/ -> 404
+[2026-04-13 10:21:18] INFO     >>> GET /api/sexos
+[2026-04-13 10:21:23] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:21:25] INFO     >>> GET /api/sexos
+[2026-04-13 10:21:26] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:21:29] INFO     >>> GET /api/sexos
+[2026-04-13 10:21:41] INFO     >>> GET /api/sexos
+[2026-04-13 10:21:41] INFO     >>> GET /api/sexos
+[2026-04-13 10:21:48] INFO     >>> GET /api/sexos
+[2026-04-13 10:21:55] INFO     >>> GET /api/sexos
+[2026-04-13 10:21:59] INFO     >>> GET /api/sexos
+[2026-04-13 10:22:11] INFO     >>> GET /api/sexos
+[2026-04-13 10:22:18] INFO     >>> GET /api/sexos
+[2026-04-13 10:22:29] INFO     >>> GET /api/sexos
+[2026-04-13 10:22:41] INFO     >>> GET /api/sexos
+[2026-04-13 10:22:59] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:05] INFO     ================================================================================
+[2026-04-13 10:23:05] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T10:23:05.448299
+[2026-04-13 10:23:05] INFO     ================================================================================
+[2026-04-13 10:23:05] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 10:23:05] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-13 10:23:07] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:09] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:23:09] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:09] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:23:09] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:19] INFO     >>> POST /api/auth/setup
+[2026-04-13 10:23:19] INFO     AUTH: Contraseña creada — a1b53ac6-c7c7-4c2f-85a6-4c92cf71598c (rol=empleado)
+[2026-04-13 10:23:19] INFO     >>> GET /api/alertas
+[2026-04-13 10:23:19] INFO     >>> GET /api/alertas
+[2026-04-13 10:23:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:27] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:23:27] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:27] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:23:27] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:29] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:33] INFO     >>> POST /api/auth/setup
+[2026-04-13 10:23:33] INFO     AUTH: Contraseña creada — admin (rol=admin)
+[2026-04-13 10:23:33] INFO     >>> GET /api/alertas
+[2026-04-13 10:23:33] INFO     >>> GET /api/alertas
+[2026-04-13 10:23:41] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:48] INFO     >>> GET /api/auth/verificar
+[2026-04-13 10:23:48] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:48] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:23:48] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:23:48] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:55] INFO     >>> POST /api/auth/setup
+[2026-04-13 10:23:55] INFO     AUTH: Contraseña creada — dev-mnx15mwz-osueu0uty3 (rol=empleado)
+[2026-04-13 10:23:55] INFO     >>> GET /api/alertas
+[2026-04-13 10:23:55] INFO     >>> GET /api/alertas
+[2026-04-13 10:23:57] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:59] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:23:59] INFO     >>> GET /api/sexos
+[2026-04-13 10:23:59] INFO     >>> GET /api/auth/verificar
+[2026-04-13 10:23:59] INFO     >>> GET /api/alertas
+[2026-04-13 10:23:59] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:01] INFO     >>> GET /api/auth/verificar
+[2026-04-13 10:24:01] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:01] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:24:01] INFO     >>> GET /api/alertas
+[2026-04-13 10:24:01] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:01] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:24:01] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:01] INFO     >>> GET /api/auth/verificar
+[2026-04-13 10:24:01] INFO     >>> GET /api/alertas
+[2026-04-13 10:24:01] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:01] INFO     >>> GET /api/auth/verificar
+[2026-04-13 10:24:01] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:01] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:24:01] INFO     >>> GET /api/alertas
+[2026-04-13 10:24:01] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:02] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:24:02] INFO     >>> POST /api/auth/logout
+[2026-04-13 10:24:03] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:24:03] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:24:03] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:03] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:08] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:24:08] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:08] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:24:08] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:14] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:24:14] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:24:14] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:14] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:22] INFO     >>> POST /api/auth/setup
+[2026-04-13 10:24:22] INFO     AUTH: Contraseña creada — dev-mnx12s42-rsgi4aa4dl (rol=empleado)
+[2026-04-13 10:24:22] INFO     >>> GET /api/alertas
+[2026-04-13 10:24:22] INFO     >>> GET /api/alertas
+[2026-04-13 10:24:27] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:29] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:32] INFO     >>> GET /api/auth/verificar
+[2026-04-13 10:24:32] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:32] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:24:32] INFO     >>> GET /api/alertas
+[2026-04-13 10:24:32] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:33] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:24:33] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:33] INFO     >>> GET /api/auth/verificar
+[2026-04-13 10:24:33] INFO     >>> GET /api/alertas
+[2026-04-13 10:24:33] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:34] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:24:34] INFO     >>> POST /api/auth/logout
+[2026-04-13 10:24:39] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:24:39] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:39] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:24:40] INFO     >>> GET /api/sexos
+[2026-04-13 10:24:57] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:02] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:25:02] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:02] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:25:02] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:14] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:25:14] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:14] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:25:14] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:27] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:36] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:25:36] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:25:36] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:36] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:44] INFO     >>> POST /api/auth/setup
+[2026-04-13 10:25:44] INFO     AUTH: Contraseña creada — dev-mnx1r7fh-sbdc75wxiwh (rol=empleado)
+[2026-04-13 10:25:44] INFO     >>> GET /api/alertas
+[2026-04-13 10:25:44] INFO     >>> GET /api/alertas
+[2026-04-13 10:25:48] INFO     >>> POST /api/log
+[2026-04-13 10:25:48] ERROR    FRONTEND | ERROR | Uncaught SyntaxError: Failed to execute 'querySelector' on 'Document': '.tab-btn[onclick*='seguros']]' is not a valid selector. | Contexto: http://172.16.0.69/:3586:28
+SyntaxError: Failed to execute 'querySelector' on 'Document': '.tab-btn[onclick*='seguros']]' is not a valid selector.
+    at irA (http://172.16.0.69/:3586:28)
+    at HTMLDivElement.onclick (http://172.16.0.69/:2279:3)
+[2026-04-13 10:25:52] INFO     >>> GET /api/auth/verificar
+[2026-04-13 10:25:52] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:25:52] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:52] INFO     >>> GET /api/alertas
+[2026-04-13 10:25:52] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:53] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:53] INFO     >>> GET /api/auth/verificar
+[2026-04-13 10:25:53] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:25:53] INFO     >>> GET /api/alertas
+[2026-04-13 10:25:53] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:55] INFO     >>> GET /api/auth/verificar
+[2026-04-13 10:25:55] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:25:55] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:55] INFO     >>> GET /api/sexos
+[2026-04-13 10:25:55] INFO     >>> GET /api/alertas
+[2026-04-13 10:25:57] INFO     >>> GET /api/sexos
+[2026-04-13 10:26:06] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:26:06] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:26:06] INFO     >>> GET /api/sexos
+[2026-04-13 10:26:06] INFO     >>> GET /api/sexos
+[2026-04-13 10:26:20] INFO     >>> POST /api/auth/setup
+[2026-04-13 10:26:20] INFO     AUTH: Contraseña creada — dev-mnx1ru6o-88or58vdr9r (rol=empleado)
+[2026-04-13 10:26:20] INFO     >>> GET /api/alertas
+[2026-04-13 10:26:20] INFO     >>> GET /api/alertas
+[2026-04-13 10:26:21] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:26:21] INFO     >>> POST /api/auth/logout
+[2026-04-13 10:26:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:26:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:26:27] INFO     >>> GET /api/sexos
+[2026-04-13 10:26:57] INFO     >>> GET /api/sexos
+[2026-04-13 10:27:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:27:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:27:27] INFO     >>> GET /api/sexos
+[2026-04-13 10:27:37] INFO     >>> GET /api/sexos
+[2026-04-13 10:27:37] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:27:37] INFO     >>> GET /api/auth/verificar
+[2026-04-13 10:27:37] INFO     >>> GET /api/sexos
+[2026-04-13 10:27:37] INFO     >>> GET /api/alertas
+[2026-04-13 10:27:46] INFO     >>> POST /api/auth/cambiar
+[2026-04-13 10:27:46] INFO     AUTH: Contraseña cambiada — a1b53ac6-c7c7-4c2f-85a6-4c92cf71598c (rol=empleado)
+[2026-04-13 10:27:49] INFO     >>> POST /api/auth/logout
+[2026-04-13 10:27:49] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:27:57] INFO     >>> GET /api/auth/verificar
+[2026-04-13 10:27:57] INFO     >>> GET /api/sexos
+[2026-04-13 10:27:57] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:27:58] INFO     >>> GET /api/alertas
+[2026-04-13 10:27:58] INFO     >>> GET /api/sexos
+[2026-04-13 10:28:11] INFO     >>> POST /api/auth/cambiar
+[2026-04-13 10:28:11] INFO     AUTH: Contraseña cambiada — admin (rol=admin)
+[2026-04-13 10:28:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:28:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:28:27] INFO     >>> GET /api/sexos
+[2026-04-13 10:28:57] INFO     >>> GET /api/sexos
+[2026-04-13 10:29:00] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:29:00] INFO     >>> GET /api/sexos
+[2026-04-13 10:29:00] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:29:00] INFO     >>> GET /api/sexos
+[2026-04-13 10:29:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:29:22] INFO     >>> GET /api/sexos
+[2026-04-13 10:29:27] INFO     >>> GET /api/sexos
+[2026-04-13 10:29:30] INFO     >>> GET /api/sexos
+[2026-04-13 10:29:51] INFO     >>> GET /api/seguros
+[2026-04-13 10:29:57] INFO     >>> GET /api/sexos
+[2026-04-13 10:29:58] INFO     >>> GET /api/estadisticas
+[2026-04-13 10:29:58] INFO     >>> GET /api/estadisticas
+[2026-04-13 10:30:00] INFO     >>> GET /api/sexos
+[2026-04-13 10:30:08] INFO     >>> GET /api/estadisticas
+[2026-04-13 10:30:17] INFO     >>> GET /api/sexos
+[2026-04-13 10:30:20] INFO     >>> GET /api/sexos
+[2026-04-13 10:30:24] INFO     >>> GET /api/logs
