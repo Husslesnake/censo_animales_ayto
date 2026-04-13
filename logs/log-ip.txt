@@ -1,2 +1,6 @@
 # Registro de accesos por IP — creado 2026-04-13 08:15:32
 [2026-04-13 08:15:37] OK   ip=172.19.0.3           rol=empleado   evento=login
+[2026-04-13 08:30:08] OK   ip=172.19.0.1           rol=empleado   evento=setup_password
+[2026-04-13 08:30:15] FAIL ip=172.19.0.1           rol=empleado   evento=login
+[2026-04-13 08:30:18] OK   ip=172.19.0.1           rol=empleado   evento=login
+[2026-04-13 08:31:54] OK   ip=172.19.0.1           rol=empleado   evento=login

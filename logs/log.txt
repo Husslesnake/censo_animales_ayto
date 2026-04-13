@@ -360,3 +360,29 @@ SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
 [2026-04-13 08:18:27] INFO     >>> GET /api/sexos
 [2026-04-13 08:18:57] INFO     >>> GET /api/sexos
 [2026-04-13 08:19:27] INFO     >>> GET /api/sexos
+[2026-04-13 08:19:57] INFO     >>> GET /api/sexos
+[2026-04-13 08:21:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:22:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:23:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:24:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:25:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:26:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:27:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:28:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:29:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:29:59] INFO     ================================================================================
+[2026-04-13 08:29:59] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T08:29:59.303571
+[2026-04-13 08:29:59] INFO     ================================================================================
+[2026-04-13 08:29:59] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 08:29:59] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-13 08:30:02] INFO     >>> GET /api/sexos
+[2026-04-13 08:30:03] INFO     >>> GET /api/auth/estado
+[2026-04-13 08:30:03] INFO     >>> GET /api/sexos
+[2026-04-13 08:30:03] INFO     >>> GET /api/motivos_baja
+[2026-04-13 08:30:03] INFO     >>> GET /api/sexos
+[2026-04-13 08:30:08] INFO     >>> POST /api/auth/setup
+[2026-04-13 08:30:08] INFO     AUTH: Contraseña configurada para 172.19.0.1 (rol=empleado)
+[2026-04-13 08:30:08] INFO     >>> GET /api/alertas
+[2026-04-13 08:30:08] INFO     >>> GET /api/alertas
+[2026-04-13 08:30:13] INFO     >>> POST /api/auth/logout
+[2026-04-13 08:30:13] INFO     >>> GET /api/auth/estado
