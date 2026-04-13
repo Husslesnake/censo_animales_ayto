@@ -8,3 +8,4 @@
 [2026-04-13 09:50:21] FAIL ip=172.19.0.1           rol=admin      evento=login
 [2026-04-13 09:50:25] OK   ip=172.19.0.1           rol=admin      evento=login
 [2026-04-13 09:50:55] OK   ip=172.19.0.1           rol=admin      evento=login
+[2026-04-13 09:58:51] OK   ip=172.19.0.1           rol=admin      evento=login

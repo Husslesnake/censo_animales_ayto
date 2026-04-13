@@ -3265,12 +3265,28 @@ Seleccione un fichero de la lista para visualizarlo.</pre
         sessionStorage.removeItem("censo_token");
       }
 
-      // Llama al backend con X-Token en cabecera
+      // ID único por navegador/dispositivo — se genera una vez y se persiste en localStorage.
+      // El servidor lo usa como clave para empleados (la IP de Docker no distingue usuarios).
+      function _getDeviceId() {
+        var id = localStorage.getItem("censo_device_id");
+        if (!id) {
+          try {
+            id = crypto.randomUUID();
+          } catch(e) {
+            id = "dev-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
+          }
+          localStorage.setItem("censo_device_id", id);
+        }
+        return id;
+      }
+
+      // Llama al backend con X-Token y X-Device-Id en cabecera
       async function apiFetch(url, opts) {
         opts = opts || {};
         opts.headers = opts.headers || {};
         var t = _getToken();
         if (t && t.token) opts.headers["X-Token"] = t.token;
+        opts.headers["X-Device-Id"] = _getDeviceId();
         return fetch(url, opts);
       }
 
@@ -3281,7 +3297,7 @@ Seleccione un fichero de la lista para visualizarlo.</pre
         badge.style.display = "block";
         badge.textContent = "Detectando acceso…";
         try {
-          var res = await fetch("/api/auth/estado");
+          var res = await fetch("/api/auth/estado", { headers: { "X-Device-Id": _getDeviceId() } });
           var data = await res.json();
           _loginEstado = data;
           if (data.es_admin_ip) {
@@ -3327,7 +3343,7 @@ Seleccione un fichero de la lista para visualizarlo.</pre
         try {
           var res = await fetch("/api/auth/login", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "X-Device-Id": _getDeviceId() },
             body: JSON.stringify({ password: pass, recordar: !!recordar })
           });
           var data = await res.json();
@@ -3373,16 +3389,15 @@ Seleccione un fichero de la lista para visualizarlo.</pre
         try {
           var res = await fetch("/api/auth/setup", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "X-Device-Id": _getDeviceId() },
             body: JSON.stringify({ password: p1 })
           });
           var data = await res.json();
           if (data.ok) {
             document.getElementById("modal-setup-admin").style.display = "none";
-            sesion = { rol: "admin", token: data.token };
-            // En el setup inicial siempre recordamos (es la máquina local)
+            sesion = { rol: data.rol, token: data.token };
             _setToken(sesion, true);
-            aplicarRol("admin");
+            aplicarRol(data.rol);
             document.getElementById("login-screen").classList.add("oculto");
             document.getElementById("setup-pass1").value = "";
             document.getElementById("setup-pass2").value = "";
@@ -3454,7 +3469,7 @@ Seleccione un fichero de la lista para visualizarlo.</pre
           var t = _getToken();
           var res = await fetch("/api/auth/cambiar", {
             method: "POST",
-            headers: { "Content-Type": "application/json", "X-Token": (t && t.token) || "" },
+            headers: { "Content-Type": "application/json", "X-Token": (t && t.token) || "", "X-Device-Id": _getDeviceId() },
             body: JSON.stringify({ actual: actual, nueva: nueva1 })
           });
           var data = await res.json();

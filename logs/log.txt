@@ -774,3 +774,49 @@ SyntaxError: Failed to execute 'querySelector' on 'Document': '.tab-btn[onclick*
 [2026-04-13 09:57:22] INFO     >>> GET /api/sexos
 [2026-04-13 09:57:41] INFO     >>> GET /api/sexos
 [2026-04-13 09:57:49] INFO     >>> GET /api/sexos
+[2026-04-13 09:57:58] INFO     ================================================================================
+[2026-04-13 09:57:58] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T09:57:58.527835
+[2026-04-13 09:57:58] INFO     ================================================================================
+[2026-04-13 09:57:58] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 09:57:58] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-13 09:57:58] INFO     AUTH: 1 token(s) de larga duración restaurados desde auth.json
+[2026-04-13 09:58:19] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:19] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:22] INFO     >>> GET /api/auth/verificar
+[2026-04-13 09:58:22] INFO     >>> GET /api/motivos_baja
+[2026-04-13 09:58:22] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:22] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:22] INFO     >>> GET /api/alertas
+[2026-04-13 09:58:39] INFO     >>> GET /api/auth/estado
+[2026-04-13 09:58:39] INFO     >>> GET /api/motivos_baja
+[2026-04-13 09:58:39] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:39] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:40] INFO     >>> GET /api/auth/estado
+[2026-04-13 09:58:40] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:40] INFO     >>> GET /api/motivos_baja
+[2026-04-13 09:58:40] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:40] INFO     >>> GET /api/auth/estado
+[2026-04-13 09:58:40] INFO     >>> GET /api/motivos_baja
+[2026-04-13 09:58:40] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:40] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:41] INFO     >>> GET /api/auth/estado
+[2026-04-13 09:58:41] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:41] INFO     >>> GET /api/motivos_baja
+[2026-04-13 09:58:41] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:41] INFO     >>> GET /api/motivos_baja
+[2026-04-13 09:58:41] INFO     >>> GET /api/auth/estado
+[2026-04-13 09:58:41] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:41] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:41] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:44] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:44] INFO     >>> GET /api/motivos_baja
+[2026-04-13 09:58:44] INFO     >>> GET /api/auth/estado
+[2026-04-13 09:58:44] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:51] INFO     >>> POST /api/auth/login
+[2026-04-13 09:58:51] INFO     AUTH: Login exitoso desde 172.19.0.1 (rol=admin, recordar=False)
+[2026-04-13 09:58:51] INFO     >>> GET /api/alertas
+[2026-04-13 09:58:51] INFO     >>> GET /api/alertas
+[2026-04-13 09:58:52] INFO     >>> GET /api/sexos
+[2026-04-13 09:58:55] INFO     >>> GET /api/logs
+[2026-04-13 09:58:57] INFO     >>> GET /api/logs/log_2026-04-09.txt
+[2026-04-13 09:58:59] INFO     >>> GET /api/logs/log.txt

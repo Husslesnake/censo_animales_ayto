@@ -209,6 +209,11 @@ def _es_ip_local(ip: str) -> bool:
     return ip in _LOCAL_IPS
 
 
+def _get_device_id() -> str:
+    """Obtiene el identificador único de dispositivo enviado por el navegador."""
+    return request.headers.get("X-Device-Id", "").strip()
+
+
 def _hash_password(password: str, salt: str) -> str:
     """SHA-256 con sal."""
     return hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
@@ -311,14 +316,20 @@ def _limpiar_tokens_expirados():
 @app.route("/api/auth/estado", methods=["GET"])
 def auth_estado():
     """
-    Devuelve si la IP del cliente es admin o empleado,
-    y si esa IP ya tiene contraseña configurada.
+    Admin  → identificado por IP (172.19.0.1).
+    Empleado → identificado por X-Device-Id (ID único generado en el navegador).
+    Devuelve es_admin_ip y si ese usuario ya tiene contraseña creada.
     """
     ip = _get_client_ip()
     es_admin_ip = _es_ip_local(ip)
     auth = _cargar_auth()
-    ips = auth.get("ips", {})
-    configurado = bool(ips.get(ip, {}).get("hash"))
+
+    if es_admin_ip:
+        configurado = bool(auth.get("ips", {}).get(ip, {}).get("hash"))
+    else:
+        device_id = _get_device_id()
+        configurado = bool(device_id and auth.get("devices", {}).get(device_id, {}).get("hash"))
+
     return jsonify({
         "ok": True,
         "es_admin_ip": es_admin_ip,
@@ -330,17 +341,24 @@ def auth_estado():
 @app.route("/api/auth/setup", methods=["POST"])
 def auth_setup():
     """
-    Configuración inicial de contraseña para la IP del cliente.
-    Cualquier IP puede crear su propia contraseña si aún no la tiene.
+    Crea la contraseña por primera vez.
+    Admin  → almacenada en auth["ips"][ip].
+    Empleado → almacenada en auth["devices"][device_id].
     """
     ip = _get_client_ip()
     es_admin_ip = _es_ip_local(ip)
     rol = "admin" if es_admin_ip else "empleado"
-
     auth = _cargar_auth()
-    ips = auth.get("ips", {})
-    if ips.get(ip, {}).get("hash"):
-        return jsonify({"ok": False, "error": "Ya tienes contraseña configurada. Usa cambiar contraseña."})
+
+    if es_admin_ip:
+        if auth.get("ips", {}).get(ip, {}).get("hash"):
+            return jsonify({"ok": False, "error": "Ya tienes contraseña configurada. Usa cambiar contraseña."})
+    else:
+        device_id = _get_device_id()
+        if not device_id:
+            return jsonify({"ok": False, "error": "Identificador de dispositivo no recibido."})
+        if auth.get("devices", {}).get(device_id, {}).get("hash"):
+            return jsonify({"ok": False, "error": "Ya tienes contraseña configurada. Usa cambiar contraseña."})
 
     data = request.get_json(silent=True) or {}
     password = data.get("password", "").strip()
@@ -350,10 +368,15 @@ def auth_setup():
 
     sal = secrets.token_hex(16)
     hashed = _hash_password(password, sal)
-    ips[ip] = {"hash": hashed, "salt": sal, "rol": rol, "creado": datetime.now().isoformat()}
-    auth["ips"] = ips
+    entrada = {"hash": hashed, "salt": sal, "rol": rol, "creado": datetime.now().isoformat()}
+
+    if es_admin_ip:
+        auth.setdefault("ips", {})[ip] = entrada
+    else:
+        auth.setdefault("devices", {})[device_id] = entrada
+
     _guardar_auth(auth)
-    logger.info("AUTH: Contraseña configurada para %s (rol=%s)", ip, rol)
+    logger.info("AUTH: Contraseña creada — %s (rol=%s)", ip if es_admin_ip else device_id, rol)
     _log_ip(ip, rol, "setup_password", True)
 
     token = _crear_token(rol, recordar=True)
@@ -363,28 +386,35 @@ def auth_setup():
 @app.route("/api/auth/cambiar", methods=["POST"])
 def auth_cambiar():
     """
-    Cambia la contraseña de la IP actual.
-    Requiere contraseña actual correcta y token de sesión válido.
+    Cambia la contraseña del usuario actual.
+    Requiere token de sesión activo y contraseña actual correcta.
     """
     ip = _get_client_ip()
     es_admin_ip = _es_ip_local(ip)
     rol = "admin" if es_admin_ip else "empleado"
 
     token_header = request.headers.get("X-Token", "")
-    payload = _validar_token(token_header)
-    if not payload:
+    if not _validar_token(token_header):
         return jsonify({"ok": False, "error": "Se requiere sesión activa."})
 
     auth = _cargar_auth()
-    ip_data = auth.get("ips", {}).get(ip, {})
-    if not ip_data.get("hash"):
-        return jsonify({"ok": False, "error": "No hay contraseña configurada. Use /api/auth/setup."})
+
+    if es_admin_ip:
+        entrada = auth.get("ips", {}).get(ip, {})
+        clave_bucket, clave_key = "ips", ip
+    else:
+        device_id = _get_device_id()
+        entrada = auth.get("devices", {}).get(device_id, {}) if device_id else {}
+        clave_bucket, clave_key = "devices", device_id
+
+    if not entrada.get("hash"):
+        return jsonify({"ok": False, "error": "No hay contraseña configurada. Usa el formulario de primera vez."})
 
     data = request.get_json(silent=True) or {}
     actual = data.get("actual", "").strip()
     nueva = data.get("nueva", "").strip()
 
-    if _hash_password(actual, ip_data["salt"]) != ip_data["hash"]:
+    if _hash_password(actual, entrada["salt"]) != entrada["hash"]:
         return jsonify({"ok": False, "error": "La contraseña actual no es correcta."})
 
     min_len = 6 if es_admin_ip else 4
@@ -393,9 +423,9 @@ def auth_cambiar():
 
     sal = secrets.token_hex(16)
     hashed = _hash_password(nueva, sal)
-    auth["ips"][ip].update({"hash": hashed, "salt": sal, "modificado": datetime.now().isoformat()})
+    auth[clave_bucket][clave_key].update({"hash": hashed, "salt": sal, "modificado": datetime.now().isoformat()})
     _guardar_auth(auth)
-    logger.info("AUTH: Contraseña cambiada desde %s (rol=%s)", ip, rol)
+    logger.info("AUTH: Contraseña cambiada — %s (rol=%s)", ip, rol)
     _log_ip(ip, rol, "cambio_password", True)
 
     token = _crear_token(rol)
@@ -406,10 +436,8 @@ def auth_cambiar():
 def auth_login():
     """
     Login con contraseña.
-    Cada IP tiene su propia contraseña almacenada en auth.json["ips"].
-    - IP local → rol admin
-    - IP remota → rol empleado
-    Acepta recordar=true para emitir token de 1 año persistido en auth.json.
+    Admin  → busca por IP en auth["ips"].
+    Empleado → busca por X-Device-Id en auth["devices"].
     """
     ip = _get_client_ip()
     es_admin_ip = _es_ip_local(ip)
@@ -422,18 +450,23 @@ def auth_login():
         return jsonify({"ok": False, "error": "Introduzca la contraseña."})
 
     auth = _cargar_auth()
-    ip_data = auth.get("ips", {}).get(ip, {})
 
-    if not ip_data.get("hash"):
+    if es_admin_ip:
+        entrada = auth.get("ips", {}).get(ip, {})
+    else:
+        device_id = _get_device_id()
+        entrada = auth.get("devices", {}).get(device_id, {}) if device_id else {}
+
+    if not entrada.get("hash"):
         return jsonify({"ok": False, "error": "configure_primero"})
 
-    if _hash_password(password, ip_data["salt"]) != ip_data["hash"]:
-        logger.warning("AUTH: Intento de login fallido desde %s (rol=%s)", ip, rol)
+    if _hash_password(password, entrada["salt"]) != entrada["hash"]:
+        logger.warning("AUTH: Login fallido desde %s (rol=%s)", ip, rol)
         _log_ip(ip, rol, "login", False)
         return jsonify({"ok": False, "error": "Contraseña incorrecta."})
 
     token = _crear_token(rol, recordar=recordar)
-    logger.info("AUTH: Login exitoso desde %s (rol=%s, recordar=%s)", ip, rol, recordar)
+    logger.info("AUTH: Login exitoso desde %s (rol=%s)", ip, rol)
     _log_ip(ip, rol, "login", True)
     return jsonify({"ok": True, "token": token, "rol": rol, "recordar": recordar})
 
