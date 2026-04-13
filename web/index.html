@@ -2048,22 +2048,47 @@ body.dark-mode .login-error {
  stroke-width="0.7"
  rx="0.5"
  /></svg
- ></span><h1>Censo Municipal de Animales</h1><p>Ayuntamiento de Navalcarnero · Acceso restringido</p></div><div class="login-body"><div class="login-error" id="login-error">
- Usuario o contraseña incorrectos.
- </div><label class="login-label" for="login-user">Usuario</label><select
- class="login-input"
- id="login-user"
- onchange="_prefillLogin(this.value)"
- ><option value="admin">Administrador</option><option value="empleado">Empleado</option></select><label class="login-label" for="login-pass">Contraseña</label><input
+ ></span><h1>Censo Municipal de Animales</h1><p>Ayuntamiento de Navalcarnero · Acceso restringido</p></div><div class="login-body"><div class="login-error" id="login-error">Contraseña incorrecta.</div><div id="login-rol-badge" style="display:none;text-align:center;margin-bottom:1rem;padding:0.45rem 0.8rem;font-size:0.78rem;font-family:'IBM Plex Mono',monospace;letter-spacing:0.04em;border:1px solid var(--borde);color:var(--gris4);">Detectando acceso…</div><label class="login-label" for="login-pass" id="login-pass-label">Contraseña</label><input
  class="login-input"
  type="password"
  id="login-pass"
  placeholder="••••••••"
  autocomplete="current-password"
  onkeydown="if (event.key === 'Enter') doLogin();"
- /><label class="login-recordar"><input type="checkbox" id="login-recordar" /><span>No volver a pedir contraseña en este equipo</span></label><button class="login-btn" onclick="doLogin()">Entrar</button><p class="login-footer">
+ /><button class="login-btn" onclick="doLogin()">Entrar</button><p class="login-footer">
  Acceso exclusivo para personal municipal autorizado
- </p></div></div></div><div class="u-bar-inst"></div><header><div class="header-marca"><span class="marca-escudo" aria-label="Escudo de Navalcarnero"><svg
+ </p></div></div></div>
+<!-- Modal setup contraseña admin (primera vez) -->
+<div id="modal-setup-admin" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
+  <div style="background:var(--blanco);padding:2rem 2.2rem;max-width:420px;width:92%;border-top:4px solid var(--rojo);">
+    <h2 style="font-family:'Libre Baskerville',serif;font-size:1.05rem;margin-bottom:0.3rem;color:var(--tinta);">Primera configuración</h2>
+    <p style="font-size:0.8rem;color:var(--gris4);margin-bottom:1.2rem;line-height:1.5;">Este es el equipo servidor. Establezca la contraseña de administrador para proteger el acceso.</p>
+    <div id="setup-error" style="display:none;color:var(--rojo);font-size:0.8rem;margin-bottom:0.8rem;"></div>
+    <label style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Nueva contraseña (mín. 6 caracteres)</label>
+    <input type="password" id="setup-pass1" class="login-input" placeholder="••••••••" style="margin-bottom:0.8rem;" onkeydown="if(event.key==='Enter')document.getElementById('setup-pass2').focus();" />
+    <label style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Confirmar contraseña</label>
+    <input type="password" id="setup-pass2" class="login-input" placeholder="••••••••" style="margin-bottom:1.2rem;" onkeydown="if(event.key==='Enter')doSetupAdmin();" />
+    <button class="login-btn" onclick="doSetupAdmin()" style="width:100%;">Establecer contraseña</button>
+  </div>
+</div>
+<!-- Modal cambiar contraseña admin -->
+<div id="modal-cambiar-pass" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
+  <div style="background:var(--blanco);padding:2rem 2.2rem;max-width:420px;width:92%;border-top:4px solid var(--rojo);">
+    <h2 style="font-family:'Libre Baskerville',serif;font-size:1.05rem;margin-bottom:1rem;color:var(--tinta);">Cambiar contraseña de administrador</h2>
+    <div id="cambiar-error" style="display:none;color:var(--rojo);font-size:0.8rem;margin-bottom:0.8rem;"></div>
+    <div id="cambiar-ok" style="display:none;color:var(--verde);font-size:0.8rem;margin-bottom:0.8rem;"></div>
+    <label style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Contraseña actual</label>
+    <input type="password" id="cambiar-actual" class="login-input" placeholder="••••••••" style="margin-bottom:0.8rem;" />
+    <label style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Nueva contraseña (mín. 6 caracteres)</label>
+    <input type="password" id="cambiar-nueva1" class="login-input" placeholder="••••••••" style="margin-bottom:0.8rem;" />
+    <label style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Confirmar nueva contraseña</label>
+    <input type="password" id="cambiar-nueva2" class="login-input" placeholder="••••••••" style="margin-bottom:1.2rem;" />
+    <div style="display:flex;gap:0.8rem;">
+      <button class="btn btn-secondary" onclick="cerrarModalCambiarPass()" style="flex:1;">Cancelar</button>
+      <button class="btn btn-enviar" onclick="doCambiarPass()" style="flex:1;">Guardar</button>
+    </div>
+  </div>
+</div><div class="u-bar-inst"></div><header><div class="header-marca"><span class="marca-escudo" aria-label="Escudo de Navalcarnero"><svg
  viewBox="0 0 200 292"
  width="52"
  height="76"
@@ -2173,7 +2198,7 @@ body.dark-mode .login-error {
  flex-shrink: 0;
  "
  ></span
- ><span id="api-status-txt">API sin conexión</span></div><div class="header-session" id="header-session" style="display: none"><span class="session-chip" id="session-chip"><span class="chip-dot"></span><span id="session-label"></span></span><button class="btn-logout" onclick="doLogout()">Salir</button></div><button
+ ><span id="api-status-txt">API sin conexión</span></div><div class="header-session" id="header-session" style="display: none"><span class="session-chip" id="session-chip"><span class="chip-dot"></span><span id="session-label"></span></span><button class="btn-secondary solo-admin" onclick="abrirModalCambiarPass()" style="font-size:0.72rem;padding:0.25rem 0.6rem;margin-right:0.4rem;" title="Cambiar contraseña de administrador">Cambiar clave</button><button class="btn-logout" onclick="doLogout()">Salir</button></div><button
  class="nav-hamburger"
  id="nav-hamburger"
  aria-label="Menú"
@@ -3169,68 +3194,208 @@ Seleccione un fichero de la lista para visualizarlo.</pre
           alert("Error: " + result.error);
         }
       }
-      var CREDS = { admin: "1234", empleado: "123" };
-      var sesion = null;
-      function doLogin() {
-        var user = document.getElementById("login-user").value;
-        var pass = document.getElementById("login-pass").value;
-        var recordar = document.getElementById("login-recordar").checked;
-        var err = document.getElementById("login-error");
-        if (CREDS[user] && pass === CREDS[user]) {
-          err.classList.remove("show");
-          sesion = { rol: user };
-          var datos = JSON.stringify(sesion);
-          if (recordar) {
-            localStorage.setItem("censo_sesion", datos);
-            localStorage.setItem(
-              "censo_cred_" + user,
-              JSON.stringify({ user, pass: pass }),
-            );
+      // ── Autenticación basada en IP ─────────────────────────────────────────
+      // El token se guarda en localStorage; el rol viene del servidor.
+      var sesion = null; // { rol: "admin"|"empleado", token: "..." }
+      var _loginEstado = { es_admin_ip: false, configurado: true }; // caché del estado
+
+      // Recupera token guardado en localStorage
+      function _getToken() {
+        try { return JSON.parse(localStorage.getItem("censo_token") || "null"); } catch(e) { return null; }
+      }
+      function _setToken(data) {
+        localStorage.setItem("censo_token", JSON.stringify(data));
+      }
+      function _clearToken() {
+        localStorage.removeItem("censo_token");
+      }
+
+      // Llama al backend con X-Token en cabecera
+      async function apiFetch(url, opts) {
+        opts = opts || {};
+        opts.headers = opts.headers || {};
+        var t = _getToken();
+        if (t && t.token) opts.headers["X-Token"] = t.token;
+        return fetch(url, opts);
+      }
+
+      // Inicializa la pantalla de login consultando el estado de auth al backend
+      async function _initLoginScreen() {
+        var badge = document.getElementById("login-rol-badge");
+        var label = document.getElementById("login-pass-label");
+        badge.style.display = "block";
+        badge.textContent = "Detectando acceso…";
+        try {
+          var res = await fetch("/api/auth/estado");
+          var data = await res.json();
+          _loginEstado = data;
+          if (data.es_admin_ip) {
+            badge.textContent = "Acceso desde servidor local — Administrador";
+            badge.style.borderColor = "var(--rojo)";
+            badge.style.color = "var(--rojo)";
+            if (label) label.textContent = "Contraseña de administrador";
+            if (!data.configurado) {
+              // Mostrar modal de setup en lugar del login normal
+              document.getElementById("modal-setup-admin").style.display = "flex";
+            }
           } else {
-            localStorage.removeItem("censo_sesion");
-            localStorage.removeItem("censo_cred_admin");
-            localStorage.removeItem("censo_cred_empleado");
+            badge.textContent = "Acceso remoto — Empleado";
+            badge.style.borderColor = "var(--azul)";
+            badge.style.color = "var(--azul)";
+            if (label) label.textContent = "Contraseña de empleado";
           }
-          aplicarRol(user);
-          document.getElementById("login-screen").classList.add("oculto");
-          document.getElementById("login-pass").value = "";
-          var btnInicio = document.getElementById("tab-inicio");
-          mostrarPagina("inicio", btnInicio);
-          setTimeout(cargarAlertas, 200);
-        } else {
+        } catch(e) {
+          badge.textContent = "Error al detectar modo de acceso";
+          logError(e.message || "Error auth/estado", "_initLoginScreen", e.stack);
+        }
+      }
+
+      async function doLogin() {
+        var pass = document.getElementById("login-pass").value;
+        var err = document.getElementById("login-error");
+        err.classList.remove("show");
+        if (!pass) {
+          err.textContent = "Introduzca la contraseña.";
           err.classList.add("show");
-          document.getElementById("login-pass").value = "";
-          document.getElementById("login-pass").focus();
+          return;
         }
-      }
-      function _prefillLogin(user) {
-        var saved = localStorage.getItem("censo_cred_" + user);
-        var passEl = document.getElementById("login-pass");
-        var recEl = document.getElementById("login-recordar");
-        if (saved) {
-          try {
-            var c = JSON.parse(saved);
-            if (passEl) passEl.value = c.pass || "";
-            if (recEl) recEl.checked = true;
-          } catch (e) {
-            logError(
-              e.message || "Error al parsear credenciales",
-              "_prefillLogin",
-              e.stack,
-            );
+        try {
+          var res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: pass })
+          });
+          var data = await res.json();
+          if (data.ok) {
+            err.classList.remove("show");
+            sesion = { rol: data.rol, token: data.token };
+            _setToken(sesion);
+            aplicarRol(data.rol);
+            document.getElementById("login-screen").classList.add("oculto");
+            document.getElementById("login-pass").value = "";
+            var btnInicio = document.getElementById("tab-inicio");
+            mostrarPagina("inicio", btnInicio);
+            setTimeout(cargarAlertas, 200);
+          } else if (data.error === "configure_primero") {
+            document.getElementById("modal-setup-admin").style.display = "flex";
+          } else {
+            err.textContent = data.error || "Contraseña incorrecta.";
+            err.classList.add("show");
+            document.getElementById("login-pass").value = "";
+            document.getElementById("login-pass").focus();
           }
-        } else {
-          if (passEl) passEl.value = "";
-          if (recEl) recEl.checked = false;
+        } catch(e) {
+          err.textContent = "Error de conexión con el servidor.";
+          err.classList.add("show");
+          logError(e.message || "Error doLogin", "doLogin", e.stack);
         }
       }
-      (function _initPrefill() {
-        var userEl = document.getElementById("login-user");
-        if (userEl) _prefillLogin(userEl.value);
-      })();
+
+      async function doSetupAdmin() {
+        var p1 = document.getElementById("setup-pass1").value;
+        var p2 = document.getElementById("setup-pass2").value;
+        var errEl = document.getElementById("setup-error");
+        errEl.style.display = "none";
+        if (p1.length < 6) {
+          errEl.textContent = "La contraseña debe tener al menos 6 caracteres.";
+          errEl.style.display = "block"; return;
+        }
+        if (p1 !== p2) {
+          errEl.textContent = "Las contraseñas no coinciden.";
+          errEl.style.display = "block"; return;
+        }
+        try {
+          var res = await fetch("/api/auth/setup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: p1 })
+          });
+          var data = await res.json();
+          if (data.ok) {
+            document.getElementById("modal-setup-admin").style.display = "none";
+            sesion = { rol: "admin", token: data.token };
+            _setToken(sesion);
+            aplicarRol("admin");
+            document.getElementById("login-screen").classList.add("oculto");
+            document.getElementById("setup-pass1").value = "";
+            document.getElementById("setup-pass2").value = "";
+            var btnInicio = document.getElementById("tab-inicio");
+            mostrarPagina("inicio", btnInicio);
+            setTimeout(cargarAlertas, 200);
+          } else {
+            errEl.textContent = data.error || "Error al configurar.";
+            errEl.style.display = "block";
+          }
+        } catch(e) {
+          errEl.textContent = "Error de conexión.";
+          errEl.style.display = "block";
+          logError(e.message, "doSetupAdmin", e.stack);
+        }
+      }
+
+      function abrirModalCambiarPass() {
+        document.getElementById("modal-cambiar-pass").style.display = "flex";
+        document.getElementById("cambiar-error").style.display = "none";
+        document.getElementById("cambiar-ok").style.display = "none";
+        document.getElementById("cambiar-actual").value = "";
+        document.getElementById("cambiar-nueva1").value = "";
+        document.getElementById("cambiar-nueva2").value = "";
+      }
+
+      function cerrarModalCambiarPass() {
+        document.getElementById("modal-cambiar-pass").style.display = "none";
+      }
+
+      async function doCambiarPass() {
+        var actual = document.getElementById("cambiar-actual").value;
+        var nueva1 = document.getElementById("cambiar-nueva1").value;
+        var nueva2 = document.getElementById("cambiar-nueva2").value;
+        var errEl = document.getElementById("cambiar-error");
+        var okEl = document.getElementById("cambiar-ok");
+        errEl.style.display = "none"; okEl.style.display = "none";
+        if (nueva1.length < 6) {
+          errEl.textContent = "La nueva contraseña debe tener al menos 6 caracteres.";
+          errEl.style.display = "block"; return;
+        }
+        if (nueva1 !== nueva2) {
+          errEl.textContent = "Las contraseñas no coinciden.";
+          errEl.style.display = "block"; return;
+        }
+        try {
+          var t = _getToken();
+          var res = await fetch("/api/auth/cambiar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Token": (t && t.token) || "" },
+            body: JSON.stringify({ actual: actual, nueva: nueva1 })
+          });
+          var data = await res.json();
+          if (data.ok) {
+            sesion = { rol: "admin", token: data.token };
+            _setToken(sesion);
+            okEl.textContent = "Contraseña cambiada correctamente.";
+            okEl.style.display = "block";
+            setTimeout(cerrarModalCambiarPass, 1500);
+          } else {
+            errEl.textContent = data.error || "Error al cambiar contraseña.";
+            errEl.style.display = "block";
+          }
+        } catch(e) {
+          errEl.textContent = "Error de conexión.";
+          errEl.style.display = "block";
+          logError(e.message, "doCambiarPass", e.stack);
+        }
+      }
+
       function doLogout() {
+        var t = _getToken();
+        if (t && t.token) {
+          fetch("/api/auth/logout", {
+            method: "POST",
+            headers: { "X-Token": t.token }
+          }).catch(function(){});
+        }
         sesion = null;
-        localStorage.removeItem("censo_sesion");
+        _clearToken();
         document.getElementById("login-screen").classList.remove("oculto");
         document.getElementById("login-pass").value = "";
         document.getElementById("header-session").style.display = "none";
@@ -3243,6 +3408,7 @@ Seleccione un fichero de la lista para visualizarlo.</pre
         });
         var p = document.getElementById("page-propietarios");
         if (p) p.classList.add("active");
+        _initLoginScreen();
       }
       function aplicarRol(rol) {
         document.body.classList.remove("rol-admin", "rol-empleado");
@@ -3318,28 +3484,31 @@ Seleccione un fichero de la lista para visualizarlo.</pre
           btn = document.querySelector('.tab-btn[onclick*="' + id + '"]');
         if (btn) mostrarPagina(id, btn);
       }
-      (function () {
-        var saved = localStorage.getItem("censo_sesion");
-        if (saved) {
+      // Inicializar sesión al cargar: verifica token guardado con el backend
+      (async function _initSession() {
+        var saved = _getToken();
+        if (saved && saved.token) {
           try {
-            var s = JSON.parse(saved);
-            if (s && s.rol) {
-              sesion = s;
-              aplicarRol(s.rol);
+            var res = await fetch("/api/auth/verificar", {
+              headers: { "X-Token": saved.token }
+            });
+            var data = await res.json();
+            if (data.ok && data.rol) {
+              sesion = { rol: data.rol, token: saved.token };
+              aplicarRol(data.rol);
               document.getElementById("login-screen").classList.add("oculto");
               var btnInicio = document.getElementById("tab-inicio");
               if (btnInicio) mostrarPagina("inicio", btnInicio);
               return;
             }
-          } catch (e) {
-            logError(
-              e.message || "Error al restaurar sesión",
-              "_initSession",
-              e.stack,
-            );
+          } catch(e) {
+            logError(e.message || "Error al restaurar sesión", "_initSession", e.stack);
           }
         }
+        _clearToken();
+        sesion = null;
         document.getElementById("header-session").style.display = "none";
+        _initLoginScreen();
       })();
       const API = "/api";
       const POR_PAGINA = 15;
