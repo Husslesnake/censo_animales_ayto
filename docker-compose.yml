@@ -24,7 +24,8 @@ services:
     container_name: censo_web
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "80:80"                  # Empleados — acceso público
+      - "127.0.0.1:8080:8080"   # Admin — solo desde localhost (el servidor)
     volumes:
       - ./web:/usr/share/nginx/html:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro

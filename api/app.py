@@ -112,12 +112,10 @@ _cleanup_old_logs()
 
 
 # ── Autenticación basada en IP ────────────────────────────────────────────────
-# El equipo servidor (IP local) es admin; el resto son empleados.
-# La contraseña de admin se hashea con SHA-256 + sal y se persiste en auth.json.
+# Admin → accede por el puerto 8080 (solo localhost); nginx añade X-Admin-Access: true.
+# Empleados → acceden por el puerto 80 (público); nginx deja X-Admin-Access vacío.
 
 AUTH_FILE = Path(os.environ.get("AUTH_FILE", "auth.json"))
-# IPs que se consideran locales (el propio servidor)
-_LOCAL_IPS = {"172.19.0.1"}
 
 # ── Logger de accesos por IP ──────────────────────────────────────────────────
 _IP_LOG_FILE = LOG_DIR / "log-ip.txt"
@@ -204,9 +202,10 @@ def _get_client_ip() -> str:
     return request.remote_addr or "0.0.0.0"
 
 
-def _es_ip_local(ip: str) -> bool:
-    """Devuelve True si la IP es la del propio servidor (administrador)."""
-    return ip in _LOCAL_IPS
+def _es_admin_request() -> bool:
+    """True si la petición llega por el puerto 8080 (admin).
+    Nginx pone X-Admin-Access: true solo en ese server block; en el puerto 80 lo fuerza a vacío."""
+    return request.headers.get("X-Admin-Access", "") == "true"
 
 
 def _get_device_id() -> str:
