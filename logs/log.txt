@@ -294,3 +294,14 @@ SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
 [2026-04-13 08:04:51] INFO     >>> GET /api/motivos_baja
 [2026-04-13 08:04:51] INFO     >>> GET /api/sexos
 [2026-04-13 08:04:51] INFO     >>> GET /api/sexos
+[2026-04-13 08:05:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:05:51] INFO     >>> GET /api/sexos
+[2026-04-13 08:06:14] INFO     >>> GET /api/auth/estado
+[2026-04-13 08:06:14] INFO     >>> GET /api/motivos_baja
+[2026-04-13 08:06:14] INFO     >>> GET /api/sexos
+[2026-04-13 08:06:14] INFO     >>> GET /api/sexos
+[2026-04-13 08:06:44] INFO     >>> GET /api/sexos
+[2026-04-13 08:07:14] INFO     >>> GET /api/sexos
+[2026-04-13 08:07:44] INFO     >>> GET /api/sexos
+[2026-04-13 08:08:14] INFO     >>> GET /api/sexos
+[2026-04-13 08:08:44] INFO     >>> GET /api/sexos
