@@ -35,3 +35,10 @@ services:
 networks:
   red_censo:
     driver: bridge
+
+services:
+  api:
+    volumes:
+      - ./auth.json:/app/auth.json   # ← añadir
+    environment:
+      - AUTH_FILE=/app/auth.json     # ← añadir

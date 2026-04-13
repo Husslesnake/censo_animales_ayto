@@ -122,6 +122,47 @@ _LOCAL_IPS = {"127.0.0.1", "::1", "localhost"}
 # Tokens de sesión en memoria: {token: {"rol": "admin"|"empleado", "exp": datetime}}
 _TOKENS: dict = {}
 _TOKEN_TTL_HOURS = 12
+_TOKEN_TTL_RECORDAR_DIAS = 365
+
+
+def _cargar_tokens_persistidos():
+    """Al arrancar, carga en _TOKENS los tokens de larga duración guardados en auth.json."""
+    auth = _cargar_auth()
+    ahora = datetime.now()
+    cargados = 0
+    for token, datos in auth.get("tokens_recordar", {}).items():
+        try:
+            exp = datetime.fromisoformat(datos["exp"])
+            if exp > ahora:
+                _TOKENS[token] = {"rol": datos["rol"], "exp": exp, "persistido": True}
+                cargados += 1
+        except Exception:
+            pass
+    if cargados:
+        logger.info("AUTH: %d token(s) de larga duración restaurados desde auth.json", cargados)
+
+
+def _guardar_token_persistido(token: str, rol: str, exp: datetime):
+    """Persiste un token de larga duración en auth.json."""
+    auth = _cargar_auth()
+    tokens = auth.get("tokens_recordar", {})
+    # Limpiar tokens expirados antes de escribir
+    ahora = datetime.now()
+    tokens = {t: d for t, d in tokens.items()
+              if datetime.fromisoformat(d.get("exp", "2000-01-01")) > ahora}
+    tokens[token] = {"rol": rol, "exp": exp.isoformat()}
+    auth["tokens_recordar"] = tokens
+    _guardar_auth(auth)
+
+
+def _eliminar_token_persistido(token: str):
+    """Elimina un token de larga duración de auth.json."""
+    auth = _cargar_auth()
+    tokens = auth.get("tokens_recordar", {})
+    if token in tokens:
+        del tokens[token]
+        auth["tokens_recordar"] = tokens
+        _guardar_auth(auth)
 
 
 def _get_client_ip() -> str:
@@ -157,13 +198,17 @@ def _guardar_auth(data: dict):
     AUTH_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 
-def _crear_token(rol: str) -> str:
-    """Genera un token aleatorio y lo registra en memoria."""
+def _crear_token(rol: str, recordar: bool = False) -> str:
+    """Genera un token aleatorio y lo registra.
+    Si recordar=True, TTL de 1 año y se persiste en auth.json para sobrevivir reinicios."""
     token = secrets.token_hex(32)
-    _TOKENS[token] = {
-        "rol": rol,
-        "exp": datetime.now() + timedelta(hours=_TOKEN_TTL_HOURS),
-    }
+    if recordar:
+        exp = datetime.now() + timedelta(days=_TOKEN_TTL_RECORDAR_DIAS)
+        _TOKENS[token] = {"rol": rol, "exp": exp, "persistido": True}
+        _guardar_token_persistido(token, rol, exp)
+    else:
+        exp = datetime.now() + timedelta(hours=_TOKEN_TTL_HOURS)
+        _TOKENS[token] = {"rol": rol, "exp": exp, "persistido": False}
     return token
 
 
@@ -173,17 +218,29 @@ def _validar_token(token: str) -> dict | None:
     if not payload:
         return None
     if datetime.now() > payload["exp"]:
+        if payload.get("persistido"):
+            _eliminar_token_persistido(token)
         del _TOKENS[token]
         return None
     return payload
 
 
 def _limpiar_tokens_expirados():
-    """Elimina tokens caducados del diccionario en memoria."""
+    """Elimina tokens caducados del diccionario en memoria y de auth.json."""
     ahora = datetime.now()
-    expirados = [t for t, p in _TOKENS.items() if ahora > p["exp"]]
+    expirados = [t for t, p in list(_TOKENS.items()) if ahora > p["exp"]]
+    persistidos_eliminados = 0
     for t in expirados:
+        if _TOKENS[t].get("persistido"):
+            persistidos_eliminados += 1
         del _TOKENS[t]
+    if persistidos_eliminados:
+        # Sincronizar auth.json eliminando los que ya no están en _TOKENS
+        auth = _cargar_auth()
+        tokens_validos = {t: d for t, d in auth.get("tokens_recordar", {}).items()
+                         if t in _TOKENS}
+        auth["tokens_recordar"] = tokens_validos
+        _guardar_auth(auth)
 
 
 # ── Endpoints de autenticación ────────────────────────────────────────────────
@@ -230,7 +287,7 @@ def auth_setup():
     _guardar_auth({"hash": hashed, "salt": sal, "creado": datetime.now().isoformat()})
     logger.info("AUTH: Contraseña de administrador configurada desde %s", ip)
 
-    token = _crear_token("admin")
+    token = _crear_token("admin", recordar=True)
     return jsonify({"ok": True, "token": token, "rol": "admin"})
 
 
@@ -272,13 +329,14 @@ def auth_login():
     """
     Login con contraseña.
     - IP local: verifica contraseña admin → token admin
-    - IP remota: verifica contraseña empleado (hardcoded en auth.json) → token empleado
-      Si no hay contraseña empleado configurada, cualquier contraseña no vacía sirve.
+    - IP remota: verifica contraseña empleado → token empleado
+    Acepta recordar=true para emitir token de 1 año persistido en auth.json.
     """
     ip = _get_client_ip()
     es_admin_ip = _es_ip_local(ip)
     data = request.get_json(silent=True) or {}
     password = data.get("password", "").strip()
+    recordar = bool(data.get("recordar", False))
 
     if not password:
         return jsonify({"ok": False, "error": "Introduzca la contraseña."})
@@ -292,9 +350,9 @@ def auth_login():
         if _hash_password(password, auth["salt"]) != auth["hash"]:
             logger.warning("AUTH: Intento de login admin fallido desde %s", ip)
             return jsonify({"ok": False, "error": "Contraseña incorrecta."})
-        token = _crear_token("admin")
-        logger.info("AUTH: Login admin exitoso desde %s", ip)
-        return jsonify({"ok": True, "token": token, "rol": "admin"})
+        token = _crear_token("admin", recordar=recordar)
+        logger.info("AUTH: Login admin exitoso desde %s (recordar=%s)", ip, recordar)
+        return jsonify({"ok": True, "token": token, "rol": "admin", "recordar": recordar})
     else:
         # Login empleado
         emp = auth.get("empleado", {})
@@ -303,9 +361,9 @@ def auth_login():
                 logger.warning("AUTH: Intento de login empleado fallido desde %s", ip)
                 return jsonify({"ok": False, "error": "Contraseña incorrecta."})
         # Si no hay contraseña de empleado configurada, acepta cualquier cosa no vacía
-        token = _crear_token("empleado")
-        logger.info("AUTH: Login empleado exitoso desde %s", ip)
-        return jsonify({"ok": True, "token": token, "rol": "empleado"})
+        token = _crear_token("empleado", recordar=recordar)
+        logger.info("AUTH: Login empleado exitoso desde %s (recordar=%s)", ip, recordar)
+        return jsonify({"ok": True, "token": token, "rol": "empleado", "recordar": recordar})
 
 
 @app.route("/api/auth/setup_empleado", methods=["POST"])
@@ -350,9 +408,11 @@ def auth_verificar():
 
 @app.route("/api/auth/logout", methods=["POST"])
 def auth_logout():
-    """Invalida el token del cliente."""
+    """Invalida el token del cliente (memoria y auth.json si era persistido)."""
     token = request.headers.get("X-Token", "")
     if token in _TOKENS:
+        if _TOKENS[token].get("persistido"):
+            _eliminar_token_persistido(token)
         del _TOKENS[token]
     return jsonify({"ok": True})
 
@@ -1968,6 +2028,9 @@ if __name__ == "__main__":
     # Procesar pendientes al arrancar
     baja_automatica_por_edad()
 
+    # Restaurar tokens de larga duración
+    _cargar_tokens_persistidos()
+
     print(f"API conectando a {MARIADB['host']}:{MARIADB['port']}/{MARIADB['database']}")
     app.run(debug=False, host="0.0.0.0", port=5000)
 
@@ -2009,3 +2072,9 @@ try:
     baja_automatica_por_edad()
 except Exception as e:
     logger.error(f"Error processing age-based withdrawals: {e}")
+
+# Restaurar tokens de larga duración desde auth.json
+try:
+    _cargar_tokens_persistidos()
+except Exception as e:
+    logger.error(f"Error loading persisted tokens: {e}")

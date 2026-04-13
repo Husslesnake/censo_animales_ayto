@@ -2055,7 +2055,7 @@ body.dark-mode .login-error {
  placeholder="••••••••"
  autocomplete="current-password"
  onkeydown="if (event.key === 'Enter') doLogin();"
- /><button class="login-btn" onclick="doLogin()">Entrar</button><p class="login-footer">
+ /><label class="login-recordar" style="margin-bottom:1rem;"><input type="checkbox" id="login-recordar" /><span>Recordar en este equipo (1 año)</span></label><button class="login-btn" onclick="doLogin()">Entrar</button><p class="login-footer">
  Acceso exclusivo para personal municipal autorizado
  </p></div></div></div>
 <!-- Modal setup contraseña admin (primera vez) -->
@@ -3200,14 +3200,28 @@ Seleccione un fichero de la lista para visualizarlo.</pre
       var _loginEstado = { es_admin_ip: false, configurado: true }; // caché del estado
 
       // Recupera token guardado en localStorage
+      // Almacenamiento del token:
+      // - recordar=true  → localStorage  (persiste 1 año, sobrevive al cierre del navegador)
+      // - recordar=false → sessionStorage (desaparece al cerrar la pestaña/navegador)
       function _getToken() {
-        try { return JSON.parse(localStorage.getItem("censo_token") || "null"); } catch(e) { return null; }
+        try {
+          var v = localStorage.getItem("censo_token") || sessionStorage.getItem("censo_token");
+          return v ? JSON.parse(v) : null;
+        } catch(e) { return null; }
       }
-      function _setToken(data) {
-        localStorage.setItem("censo_token", JSON.stringify(data));
+      function _setToken(data, recordar) {
+        var str = JSON.stringify(data);
+        if (recordar) {
+          localStorage.setItem("censo_token", str);
+          sessionStorage.removeItem("censo_token");
+        } else {
+          sessionStorage.setItem("censo_token", str);
+          localStorage.removeItem("censo_token");
+        }
       }
       function _clearToken() {
         localStorage.removeItem("censo_token");
+        sessionStorage.removeItem("censo_token");
       }
 
       // Llama al backend con X-Token en cabecera
@@ -3235,7 +3249,6 @@ Seleccione un fichero de la lista para visualizarlo.</pre
             badge.style.color = "var(--rojo)";
             if (label) label.textContent = "Contraseña de administrador";
             if (!data.configurado) {
-              // Mostrar modal de setup en lugar del login normal
               document.getElementById("modal-setup-admin").style.display = "flex";
             }
           } else {
@@ -3252,6 +3265,7 @@ Seleccione un fichero de la lista para visualizarlo.</pre
 
       async function doLogin() {
         var pass = document.getElementById("login-pass").value;
+        var recordar = document.getElementById("login-recordar") && document.getElementById("login-recordar").checked;
         var err = document.getElementById("login-error");
         err.classList.remove("show");
         if (!pass) {
@@ -3263,13 +3277,13 @@ Seleccione un fichero de la lista para visualizarlo.</pre
           var res = await fetch("/api/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ password: pass })
+            body: JSON.stringify({ password: pass, recordar: !!recordar })
           });
           var data = await res.json();
           if (data.ok) {
             err.classList.remove("show");
             sesion = { rol: data.rol, token: data.token };
-            _setToken(sesion);
+            _setToken(sesion, !!recordar);
             aplicarRol(data.rol);
             document.getElementById("login-screen").classList.add("oculto");
             document.getElementById("login-pass").value = "";
@@ -3314,7 +3328,8 @@ Seleccione un fichero de la lista para visualizarlo.</pre
           if (data.ok) {
             document.getElementById("modal-setup-admin").style.display = "none";
             sesion = { rol: "admin", token: data.token };
-            _setToken(sesion);
+            // En el setup inicial siempre recordamos (es la máquina local)
+            _setToken(sesion, true);
             aplicarRol("admin");
             document.getElementById("login-screen").classList.add("oculto");
             document.getElementById("setup-pass1").value = "";
