@@ -117,7 +117,23 @@ _cleanup_old_logs()
 
 AUTH_FILE = Path(os.environ.get("AUTH_FILE", "auth.json"))
 # IPs que se consideran locales (el propio servidor)
-_LOCAL_IPS = {"127.0.0.1", "::1", "localhost", "195.53.227.58"}  # Añadir aquí otras IPs locales si es necesario
+_LOCAL_IPS = {"127.0.0.1", "::1", "localhost", "172.18.64.1"}
+
+# ── Logger de accesos por IP ──────────────────────────────────────────────────
+_IP_LOG_FILE = LOG_DIR / "log-ip.txt"
+
+def _log_ip(ip: str, rol: str, evento: str, exito: bool):
+    """Registra en log-ip.txt cada intento de acceso con su IP, rol y resultado."""
+    linea = (
+        f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] "
+        f"{'OK  ' if exito else 'FAIL'} "
+        f"ip={ip:<20} rol={rol:<10} evento={evento}\n"
+    )
+    try:
+        with open(_IP_LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(linea)
+    except Exception as e:
+        logger.warning("No se pudo escribir en log-ip.txt: %s", e)
 
 # Tokens de sesión en memoria: {token: {"rol": "admin"|"empleado", "exp": datetime}}
 _TOKENS: dict = {}
@@ -286,6 +302,7 @@ def auth_setup():
     hashed = _hash_password(password, sal)
     _guardar_auth({"hash": hashed, "salt": sal, "creado": datetime.now().isoformat()})
     logger.info("AUTH: Contraseña de administrador configurada desde %s", ip)
+    _log_ip(ip, "admin", "setup_password", True)
 
     token = _crear_token("admin", recordar=True)
     return jsonify({"ok": True, "token": token, "rol": "admin"})
@@ -319,6 +336,7 @@ def auth_cambiar():
     hashed = _hash_password(nueva, sal)
     _guardar_auth({"hash": hashed, "salt": sal, "modificado": datetime.now().isoformat()})
     logger.info("AUTH: Contraseña de administrador cambiada desde %s", ip)
+    _log_ip(ip, "admin", "cambio_password", True)
 
     token = _crear_token("admin")
     return jsonify({"ok": True, "token": token, "rol": "admin"})
@@ -349,9 +367,11 @@ def auth_login():
             return jsonify({"ok": False, "error": "configure_primero"})
         if _hash_password(password, auth["salt"]) != auth["hash"]:
             logger.warning("AUTH: Intento de login admin fallido desde %s", ip)
+            _log_ip(ip, "admin", "login", False)
             return jsonify({"ok": False, "error": "Contraseña incorrecta."})
         token = _crear_token("admin", recordar=recordar)
         logger.info("AUTH: Login admin exitoso desde %s (recordar=%s)", ip, recordar)
+        _log_ip(ip, "admin", "login", True)
         return jsonify({"ok": True, "token": token, "rol": "admin", "recordar": recordar})
     else:
         # Login empleado
@@ -359,10 +379,12 @@ def auth_login():
         if emp.get("hash"):
             if _hash_password(password, emp["salt"]) != emp["hash"]:
                 logger.warning("AUTH: Intento de login empleado fallido desde %s", ip)
+                _log_ip(ip, "empleado", "login", False)
                 return jsonify({"ok": False, "error": "Contraseña incorrecta."})
         # Si no hay contraseña de empleado configurada, acepta cualquier cosa no vacía
         token = _crear_token("empleado", recordar=recordar)
         logger.info("AUTH: Login empleado exitoso desde %s (recordar=%s)", ip, recordar)
+        _log_ip(ip, "empleado", "login", True)
         return jsonify({"ok": True, "token": token, "rol": "empleado", "recordar": recordar})
 
 
@@ -392,6 +414,7 @@ def auth_setup_empleado():
     auth["empleado"] = {"hash": hashed, "salt": sal, "modificado": datetime.now().isoformat()}
     _guardar_auth(auth)
     logger.info("AUTH: Contraseña de empleado configurada por admin desde %s", ip)
+    _log_ip(ip, "admin", "setup_password_empleado", True)
     return jsonify({"ok": True})
 
 

@@ -255,3 +255,42 @@ SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
 [2026-04-13 08:03:38] INFO     >>> GET /api/motivos_baja
 [2026-04-13 08:03:38] INFO     >>> GET /api/sexos
 [2026-04-13 08:03:38] INFO     >>> GET /api/auth/estado
+[2026-04-13 08:04:08] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:38] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:41] INFO     ================================================================================
+[2026-04-13 08:04:41] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T08:04:41.400338
+[2026-04-13 08:04:41] INFO     ================================================================================
+[2026-04-13 08:04:41] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 08:04:41] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-13 08:04:48] INFO     >>> GET /api/auth/estado
+[2026-04-13 08:04:48] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:48] INFO     >>> GET /api/motivos_baja
+[2026-04-13 08:04:48] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:49] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:49] INFO     >>> GET /api/auth/estado
+[2026-04-13 08:04:49] INFO     >>> GET /api/motivos_baja
+[2026-04-13 08:04:49] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:50] INFO     >>> GET /api/auth/estado
+[2026-04-13 08:04:50] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:50] INFO     >>> GET /api/motivos_baja
+[2026-04-13 08:04:50] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:50] INFO     >>> GET /api/auth/estado
+[2026-04-13 08:04:50] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:50] INFO     >>> GET /api/motivos_baja
+[2026-04-13 08:04:50] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:51] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:51] INFO     >>> GET /api/motivos_baja
+[2026-04-13 08:04:51] INFO     >>> GET /api/auth/estado
+[2026-04-13 08:04:51] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:51] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:51] INFO     >>> GET /api/auth/estado
+[2026-04-13 08:04:51] INFO     >>> GET /api/motivos_baja
+[2026-04-13 08:04:51] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:51] INFO     >>> GET /api/auth/estado
+[2026-04-13 08:04:51] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:51] INFO     >>> GET /api/motivos_baja
+[2026-04-13 08:04:51] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:51] INFO     >>> GET /api/auth/estado
+[2026-04-13 08:04:51] INFO     >>> GET /api/motivos_baja
+[2026-04-13 08:04:51] INFO     >>> GET /api/sexos
+[2026-04-13 08:04:51] INFO     >>> GET /api/sexos
