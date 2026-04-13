@@ -416,3 +416,42 @@ SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
 [2026-04-13 08:34:20] INFO     >>> GET /api/sexos
 [2026-04-13 08:34:33] INFO     >>> GET /api/sexos
 [2026-04-13 08:34:47] INFO     >>> GET /api/sexos
+[2026-04-13 08:35:03] INFO     >>> GET /api/sexos
+[2026-04-13 08:35:17] INFO     >>> GET /api/sexos
+[2026-04-13 08:35:47] INFO     >>> GET /api/sexos
+[2026-04-13 08:36:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:36:41] INFO     >>> GET /api/sexos
+[2026-04-13 08:37:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:37:41] INFO     >>> GET /api/sexos
+[2026-04-13 08:38:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:38:41] INFO     >>> GET /api/sexos
+[2026-04-13 08:39:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:39:41] INFO     >>> GET /api/sexos
+[2026-04-13 08:40:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:40:41] INFO     >>> GET /api/sexos
+[2026-04-13 08:41:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:41:41] INFO     >>> GET /api/sexos
+[2026-04-13 08:42:20] INFO     ================================================================================
+[2026-04-13 08:42:20] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T08:42:20.407751
+[2026-04-13 08:42:20] INFO     ================================================================================
+[2026-04-13 08:42:20] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 08:42:20] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-13 08:42:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:42:23] INFO     >>> GET /api/sexos
+[2026-04-13 08:42:23] INFO     >>> GET /api/motivos_baja
+[2026-04-13 08:42:23] INFO     >>> GET /api/auth/estado
+[2026-04-13 08:42:23] INFO     >>> GET /api/sexos
+[2026-04-13 08:42:36] INFO     >>> POST /api/auth/setup
+[2026-04-13 08:42:36] INFO     AUTH: Contraseña configurada para 172.19.0.1 (rol=admin)
+[2026-04-13 08:42:36] INFO     >>> GET /api/alertas
+[2026-04-13 08:42:36] INFO     >>> GET /api/alertas
+[2026-04-13 08:42:41] INFO     >>> GET /api/sexos
+[2026-04-13 08:42:49] INFO     >>> GET /api/sexos
+[2026-04-13 08:42:53] INFO     >>> GET /api/sexos
+[2026-04-13 08:43:17] INFO     >>> GET /api/sexos
+[2026-04-13 08:43:23] INFO     >>> GET /api/sexos
+[2026-04-13 08:43:47] INFO     >>> GET /api/sexos
+[2026-04-13 08:43:53] INFO     >>> GET /api/sexos
+[2026-04-13 08:44:23] INFO     >>> GET /api/sexos
+[2026-04-13 08:44:41] INFO     >>> GET /api/sexos
+[2026-04-13 08:44:53] INFO     >>> GET /api/sexos

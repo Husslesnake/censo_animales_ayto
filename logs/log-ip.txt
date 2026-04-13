@@ -4,3 +4,4 @@
 [2026-04-13 08:30:15] FAIL ip=172.19.0.1           rol=empleado   evento=login
 [2026-04-13 08:30:18] OK   ip=172.19.0.1           rol=empleado   evento=login
 [2026-04-13 08:31:54] OK   ip=172.19.0.1           rol=empleado   evento=login
+[2026-04-13 08:42:36] OK   ip=172.19.0.1           rol=admin      evento=setup_password
