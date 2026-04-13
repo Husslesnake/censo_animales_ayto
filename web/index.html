@@ -2058,13 +2058,13 @@ body.dark-mode .login-error {
  /><label class="login-recordar" style="margin-bottom:1rem;"><input type="checkbox" id="login-recordar" /><span>Recordar en este equipo (1 año)</span></label><button class="login-btn" onclick="doLogin()">Entrar</button><p class="login-footer">
  Acceso exclusivo para personal municipal autorizado
  </p></div></div></div>
-<!-- Modal setup contraseña admin (primera vez) -->
+<!-- Modal setup contraseña (primera vez, cualquier IP) -->
 <div id="modal-setup-admin" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
   <div style="background:var(--blanco);padding:2rem 2.2rem;max-width:420px;width:92%;border-top:4px solid var(--rojo);">
-    <h2 style="font-family:'Libre Baskerville',serif;font-size:1.05rem;margin-bottom:0.3rem;color:var(--tinta);">Primera configuración</h2>
-    <p style="font-size:0.8rem;color:var(--gris4);margin-bottom:1.2rem;line-height:1.5;">Este es el equipo servidor. Establezca la contraseña de administrador para proteger el acceso.</p>
+    <h2 style="font-family:'Libre Baskerville',serif;font-size:1.05rem;margin-bottom:0.3rem;color:var(--tinta);">Primera conexión</h2>
+    <p id="setup-desc" style="font-size:0.8rem;color:var(--gris4);margin-bottom:1.2rem;line-height:1.5;">Crea tu contraseña de acceso para este equipo.</p>
     <div id="setup-error" style="display:none;color:var(--rojo);font-size:0.8rem;margin-bottom:0.8rem;"></div>
-    <label style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Nueva contraseña (mín. 6 caracteres)</label>
+    <label id="setup-pass-label" style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Nueva contraseña (mín. 6 caracteres)</label>
     <input type="password" id="setup-pass1" class="login-input" placeholder="••••••••" style="margin-bottom:0.8rem;" onkeydown="if(event.key==='Enter')document.getElementById('setup-pass2').focus();" />
     <label style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Confirmar contraseña</label>
     <input type="password" id="setup-pass2" class="login-input" placeholder="••••••••" style="margin-bottom:1.2rem;" onkeydown="if(event.key==='Enter')doSetupAdmin();" />
@@ -3248,14 +3248,24 @@ Seleccione un fichero de la lista para visualizarlo.</pre
             badge.style.borderColor = "var(--rojo)";
             badge.style.color = "var(--rojo)";
             if (label) label.textContent = "Contraseña de administrador";
-            if (!data.configurado) {
-              document.getElementById("modal-setup-admin").style.display = "flex";
-            }
           } else {
             badge.textContent = "Acceso remoto — Empleado";
             badge.style.borderColor = "var(--azul)";
             badge.style.color = "var(--azul)";
             if (label) label.textContent = "Contraseña de empleado";
+          }
+          if (!data.configurado) {
+            var desc = document.getElementById("setup-desc");
+            if (desc) {
+              desc.textContent = data.es_admin_ip
+                ? "Este es el equipo servidor. Crea la contraseña de administrador para proteger el acceso."
+                : "Primera conexión desde este equipo. Crea tu contraseña de empleado para acceder.";
+            }
+            var passLbl = document.getElementById("setup-pass-label");
+            if (passLbl) {
+              passLbl.textContent = "Nueva contraseña (mín. " + (data.es_admin_ip ? "6" : "4") + " caracteres)";
+            }
+            document.getElementById("modal-setup-admin").style.display = "flex";
           }
         } catch(e) {
           badge.textContent = "Error al detectar modo de acceso";
@@ -3310,8 +3320,9 @@ Seleccione un fichero de la lista para visualizarlo.</pre
         var p2 = document.getElementById("setup-pass2").value;
         var errEl = document.getElementById("setup-error");
         errEl.style.display = "none";
-        if (p1.length < 6) {
-          errEl.textContent = "La contraseña debe tener al menos 6 caracteres.";
+        var minLen = (_loginEstado && !_loginEstado.es_admin_ip) ? 4 : 6;
+        if (p1.length < minLen) {
+          errEl.textContent = "La contraseña debe tener al menos " + minLen + " caracteres.";
           errEl.style.display = "block"; return;
         }
         if (p1 !== p2) {

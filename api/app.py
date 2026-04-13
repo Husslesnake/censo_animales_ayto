@@ -198,6 +198,9 @@ def _get_client_ip() -> str:
     forwarded = request.headers.get("X-Forwarded-For")
     if forwarded:
         return forwarded.split(",")[0].strip()
+    real_ip = request.headers.get("X-Real-IP")
+    if real_ip:
+        return real_ip.strip()
     return request.remote_addr or "0.0.0.0"
 
 
@@ -212,13 +215,45 @@ def _hash_password(password: str, salt: str) -> str:
 
 
 def _cargar_auth() -> dict:
-    """Carga el fichero auth.json. Devuelve {} si no existe."""
+    """Carga el fichero auth.json. Devuelve {} si no existe.
+    Migra automáticamente el formato antiguo (hash/salt plano) al nuevo (ips dict).
+    """
     if AUTH_FILE.exists():
         try:
-            return json.loads(AUTH_FILE.read_text(encoding="utf-8"))
+            data = json.loads(AUTH_FILE.read_text(encoding="utf-8"))
         except Exception:
             return {}
-    return {}
+    else:
+        return {}
+
+    # Migración: formato antiguo tenía "hash"/"salt" en la raíz para admin
+    # y "empleado": {"hash", "salt"} para empleados. Convertir a "ips".
+    migrado = False
+    if "hash" in data and "salt" in data and "ips" not in data:
+        ips = data.get("ips", {})
+        # Migrar contraseña de admin a la IP local principal
+        for ip_local in ("127.0.0.1", "::1"):
+            if ip_local not in ips:
+                ips[ip_local] = {
+                    "hash": data["hash"],
+                    "salt": data["salt"],
+                    "rol": "admin",
+                    "creado": data.get("creado", datetime.now().isoformat()),
+                }
+        data["ips"] = ips
+        # Limpiar campos del formato antiguo
+        for campo in ("hash", "salt", "creado", "modificado", "empleado"):
+            data.pop(campo, None)
+        migrado = True
+
+    if migrado:
+        try:
+            AUTH_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
+            logger.info("AUTH: auth.json migrado al formato per-IP")
+        except Exception as e:
+            logger.warning("AUTH: No se pudo guardar la migración: %s", e)
+
+    return data
 
 
 def _guardar_auth(data: dict):
@@ -277,12 +312,13 @@ def _limpiar_tokens_expirados():
 def auth_estado():
     """
     Devuelve si la IP del cliente es admin o empleado,
-    y si la contraseña de admin ya está configurada.
+    y si esa IP ya tiene contraseña configurada.
     """
     ip = _get_client_ip()
     es_admin_ip = _es_ip_local(ip)
     auth = _cargar_auth()
-    configurado = bool(auth.get("hash"))
+    ips = auth.get("ips", {})
+    configurado = bool(ips.get(ip, {}).get("hash"))
     return jsonify({
         "ok": True,
         "es_admin_ip": es_admin_ip,
@@ -294,76 +330,90 @@ def auth_estado():
 @app.route("/api/auth/setup", methods=["POST"])
 def auth_setup():
     """
-    Configuración inicial de contraseña admin.
-    Solo funciona desde la IP local y si no hay contraseña previa.
+    Configuración inicial de contraseña para la IP del cliente.
+    Cualquier IP puede crear su propia contraseña si aún no la tiene.
     """
     ip = _get_client_ip()
-    if not _es_ip_local(ip):
-        return jsonify({"ok": False, "error": "Solo se puede configurar desde el servidor local."})
+    es_admin_ip = _es_ip_local(ip)
+    rol = "admin" if es_admin_ip else "empleado"
 
     auth = _cargar_auth()
-    if auth.get("hash"):
-        return jsonify({"ok": False, "error": "La contraseña ya está configurada. Use /api/auth/cambiar."})
+    ips = auth.get("ips", {})
+    if ips.get(ip, {}).get("hash"):
+        return jsonify({"ok": False, "error": "Ya tienes contraseña configurada. Usa cambiar contraseña."})
 
     data = request.get_json(silent=True) or {}
     password = data.get("password", "").strip()
-    if len(password) < 6:
-        return jsonify({"ok": False, "error": "La contraseña debe tener al menos 6 caracteres."})
+    min_len = 6 if es_admin_ip else 4
+    if len(password) < min_len:
+        return jsonify({"ok": False, "error": f"La contraseña debe tener al menos {min_len} caracteres."})
 
     sal = secrets.token_hex(16)
     hashed = _hash_password(password, sal)
-    _guardar_auth({"hash": hashed, "salt": sal, "creado": datetime.now().isoformat()})
-    logger.info("AUTH: Contraseña de administrador configurada desde %s", ip)
-    _log_ip(ip, "admin", "setup_password", True)
+    ips[ip] = {"hash": hashed, "salt": sal, "rol": rol, "creado": datetime.now().isoformat()}
+    auth["ips"] = ips
+    _guardar_auth(auth)
+    logger.info("AUTH: Contraseña configurada para %s (rol=%s)", ip, rol)
+    _log_ip(ip, rol, "setup_password", True)
 
-    token = _crear_token("admin", recordar=True)
-    return jsonify({"ok": True, "token": token, "rol": "admin"})
+    token = _crear_token(rol, recordar=True)
+    return jsonify({"ok": True, "token": token, "rol": rol})
 
 
 @app.route("/api/auth/cambiar", methods=["POST"])
 def auth_cambiar():
     """
-    Cambia la contraseña de admin.
-    Requiere IP local + contraseña actual correcta.
+    Cambia la contraseña de la IP actual.
+    Requiere contraseña actual correcta y token de sesión válido.
     """
     ip = _get_client_ip()
-    if not _es_ip_local(ip):
-        return jsonify({"ok": False, "error": "Solo se puede cambiar desde el servidor local."})
+    es_admin_ip = _es_ip_local(ip)
+    rol = "admin" if es_admin_ip else "empleado"
+
+    token_header = request.headers.get("X-Token", "")
+    payload = _validar_token(token_header)
+    if not payload:
+        return jsonify({"ok": False, "error": "Se requiere sesión activa."})
 
     auth = _cargar_auth()
-    if not auth.get("hash"):
+    ip_data = auth.get("ips", {}).get(ip, {})
+    if not ip_data.get("hash"):
         return jsonify({"ok": False, "error": "No hay contraseña configurada. Use /api/auth/setup."})
 
     data = request.get_json(silent=True) or {}
     actual = data.get("actual", "").strip()
     nueva = data.get("nueva", "").strip()
 
-    if _hash_password(actual, auth["salt"]) != auth["hash"]:
+    if _hash_password(actual, ip_data["salt"]) != ip_data["hash"]:
         return jsonify({"ok": False, "error": "La contraseña actual no es correcta."})
 
-    if len(nueva) < 6:
-        return jsonify({"ok": False, "error": "La nueva contraseña debe tener al menos 6 caracteres."})
+    min_len = 6 if es_admin_ip else 4
+    if len(nueva) < min_len:
+        return jsonify({"ok": False, "error": f"La nueva contraseña debe tener al menos {min_len} caracteres."})
 
     sal = secrets.token_hex(16)
     hashed = _hash_password(nueva, sal)
-    _guardar_auth({"hash": hashed, "salt": sal, "modificado": datetime.now().isoformat()})
-    logger.info("AUTH: Contraseña de administrador cambiada desde %s", ip)
-    _log_ip(ip, "admin", "cambio_password", True)
+    auth["ips"][ip].update({"hash": hashed, "salt": sal, "modificado": datetime.now().isoformat()})
+    _guardar_auth(auth)
+    logger.info("AUTH: Contraseña cambiada desde %s (rol=%s)", ip, rol)
+    _log_ip(ip, rol, "cambio_password", True)
 
-    token = _crear_token("admin")
-    return jsonify({"ok": True, "token": token, "rol": "admin"})
+    token = _crear_token(rol)
+    return jsonify({"ok": True, "token": token, "rol": rol})
 
 
 @app.route("/api/auth/login", methods=["POST"])
 def auth_login():
     """
     Login con contraseña.
-    - IP local: verifica contraseña admin → token admin
-    - IP remota: verifica contraseña empleado → token empleado
+    Cada IP tiene su propia contraseña almacenada en auth.json["ips"].
+    - IP local → rol admin
+    - IP remota → rol empleado
     Acepta recordar=true para emitir token de 1 año persistido en auth.json.
     """
     ip = _get_client_ip()
     es_admin_ip = _es_ip_local(ip)
+    rol = "admin" if es_admin_ip else "empleado"
     data = request.get_json(silent=True) or {}
     password = data.get("password", "").strip()
     recordar = bool(data.get("recordar", False))
@@ -372,32 +422,20 @@ def auth_login():
         return jsonify({"ok": False, "error": "Introduzca la contraseña."})
 
     auth = _cargar_auth()
+    ip_data = auth.get("ips", {}).get(ip, {})
 
-    if es_admin_ip:
-        # Login administrador
-        if not auth.get("hash"):
-            return jsonify({"ok": False, "error": "configure_primero"})
-        if _hash_password(password, auth["salt"]) != auth["hash"]:
-            logger.warning("AUTH: Intento de login admin fallido desde %s", ip)
-            _log_ip(ip, "admin", "login", False)
-            return jsonify({"ok": False, "error": "Contraseña incorrecta."})
-        token = _crear_token("admin", recordar=recordar)
-        logger.info("AUTH: Login admin exitoso desde %s (recordar=%s)", ip, recordar)
-        _log_ip(ip, "admin", "login", True)
-        return jsonify({"ok": True, "token": token, "rol": "admin", "recordar": recordar})
-    else:
-        # Login empleado
-        emp = auth.get("empleado", {})
-        if emp.get("hash"):
-            if _hash_password(password, emp["salt"]) != emp["hash"]:
-                logger.warning("AUTH: Intento de login empleado fallido desde %s", ip)
-                _log_ip(ip, "empleado", "login", False)
-                return jsonify({"ok": False, "error": "Contraseña incorrecta."})
-        # Si no hay contraseña de empleado configurada, acepta cualquier cosa no vacía
-        token = _crear_token("empleado", recordar=recordar)
-        logger.info("AUTH: Login empleado exitoso desde %s (recordar=%s)", ip, recordar)
-        _log_ip(ip, "empleado", "login", True)
-        return jsonify({"ok": True, "token": token, "rol": "empleado", "recordar": recordar})
+    if not ip_data.get("hash"):
+        return jsonify({"ok": False, "error": "configure_primero"})
+
+    if _hash_password(password, ip_data["salt"]) != ip_data["hash"]:
+        logger.warning("AUTH: Intento de login fallido desde %s (rol=%s)", ip, rol)
+        _log_ip(ip, rol, "login", False)
+        return jsonify({"ok": False, "error": "Contraseña incorrecta."})
+
+    token = _crear_token(rol, recordar=recordar)
+    logger.info("AUTH: Login exitoso desde %s (rol=%s, recordar=%s)", ip, rol, recordar)
+    _log_ip(ip, rol, "login", True)
+    return jsonify({"ok": True, "token": token, "rol": rol, "recordar": recordar})
 
 
 @app.route("/api/auth/setup_empleado", methods=["POST"])
