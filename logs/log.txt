@@ -1353,3 +1353,89 @@ SyntaxError: Failed to execute 'querySelector' on 'Document': '.tab-btn[onclick*
 [2026-04-13 10:38:30] INFO     >>> GET /api/sexos
 [2026-04-13 10:39:00] INFO     >>> GET /api/sexos
 [2026-04-13 10:39:16] INFO     >>> GET /api/sexos
+[2026-04-13 10:39:28] INFO     >>> GET /api/sexos
+[2026-04-13 10:39:30] INFO     >>> GET /api/sexos
+[2026-04-13 10:39:58] INFO     >>> GET /api/sexos
+[2026-04-13 10:40:00] INFO     >>> GET /api/sexos
+[2026-04-13 10:40:29] INFO     ================================================================================
+[2026-04-13 10:40:29] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T10:40:29.353967
+[2026-04-13 10:40:29] INFO     ================================================================================
+[2026-04-13 10:40:29] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 10:40:29] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-13 10:40:29] INFO     AUTH: 3 token(s) de larga duración restaurados desde auth.json
+[2026-04-13 10:40:30] INFO     >>> GET /api/sexos
+[2026-04-13 10:40:31] INFO     >>> GET /api/sexos
+[2026-04-13 10:40:33] INFO     >>> GET /api/auth/verificar
+[2026-04-13 10:40:33] INFO     >>> GET /api/sexos
+[2026-04-13 10:40:33] INFO     >>> GET /api/motivos_baja
+[2026-04-13 10:40:33] INFO     >>> GET /api/sexos
+[2026-04-13 10:40:34] INFO     >>> GET /api/auth/estado
+[2026-04-13 10:40:38] INFO     >>> POST /api/auth/login
+[2026-04-13 10:40:38] INFO     AUTH: Login exitoso desde 172.19.0.1 (rol=admin)
+[2026-04-13 10:40:38] INFO     >>> GET /api/alertas
+[2026-04-13 10:40:38] INFO     >>> GET /api/alertas
+[2026-04-13 10:40:43] INFO     >>> GET /api/incidencias
+[2026-04-13 10:40:43] WARNING  <<< GET /api/incidencias -> 404
+[2026-04-13 10:40:43] INFO     >>> POST /api/log
+[2026-04-13 10:40:43] ERROR    FRONTEND | ERROR | Unexpected token '<', "<!doctype "... is not valid JSON | Contexto: cargarIncidencias
+SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+[2026-04-13 10:41:00] INFO     >>> GET /api/sexos
+[2026-04-13 10:41:03] INFO     >>> GET /api/policia/chip/12312312312
+[2026-04-13 10:41:03] WARNING  <<< GET /api/policia/chip/12312312312 -> 404
+[2026-04-13 10:41:03] INFO     >>> POST /api/log
+[2026-04-13 10:41:03] ERROR    FRONTEND | ERROR | Unexpected token '<', "<!doctype "... is not valid JSON | Contexto: buscarChipPolicia
+SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+[2026-04-13 10:41:03] INFO     >>> GET /api/sexos
+[2026-04-13 10:41:16] INFO     >>> GET /api/policia/chip/1231231231
+[2026-04-13 10:41:16] WARNING  <<< GET /api/policia/chip/1231231231 -> 404
+[2026-04-13 10:41:16] INFO     >>> POST /api/log
+[2026-04-13 10:41:16] ERROR    FRONTEND | ERROR | Unexpected token '<', "<!doctype "... is not valid JSON | Contexto: buscarChipPolicia
+SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+[2026-04-13 10:41:19] INFO     >>> GET /api/propietarios
+[2026-04-13 10:41:22] INFO     >>> GET /api/animales
+[2026-04-13 10:41:24] INFO     >>> GET /api/ficha_animal/123123123123
+[2026-04-13 10:41:30] INFO     >>> GET /api/incidencias
+[2026-04-13 10:41:30] WARNING  <<< GET /api/incidencias -> 404
+[2026-04-13 10:41:30] INFO     >>> POST /api/log
+[2026-04-13 10:41:30] ERROR    FRONTEND | ERROR | Unexpected token '<', "<!doctype "... is not valid JSON | Contexto: cargarIncidencias
+SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+[2026-04-13 10:41:30] INFO     >>> GET /api/sexos
+[2026-04-13 10:41:33] INFO     >>> GET /api/policia/chip/123123123123
+[2026-04-13 10:41:33] WARNING  <<< GET /api/policia/chip/123123123123 -> 404
+[2026-04-13 10:41:33] INFO     >>> POST /api/log
+[2026-04-13 10:41:33] ERROR    FRONTEND | ERROR | Unexpected token '<', "<!doctype "... is not valid JSON | Contexto: buscarChipPolicia
+SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+[2026-04-13 10:41:33] INFO     >>> GET /api/sexos
+[2026-04-13 10:41:39] INFO     >>> POST /api/incidencias
+[2026-04-13 10:41:39] WARNING  <<< POST /api/incidencias -> 404
+[2026-04-13 10:41:39] INFO     >>> POST /api/log
+[2026-04-13 10:41:39] ERROR    FRONTEND | ERROR | Unexpected token '<', "<!doctype "... is not valid JSON | Contexto: registrarIncidencia
+SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+[2026-04-13 10:42:00] INFO     >>> GET /api/sexos
+[2026-04-13 10:42:04] INFO     >>> GET /api/sexos
+[2026-04-13 10:42:22] INFO     ================================================================================
+[2026-04-13 10:42:22] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T10:42:22.534081
+[2026-04-13 10:42:22] INFO     ================================================================================
+[2026-04-13 10:42:22] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 10:42:22] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-13 10:42:22] INFO     AUTH: 4 token(s) de larga duración restaurados desde auth.json
+[2026-04-13 10:42:27] INFO     >>> GET /api/policia/chip/123123123123
+[2026-04-13 10:42:27] WARNING  <<< GET /api/policia/chip/123123123123 -> 404
+[2026-04-13 10:42:30] INFO     >>> GET /api/sexos
+[2026-04-13 10:42:34] INFO     >>> GET /api/sexos
+[2026-04-13 10:42:37] INFO     ================================================================================
+[2026-04-13 10:42:37] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T10:42:37.196848
+[2026-04-13 10:42:37] INFO     ================================================================================
+[2026-04-13 10:42:37] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 10:42:37] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-13 10:42:37] INFO     AUTH: 4 token(s) de larga duración restaurados desde auth.json
+[2026-04-13 10:42:57] INFO     ================================================================================
+[2026-04-13 10:42:57] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T10:42:57.954746
+[2026-04-13 10:42:57] INFO     ================================================================================
+[2026-04-13 10:42:57] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 10:42:57] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-13 10:42:58] INFO     AUTH: 4 token(s) de larga duración restaurados desde auth.json
+[2026-04-13 10:43:00] INFO     >>> GET /api/sexos
+[2026-04-13 10:43:02] INFO     >>> GET /api/policia/chip/123123123123
+[2026-04-13 10:43:02] WARNING  <<< GET /api/policia/chip/123123123123 -> 404
+[2026-04-13 10:43:04] INFO     >>> GET /api/sexos
