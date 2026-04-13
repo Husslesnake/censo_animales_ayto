@@ -1,0 +1,2 @@
+# Registro de accesos por IP — creado 2026-04-13 08:15:32
+[2026-04-13 08:15:37] OK   ip=172.19.0.3           rol=empleado   evento=login

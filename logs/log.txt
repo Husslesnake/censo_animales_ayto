@@ -322,3 +322,24 @@ SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
 [2026-04-13 08:11:21] INFO     >>> GET /api/sexos
 [2026-04-13 08:11:21] INFO     >>> GET /api/motivos_baja
 [2026-04-13 08:11:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:11:51] INFO     >>> GET /api/sexos
+[2026-04-13 08:12:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:12:51] INFO     >>> GET /api/sexos
+[2026-04-13 08:13:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:13:51] INFO     >>> GET /api/sexos
+[2026-04-13 08:14:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:14:51] INFO     >>> GET /api/sexos
+[2026-04-13 08:15:21] INFO     >>> GET /api/sexos
+[2026-04-13 08:15:32] INFO     ================================================================================
+[2026-04-13 08:15:32] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T08:15:32.709251
+[2026-04-13 08:15:32] INFO     ================================================================================
+[2026-04-13 08:15:32] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 08:15:32] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-13 08:15:36] INFO     >>> GET /api/auth/estado
+[2026-04-13 08:15:36] INFO     >>> GET /api/sexos
+[2026-04-13 08:15:36] INFO     >>> GET /api/motivos_baja
+[2026-04-13 08:15:36] INFO     >>> GET /api/sexos
+[2026-04-13 08:15:37] INFO     >>> POST /api/auth/login
+[2026-04-13 08:15:37] INFO     AUTH: Login empleado exitoso desde 172.19.0.3 (recordar=False)
+[2026-04-13 08:15:38] INFO     >>> GET /api/alertas
+[2026-04-13 08:15:38] INFO     >>> GET /api/alertas

@@ -117,7 +117,7 @@ _cleanup_old_logs()
 
 AUTH_FILE = Path(os.environ.get("AUTH_FILE", "auth.json"))
 # IPs que se consideran locales (el propio servidor)
-_LOCAL_IPS = {"127.0.0.1", "::1", "localhost", "172.18.64.1"}
+_LOCAL_IPS = {"127.0.0.1", "::1", "localhost", "172.19.0.3"}
 
 # ── Logger de accesos por IP ──────────────────────────────────────────────────
 _IP_LOG_FILE = LOG_DIR / "log-ip.txt"
