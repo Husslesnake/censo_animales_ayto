@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-
+services:
   api:
     build: ./api
     container_name: censo_api
@@ -13,8 +13,10 @@ services:
       DB_PASSWORD: "123"
       DB_NAME: censo_animales
       LOG_DIR: /app/logs
+      - AUTH_FILE=/app/auth.json     # ← añadir
     volumes:
       - ./logs:/app/logs
+      - ./auth.json:/app/auth.json   # ← añadir
     networks:
       - red_censo
 
@@ -36,9 +38,3 @@ networks:
   red_censo:
     driver: bridge
 
-services:
-  api:
-    volumes:
-      - ./auth.json:/app/auth.json   # ← añadir
-    environment:
-      - AUTH_FILE=/app/auth.json     # ← añadir
