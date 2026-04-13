@@ -158,3 +158,5 @@ SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
 [2026-04-13 07:21:21] INFO     >>> GET /api/sexos
 [2026-04-13 07:22:21] INFO     >>> GET /api/sexos
 [2026-04-13 07:23:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:24:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:25:21] INFO     >>> GET /api/sexos
