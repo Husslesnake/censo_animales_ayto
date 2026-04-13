@@ -2113,89 +2113,6 @@ def recibir_log():
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
-# Arranque
-
-if __name__ == "__main__":
-    # Scheduler diario a las 01:00
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(
-        baja_automatica_por_edad,
-        trigger="cron",
-        hour=1,
-        minute=0,
-        id="baja_por_edad",
-        replace_existing=True,
-    )
-    # Agregar limpieza de logs cada día a las 02:00
-    scheduler.add_job(
-        _cleanup_old_logs,
-        trigger="cron",
-        hour=2,
-        minute=0,
-        id="cleanup_logs",
-        replace_existing=True,
-    )
-    scheduler.start()
-    atexit.register(lambda: scheduler.shutdown())
-
-    # Asegurar restricción UNIQUE en el chip
-    aplicar_unique_chip()
-
-    # Procesar pendientes al arrancar
-    baja_automatica_por_edad()
-
-    # Restaurar tokens de larga duración
-    _cargar_tokens_persistidos()
-
-    print(f"API conectando a {MARIADB['host']}:{MARIADB['port']}/{MARIADB['database']}")
-    app.run(debug=False, host="0.0.0.0", port=5000)
-
-
-# Inicializar scheduler también para Docker/gunicorn
-try:
-    # Evitar crear múltiples schedulers
-    if not hasattr(app, '_scheduler_initialized'):
-        scheduler = BackgroundScheduler()
-        scheduler.add_job(
-            baja_automatica_por_edad,
-            trigger="cron",
-            hour=1,
-            minute=0,
-            id="baja_por_edad",
-            replace_existing=True,
-        )
-        scheduler.add_job(
-            _cleanup_old_logs,
-            trigger="cron",
-            hour=2,
-            minute=0,
-            id="cleanup_logs",
-            replace_existing=True,
-        )
-        scheduler.start()
-        atexit.register(lambda: scheduler.shutdown())
-        app._scheduler_initialized = True
-except Exception as e:
-    logger.error(f"Error initializing scheduler: {e}")
-
-# Aplicar restricción UNIQUE y procesar pendientes
-try:
-    aplicar_unique_chip()
-except Exception as e:
-    logger.error(f"Error applying unique chip constraint: {e}")
-
-try:
-    baja_automatica_por_edad()
-except Exception as e:
-    logger.error(f"Error processing age-based withdrawals: {e}")
-
-# Restaurar tokens de larga duración desde auth.json
-try:
-    _cargar_tokens_persistidos()
-except Exception as e:
-    logger.error(f"Error loading persisted tokens: {e}")
-
-
 # ── Tabla INCIDENCIAS ─────────────────────────────────────────────────────────
 def _init_incidencias():
     """Crea la tabla INCIDENCIAS si no existe."""
@@ -2218,11 +2135,6 @@ def _init_incidencias():
     except Exception as e:
         logger.warning("DB: no se pudo crear INCIDENCIAS: %s", e)
 
-try:
-    _init_incidencias()
-except Exception as e:
-    logger.error(f"Error initializing INCIDENCIAS table: {e}")
-
 
 # ── Endpoints policía ─────────────────────────────────────────────────────────
 
@@ -2235,7 +2147,7 @@ def _req_policia_o_admin():
     return None
 
 
-@app.route("/api/policia/chip/<chip>", methods=["GET"])
+@app.route("/api/policia/chip/<chip>", methods=["GET"], strict_slashes=False)
 def policia_buscar_chip(chip):
     """Devuelve el animal y su propietario por número de chip."""
     if not _req_policia_o_admin():
@@ -2265,7 +2177,7 @@ def policia_buscar_chip(chip):
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
-@app.route("/api/incidencias", methods=["POST"])
+@app.route("/api/incidencias", methods=["POST"], strict_slashes=False)
 def registrar_incidencia():
     """Registra una incidencia. Requiere rol admin o policia."""
     payload = _req_policia_o_admin()
@@ -2299,7 +2211,7 @@ def registrar_incidencia():
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
-@app.route("/api/incidencias", methods=["GET"])
+@app.route("/api/incidencias", methods=["GET"], strict_slashes=False)
 def listar_incidencias():
     """Lista las incidencias. Requiere rol admin o policia."""
     if not _req_policia_o_admin():
@@ -2314,3 +2226,56 @@ def listar_incidencias():
     except Exception as e:
         _log_request_error(request.endpoint or "unknown", e)
         return jsonify({"ok": False, "error": str(e)}), 500
+
+
+# ── Arranque ──────────────────────────────────────────────────────────────────
+
+# Inicializar scheduler (tanto para `python app.py` como para Docker)
+try:
+    if not hasattr(app, '_scheduler_initialized'):
+        scheduler = BackgroundScheduler()
+        scheduler.add_job(
+            baja_automatica_por_edad,
+            trigger="cron",
+            hour=1,
+            minute=0,
+            id="baja_por_edad",
+            replace_existing=True,
+        )
+        scheduler.add_job(
+            _cleanup_old_logs,
+            trigger="cron",
+            hour=2,
+            minute=0,
+            id="cleanup_logs",
+            replace_existing=True,
+        )
+        scheduler.start()
+        atexit.register(lambda: scheduler.shutdown())
+        app._scheduler_initialized = True
+except Exception as e:
+    logger.error(f"Error initializing scheduler: {e}")
+
+try:
+    aplicar_unique_chip()
+except Exception as e:
+    logger.error(f"Error applying unique chip constraint: {e}")
+
+try:
+    baja_automatica_por_edad()
+except Exception as e:
+    logger.error(f"Error processing age-based withdrawals: {e}")
+
+try:
+    _cargar_tokens_persistidos()
+except Exception as e:
+    logger.error(f"Error loading persisted tokens: {e}")
+
+try:
+    _init_incidencias()
+except Exception as e:
+    logger.error(f"Error initializing INCIDENCIAS table: {e}")
+
+if __name__ == "__main__":
+    print(f"API conectando a {MARIADB['host']}:{MARIADB['port']}/{MARIADB['database']}")
+    app.run(debug=False, host="0.0.0.0", port=5000)
