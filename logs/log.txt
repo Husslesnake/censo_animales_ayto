@@ -189,3 +189,31 @@ SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
 [2026-04-13 07:46:16] INFO     ================================================================================
 [2026-04-13 07:46:16] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
 [2026-04-13 07:46:16] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-13 07:46:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:46:34] INFO     >>> GET /api/auth/estado
+[2026-04-13 07:46:34] INFO     >>> GET /api/sexos
+[2026-04-13 07:46:34] INFO     >>> GET /api/motivos_baja
+[2026-04-13 07:46:34] INFO     >>> GET /api/sexos
+[2026-04-13 07:46:38] INFO     >>> POST /api/auth/login
+[2026-04-13 07:46:38] INFO     AUTH: Login empleado exitoso desde 172.19.0.3 (recordar=False)
+[2026-04-13 07:46:38] INFO     >>> GET /api/alertas
+[2026-04-13 07:46:39] INFO     >>> GET /api/alertas
+[2026-04-13 07:46:43] INFO     >>> POST /api/auth/logout
+[2026-04-13 07:46:43] INFO     >>> GET /api/auth/estado
+[2026-04-13 07:47:04] INFO     >>> GET /api/sexos
+[2026-04-13 07:47:34] INFO     >>> GET /api/sexos
+[2026-04-13 07:48:04] INFO     >>> GET /api/sexos
+[2026-04-13 07:48:34] INFO     >>> GET /api/sexos
+[2026-04-13 07:49:04] INFO     >>> GET /api/sexos
+[2026-04-13 07:49:34] INFO     >>> GET /api/sexos
+[2026-04-13 07:50:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:51:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:52:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:53:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:54:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:55:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:55:51] INFO     ================================================================================
+[2026-04-13 07:55:51] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T07:55:51.209850
+[2026-04-13 07:55:51] INFO     ================================================================================
+[2026-04-13 07:55:51] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 07:55:51] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175

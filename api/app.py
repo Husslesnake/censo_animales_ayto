@@ -117,7 +117,7 @@ _cleanup_old_logs()
 
 AUTH_FILE = Path(os.environ.get("AUTH_FILE", "auth.json"))
 # IPs que se consideran locales (el propio servidor)
-_LOCAL_IPS = {"127.0.0.1", "::1", "localhost", "172.18.64.1"}
+_LOCAL_IPS = {"127.0.0.1", "::1", "localhost", "172.16.0.69"}  # Añadir aquí otras IPs locales si es necesario
 
 # Tokens de sesión en memoria: {token: {"rol": "admin"|"empleado", "exp": datetime}}
 _TOKENS: dict = {}
