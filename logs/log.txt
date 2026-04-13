@@ -121,3 +121,39 @@ SyntaxError: Failed to execute 'querySelector' on 'Document': '.tab-btn[onclick*
 [2026-04-13 07:07:21] INFO     >>> GET /api/sexos
 [2026-04-13 07:08:21] INFO     >>> GET /api/sexos
 [2026-04-13 07:09:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:10:16] INFO     >>> GET /api/sexos
+[2026-04-13 07:10:17] INFO     >>> GET /api/auth/estado
+[2026-04-13 07:10:17] INFO     >>> GET /api/sexos
+[2026-04-13 07:10:17] INFO     >>> GET /api/motivos_baja
+[2026-04-13 07:10:17] WARNING  <<< GET /api/auth/estado -> 404
+[2026-04-13 07:10:17] INFO     >>> GET /api/sexos
+[2026-04-13 07:10:18] INFO     >>> POST /api/log
+[2026-04-13 07:10:18] ERROR    FRONTEND | ERROR | Unexpected token '<', "<!doctype "... is not valid JSON | Contexto: _initLoginScreen
+SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+[2026-04-13 07:10:20] INFO     >>> POST /api/auth/login
+[2026-04-13 07:10:20] WARNING  <<< POST /api/auth/login -> 404
+[2026-04-13 07:10:20] INFO     >>> POST /api/log
+[2026-04-13 07:10:20] ERROR    FRONTEND | ERROR | Unexpected token '<', "<!doctype "... is not valid JSON | Contexto: doLogin
+SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+[2026-04-13 07:10:47] INFO     >>> GET /api/sexos
+[2026-04-13 07:11:17] INFO     >>> GET /api/sexos
+[2026-04-13 07:11:47] INFO     >>> GET /api/sexos
+[2026-04-13 07:12:17] INFO     >>> GET /api/sexos
+[2026-04-13 07:12:47] INFO     >>> GET /api/sexos
+[2026-04-13 07:13:17] INFO     >>> GET /api/sexos
+[2026-04-13 07:14:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:15:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:16:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:17:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:18:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:19:07] INFO     >>> GET /api/sexos
+[2026-04-13 07:19:17] INFO     >>> GET /api/sexos
+[2026-04-13 07:19:20] INFO     >>> POST /api/auth/login
+[2026-04-13 07:19:20] WARNING  <<< POST /api/auth/login -> 404
+[2026-04-13 07:19:20] INFO     >>> POST /api/log
+[2026-04-13 07:19:20] ERROR    FRONTEND | ERROR | Unexpected token '<', "<!doctype "... is not valid JSON | Contexto: doLogin
+SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
+[2026-04-13 07:19:47] INFO     >>> GET /api/sexos
+[2026-04-13 07:20:17] INFO     >>> GET /api/sexos
+[2026-04-13 07:21:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:22:21] INFO     >>> GET /api/sexos
