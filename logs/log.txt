@@ -182,3 +182,10 @@ SyntaxError: Unexpected token '<', "<!doctype "... is not valid JSON
 [2026-04-13 07:41:47] INFO     >>> GET /api/sexos
 [2026-04-13 07:42:21] INFO     >>> GET /api/sexos
 [2026-04-13 07:43:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:44:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:45:21] INFO     >>> GET /api/sexos
+[2026-04-13 07:46:16] INFO     ================================================================================
+[2026-04-13 07:46:16] INFO     APPLICATION STARTUP - Timestamp: 2026-04-13T07:46:16.795194
+[2026-04-13 07:46:16] INFO     ================================================================================
+[2026-04-13 07:46:16] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-13 07:46:16] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
