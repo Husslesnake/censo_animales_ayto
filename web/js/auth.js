@@ -253,6 +253,54 @@
         }
       }
 
+      function togglePoliciaLogin() {
+        var form = document.getElementById("policia-login-form");
+        var visible = form.style.display !== "none";
+        form.style.display = visible ? "none" : "block";
+        document.getElementById("btn-toggle-policia").textContent =
+          visible ? "Acceso de Policía Municipal" : "Ocultar acceso policial";
+        if (!visible) document.getElementById("pol-login-user").focus();
+      }
+
+      async function doLoginPolicia() {
+        var user  = document.getElementById("pol-login-user").value.trim();
+        var pass  = document.getElementById("pol-login-pass").value;
+        var recordar = document.getElementById("pol-login-recordar").checked;
+        var errEl = document.getElementById("pol-login-error");
+        errEl.classList.remove("show");
+        if (!user || !pass) {
+          errEl.textContent = "Introduzca usuario y contraseña.";
+          errEl.classList.add("show");
+          return;
+        }
+        try {
+          var res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: user, password: pass, recordar: !!recordar })
+          });
+          var data = await res.json();
+          if (data.ok) {
+            sesion = { rol: data.rol, token: data.token };
+            _setToken(sesion, !!recordar);
+            aplicarRol(data.rol);
+            document.getElementById("login-screen").classList.add("oculto");
+            document.getElementById("pol-login-pass").value = "";
+            mostrarPagina("policia", document.getElementById("tab-policia"));
+            cargarIncidencias();
+          } else {
+            errEl.textContent = data.error || "Usuario o contraseña incorrectos.";
+            errEl.classList.add("show");
+            document.getElementById("pol-login-pass").value = "";
+            document.getElementById("pol-login-pass").focus();
+          }
+        } catch(e) {
+          errEl.textContent = "Error de conexión con el servidor.";
+          errEl.classList.add("show");
+          logError(e.message || "Error doLoginPolicia", "doLoginPolicia", e.stack);
+        }
+      }
+
       function doLogout() {
         var t = _getToken();
         if (t && t.token) {

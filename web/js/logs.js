@@ -94,3 +94,155 @@
         window.location.href =
           API + "/logs/" + encodeURIComponent(_logFicheroActivo);
       }
+
+      // ── Gestión de agentes de policía (admin) ─────────────────────────────
+
+      var _polResetUsername = null;
+
+      async function cargarAgentesPolicia() {
+        var tbody = document.getElementById("tbody-agentes");
+        if (!tbody) return;
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Cargando…</td></tr>';
+        try {
+          var res  = await apiFetch(API + "/auth/policia_usuarios");
+          var data = await res.json();
+          if (!data.ok) {
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Error al cargar agentes.</td></tr>';
+            return;
+          }
+          if (!data.datos.length) {
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No hay agentes registrados.</td></tr>';
+            return;
+          }
+          tbody.innerHTML = data.datos.map(function(a) {
+            var estadoTag = a.activo
+              ? '<span class="tag" style="background:rgba(30,107,60,0.1);color:var(--verde);border:1px solid rgba(30,107,60,0.3);">Activo</span>'
+              : '<span class="tag" style="background:rgba(123,45,64,0.1);color:var(--rojo);border:1px solid rgba(123,45,64,0.3);">Desactivado</span>';
+            var creado = a.creado ? a.creado.replace("T", " ").slice(0, 16) : "—";
+            var toggleLabel = a.activo ? "Desactivar" : "Activar";
+            var toggleColor = a.activo ? "color:var(--rojo);" : "color:var(--verde);";
+            return '<tr>' +
+              '<td><span class="tag tag-id">' + a.username + '</span></td>' +
+              '<td>' + a.nombre + '</td>' +
+              '<td>' + estadoTag + '</td>' +
+              '<td style="font-size:0.78rem;color:var(--gris3);">' + creado + '</td>' +
+              '<td style="white-space:nowrap;display:flex;gap:0.4rem;flex-wrap:wrap;">' +
+                '<button class="btn btn-secondary" style="font-size:0.75rem;padding:0.15rem 0.5rem;" ' +
+                  'onclick="abrirModalResetPolicia(\'' + a.username + '\',\'' + a.nombre.replace(/'/g,"\\'" ) + '\')">' +
+                  'Contraseña</button>' +
+                '<button class="btn btn-secondary" style="font-size:0.75rem;padding:0.15rem 0.5rem;' + toggleColor + '" ' +
+                  'onclick="toggleActivoPolicia(\'' + a.username + '\',' + !a.activo + ')">' +
+                  toggleLabel + '</button>' +
+                '<button class="btn btn-secondary" style="font-size:0.75rem;padding:0.15rem 0.5rem;color:var(--rojo);" ' +
+                  'onclick="eliminarCuentaPolicia(\'' + a.username + '\',\'' + a.nombre.replace(/'/g,"\\'") + '\')">' +
+                  'Eliminar</button>' +
+              '</td></tr>';
+          }).join("");
+        } catch(e) {
+          tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Error de conexión.</td></tr>';
+          logError(e.message, "cargarAgentesPolicia", e.stack);
+        }
+      }
+
+      async function crearCuentaPolicia() {
+        var username = document.getElementById("pol-admin-username").value.trim().toLowerCase();
+        var nombre   = document.getElementById("pol-admin-nombre").value.trim();
+        var password = document.getElementById("pol-admin-pass").value;
+        var alertEl  = document.getElementById("pol-admin-alert");
+        alertEl.classList.remove("show");
+        if (!username || !nombre || !password) {
+          alertEl.querySelector(".alert-msg").textContent = "Todos los campos son obligatorios.";
+          alertEl.classList.add("show", "error");
+          return;
+        }
+        try {
+          var res  = await apiFetch(API + "/auth/policia_usuarios", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username: username, nombre: nombre, password: password })
+          });
+          var data = await res.json();
+          if (data.ok) {
+            alertEl.querySelector(".alert-msg").textContent = "Cuenta creada correctamente.";
+            alertEl.classList.add("show", "ok");
+            document.getElementById("pol-admin-username").value = "";
+            document.getElementById("pol-admin-nombre").value   = "";
+            document.getElementById("pol-admin-pass").value     = "";
+            cargarAgentesPolicia();
+          } else {
+            alertEl.querySelector(".alert-msg").textContent = data.error || "Error al crear la cuenta.";
+            alertEl.classList.add("show", "error");
+          }
+        } catch(e) {
+          alertEl.querySelector(".alert-msg").textContent = "Error de conexión.";
+          alertEl.classList.add("show", "error");
+          logError(e.message, "crearCuentaPolicia", e.stack);
+        }
+      }
+
+      async function toggleActivoPolicia(username, nuevoEstado) {
+        try {
+          var res  = await apiFetch(API + "/auth/policia_usuarios/" + encodeURIComponent(username), {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ activo: nuevoEstado })
+          });
+          var data = await res.json();
+          if (data.ok) cargarAgentesPolicia();
+          else alert(data.error || "Error al actualizar.");
+        } catch(e) { logError(e.message, "toggleActivoPolicia", e.stack); }
+      }
+
+      async function eliminarCuentaPolicia(username, nombre) {
+        if (!confirm('¿Eliminar la cuenta de "' + nombre + '" (' + username + ')?\nEsta acción no se puede deshacer.')) return;
+        try {
+          var res  = await apiFetch(API + "/auth/policia_usuarios/" + encodeURIComponent(username), {
+            method: "DELETE"
+          });
+          var data = await res.json();
+          if (data.ok) cargarAgentesPolicia();
+          else alert(data.error || "Error al eliminar.");
+        } catch(e) { logError(e.message, "eliminarCuentaPolicia", e.stack); }
+      }
+
+      function abrirModalResetPolicia(username, nombre) {
+        _polResetUsername = username;
+        document.getElementById("modal-reset-pol-desc").textContent = "Agente: " + nombre + " (" + username + ")";
+        document.getElementById("modal-reset-pol-pass").value = "";
+        document.getElementById("modal-reset-pol-error").style.display = "none";
+        document.getElementById("modal-reset-pol").style.display = "flex";
+        setTimeout(function(){ document.getElementById("modal-reset-pol-pass").focus(); }, 50);
+      }
+
+      function cerrarModalResetPolicia() {
+        document.getElementById("modal-reset-pol").style.display = "none";
+        _polResetUsername = null;
+      }
+
+      async function confirmarResetPolicia() {
+        var pass  = document.getElementById("modal-reset-pol-pass").value;
+        var errEl = document.getElementById("modal-reset-pol-error");
+        errEl.style.display = "none";
+        if (pass.length < 6) {
+          errEl.textContent = "La contraseña debe tener al menos 6 caracteres.";
+          errEl.style.display = "block"; return;
+        }
+        try {
+          var res  = await apiFetch(API + "/auth/policia_usuarios/" + encodeURIComponent(_polResetUsername), {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: pass })
+          });
+          var data = await res.json();
+          if (data.ok) {
+            cerrarModalResetPolicia();
+          } else {
+            errEl.textContent = data.error || "Error al cambiar contraseña.";
+            errEl.style.display = "block";
+          }
+        } catch(e) {
+          errEl.textContent = "Error de conexión.";
+          errEl.style.display = "block";
+          logError(e.message, "confirmarResetPolicia", e.stack);
+        }
+      }

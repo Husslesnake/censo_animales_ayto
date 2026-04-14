@@ -396,9 +396,22 @@
  placeholder="••••••••"
  autocomplete="current-password"
  onkeydown="if (event.key === 'Enter') doLogin();"
- /><label class="login-recordar" style="margin-bottom:1rem;"><input type="checkbox" id="login-recordar" /><span>Recordar en este equipo</span></label><button class="login-btn" onclick="doLogin()">Entrar</button><p class="login-footer">
- Acceso exclusivo para personal municipal autorizado
- </p></div></div></div>
+ /><label class="login-recordar" style="margin-bottom:1rem;"><input type="checkbox" id="login-recordar" /><span>Recordar en este equipo</span></label><button class="login-btn" onclick="doLogin()">Entrar</button>
+<div style="margin-top:1rem;padding-top:0.9rem;border-top:1px solid var(--borde);">
+  <button type="button" id="btn-toggle-policia" class="btn btn-secondary" style="width:100%;font-size:0.8rem;" onclick="togglePoliciaLogin()">
+    Acceso de Policía Municipal
+  </button>
+  <div id="policia-login-form" style="display:none;margin-top:0.9rem;">
+    <div id="pol-login-error" class="login-error" style="margin-bottom:0.5rem;"></div>
+    <label class="login-label" for="pol-login-user">Usuario</label>
+    <input class="login-input" type="text" id="pol-login-user" placeholder="Nombre de usuario" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('pol-login-pass').focus();" />
+    <label class="login-label" for="pol-login-pass" style="margin-top:0.5rem;">Contraseña</label>
+    <input class="login-input" type="password" id="pol-login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLoginPolicia();" />
+    <label class="login-recordar" style="margin:0.6rem 0 0.8rem;"><input type="checkbox" id="pol-login-recordar" /><span>Recordar en este equipo</span></label>
+    <button class="login-btn" onclick="doLoginPolicia()">Entrar como policía</button>
+  </div>
+</div>
+<p class="login-footer">Acceso exclusivo para personal municipal autorizado</p></div></div></div>
 <!-- Modal setup contraseña (primera vez, cualquier IP) -->
 <div id="modal-setup-admin" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
   <div style="background:var(--blanco);padding:2rem 2.2rem;max-width:420px;width:92%;border-top:4px solid var(--rojo);">

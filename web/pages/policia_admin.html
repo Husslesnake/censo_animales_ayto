@@ -1,0 +1,71 @@
+<div class="page" id="page-policia-admin">
+  <div class="section-header">
+    <span class="section-num">ADM-02</span>
+    <h2>Gestión de Agentes</h2>
+    <p>Cuentas de acceso para la Policía Municipal · Solo administrador</p>
+  </div>
+
+  <!-- Crear cuenta -->
+  <div class="bloque" style="margin-bottom:1.25rem;">
+    <div class="bloque-titulo"><h3>Nueva cuenta de agente</h3></div>
+    <div class="bloque-body">
+      <div id="pol-admin-alert" class="alert"><span class="alert-icon"></span><span class="alert-msg"></span></div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label style="font-size:0.8rem;color:var(--gris4);">Usuario <span class="req">*</span></label>
+          <input type="text" id="pol-admin-username" class="login-input" style="margin:0;" placeholder="ej. garcia_j" autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label style="font-size:0.8rem;color:var(--gris4);">Nombre completo <span class="req">*</span></label>
+          <input type="text" id="pol-admin-nombre" class="login-input" style="margin:0;" placeholder="ej. Juan García López" autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label style="font-size:0.8rem;color:var(--gris4);">Contraseña inicial <span class="req">*</span> (mín. 6 caracteres)</label>
+          <input type="password" id="pol-admin-pass" class="login-input" style="margin:0;" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter')crearCuentaPolicia();" />
+        </div>
+      </div>
+      <button class="btn btn-enviar" style="margin-top:0.8rem;" onclick="crearCuentaPolicia()">Crear cuenta</button>
+    </div>
+  </div>
+
+  <!-- Listado de agentes -->
+  <div class="bloque">
+    <div class="bloque-titulo" style="display:flex;align-items:center;justify-content:space-between;">
+      <h3>Agentes registrados</h3>
+      <button class="btn btn-secondary" style="font-size:0.78rem;padding:0.2rem 0.7rem;" onclick="cargarAgentesPolicia()">Actualizar</button>
+    </div>
+    <div class="bloque-body" style="padding:0;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Nombre</th>
+              <th>Estado</th>
+              <th>Creado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-agentes">
+            <tr class="empty-row"><td colspan="5">Cargando…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal reset contraseña -->
+  <div id="modal-reset-pol" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
+    <div style="background:var(--blanco);padding:2rem 2.2rem;max-width:400px;width:92%;border-top:4px solid var(--rojo);">
+      <h2 style="font-family:'Libre Baskerville',serif;font-size:1rem;margin-bottom:0.3rem;color:var(--tinta);">Cambiar contraseña</h2>
+      <p id="modal-reset-pol-desc" style="font-size:0.8rem;color:var(--gris4);margin-bottom:1rem;"></p>
+      <div id="modal-reset-pol-error" style="display:none;color:var(--rojo);font-size:0.8rem;margin-bottom:0.6rem;"></div>
+      <label style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Nueva contraseña (mín. 6 caracteres)</label>
+      <input type="password" id="modal-reset-pol-pass" class="login-input" placeholder="••••••••" style="margin-bottom:1.2rem;" onkeydown="if(event.key==='Enter')confirmarResetPolicia();" />
+      <div style="display:flex;gap:0.8rem;">
+        <button class="btn btn-secondary" onclick="cerrarModalResetPolicia()" style="flex:1;">Cancelar</button>
+        <button class="btn btn-enviar" onclick="confirmarResetPolicia()" style="flex:1;">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>

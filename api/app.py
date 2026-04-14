@@ -160,7 +160,10 @@ def _cargar_tokens_persistidos():
         try:
             exp = datetime.fromisoformat(datos["exp"])
             if exp > ahora:
-                _TOKENS[token] = {"rol": datos["rol"], "exp": exp, "persistido": True}
+                payload = {"rol": datos["rol"], "exp": exp, "persistido": True}
+                if "username" in datos:
+                    payload["username"] = datos["username"]
+                _TOKENS[token] = payload
                 cargados += 1
         except Exception:
             pass
@@ -168,7 +171,7 @@ def _cargar_tokens_persistidos():
         logger.info("AUTH: %d token(s) de larga duración restaurados desde auth.json", cargados)
 
 
-def _guardar_token_persistido(token: str, rol: str, exp: datetime):
+def _guardar_token_persistido(token: str, rol: str, exp: datetime, **extra):
     """Persiste un token de larga duración en auth.json."""
     auth = _cargar_auth()
     tokens = auth.get("tokens_recordar", {})
@@ -176,7 +179,9 @@ def _guardar_token_persistido(token: str, rol: str, exp: datetime):
     ahora = datetime.now()
     tokens = {t: d for t, d in tokens.items()
               if datetime.fromisoformat(d.get("exp", "2000-01-01")) > ahora}
-    tokens[token] = {"rol": rol, "exp": exp.isoformat()}
+    entry = {"rol": rol, "exp": exp.isoformat()}
+    entry.update(extra)
+    tokens[token] = entry
     auth["tokens_recordar"] = tokens
     _guardar_auth(auth)
 
@@ -270,22 +275,25 @@ def _guardar_auth(data: dict):
     AUTH_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 
-def _crear_token(rol: str, recordar: bool = False) -> str:
+def _crear_token(rol: str, recordar: bool = False, **extra) -> str:
     """Genera un token aleatorio y lo registra.
-    Si recordar=True, TTL de 1 año y se persiste en auth.json para sobrevivir reinicios."""
+    Si recordar=True, TTL de 1 año y se persiste en auth.json para sobrevivir reinicios.
+    **extra permite adjuntar campos adicionales al payload (p.ej. username para policía)."""
     token = secrets.token_hex(32)
     if recordar:
         exp = datetime.now() + timedelta(days=_TOKEN_TTL_RECORDAR_DIAS)
-        _TOKENS[token] = {"rol": rol, "exp": exp, "persistido": True}
-        _guardar_token_persistido(token, rol, exp)
+        payload = {"rol": rol, "exp": exp, "persistido": True, **extra}
+        _TOKENS[token] = payload
+        _guardar_token_persistido(token, rol, exp, **extra)
     else:
         exp = datetime.now() + timedelta(hours=_TOKEN_TTL_HOURS)
-        _TOKENS[token] = {"rol": rol, "exp": exp, "persistido": False}
+        _TOKENS[token] = {"rol": rol, "exp": exp, "persistido": False, **extra}
     return token
 
 
 def _validar_token(token: str) -> dict | None:
-    """Devuelve el payload del token si es válido y no ha expirado."""
+    """Devuelve el payload del token si es válido y no ha expirado.
+    Para tokens de policía, verifica además que la cuenta siga activa en auth.json."""
     payload = _TOKENS.get(token)
     if not payload:
         return None
@@ -294,6 +302,15 @@ def _validar_token(token: str) -> dict | None:
             _eliminar_token_persistido(token)
         del _TOKENS[token]
         return None
+    if payload["rol"] == "policia":
+        username = payload.get("username")
+        if username:
+            user = _cargar_auth().get("policia_usuarios", {}).get(username, {})
+            if not user.get("activo", False):
+                if payload.get("persistido"):
+                    _eliminar_token_persistido(token)
+                del _TOKENS[token]
+                return None
     return payload
 
 
@@ -446,13 +463,41 @@ def auth_cambiar():
 def auth_login():
     """
     Login con contraseña.
-    Admin  → busca en auth["admin"].
+    Admin    → busca en auth["admin"].
     Empleado → busca en auth["devices"][device_id].
+    Policía  → petición incluye campo "username"; busca en auth["policia_usuarios"].
     """
     ip = _get_client_ip()
+    data = request.get_json(silent=True) or {}
+    recordar = bool(data.get("recordar", False))
+
+    # ── Rama policía ──────────────────────────────────────────────────────────
+    username = data.get("username", "").strip()
+    if username:
+        password = data.get("password", "").strip()
+        if not password:
+            return jsonify({"ok": False, "error": "Introduzca la contraseña."})
+        auth = _cargar_auth()
+        user = auth.get("policia_usuarios", {}).get(username)
+        if not user or not user.get("hash"):
+            _log_ip(ip, "policia", "login", False)
+            return jsonify({"ok": False, "error": "Usuario o contraseña incorrectos."})
+        if not user.get("activo", False):
+            _log_ip(ip, "policia", "login", False)
+            return jsonify({"ok": False, "error": "Cuenta desactivada. Contacte con el administrador."})
+        if _hash_password(password, user["salt"]) != user["hash"]:
+            logger.warning("AUTH: Login policía fallido — %s desde %s", username, ip)
+            _log_ip(ip, "policia", "login", False)
+            return jsonify({"ok": False, "error": "Usuario o contraseña incorrectos."})
+        token = _crear_token("policia", recordar=recordar, username=username)
+        logger.info("AUTH: Login policía exitoso — %s desde %s", username, ip)
+        _log_ip(ip, "policia", "login", True)
+        return jsonify({"ok": True, "token": token, "rol": "policia",
+                        "nombre": user.get("nombre", username), "recordar": recordar})
+
+    # ── Rama admin / empleado ─────────────────────────────────────────────────
     es_admin = _es_admin_request()
     rol = "admin" if es_admin else "empleado"
-    data = request.get_json(silent=True) or {}
     password = data.get("password", "").strip()
     recordar = bool(data.get("recordar", False))
 
@@ -520,6 +565,115 @@ def auth_verificar():
     if not payload:
         return jsonify({"ok": False, "error": "Sesión expirada o inválida."})
     return jsonify({"ok": True, "rol": payload["rol"]})
+
+
+def _req_admin():
+    """Devuelve el payload si el token pertenece a un admin, None en caso contrario."""
+    token = request.headers.get("X-Token", "")
+    payload = _validar_token(token)
+    return payload if payload and payload["rol"] == "admin" else None
+
+
+# ── Gestión de usuarios policía (solo admin) ──────────────────────────────────
+
+@app.route("/api/auth/policia_usuarios", methods=["GET"])
+def policia_usuarios_listar():
+    """Lista todas las cuentas de policía. Requiere sesión de administrador."""
+    if not _req_admin():
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    auth = _cargar_auth()
+    usuarios = auth.get("policia_usuarios", {})
+    datos = [
+        {"username": u, "nombre": d.get("nombre", u),
+         "activo": d.get("activo", False), "creado": d.get("creado", "")}
+        for u, d in usuarios.items()
+    ]
+    return jsonify({"ok": True, "datos": datos})
+
+
+@app.route("/api/auth/policia_usuarios", methods=["POST"])
+def policia_usuarios_crear():
+    """Crea una nueva cuenta de policía. Requiere sesión de administrador."""
+    if not _req_admin():
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    data = request.get_json(silent=True) or {}
+    username = data.get("username", "").strip().lower()
+    nombre   = data.get("nombre", "").strip()
+    password = data.get("password", "").strip()
+    if not username or not nombre or not password:
+        return jsonify({"ok": False, "error": "Usuario, nombre y contraseña son obligatorios."})
+    if len(password) < 6:
+        return jsonify({"ok": False, "error": "La contraseña debe tener al menos 6 caracteres."})
+    auth = _cargar_auth()
+    if username in auth.get("policia_usuarios", {}):
+        return jsonify({"ok": False, "error": f"El usuario '{username}' ya existe."})
+    sal    = secrets.token_hex(16)
+    hashed = _hash_password(password, sal)
+    auth.setdefault("policia_usuarios", {})[username] = {
+        "hash": hashed, "salt": sal, "nombre": nombre,
+        "activo": True, "creado": datetime.now().isoformat()
+    }
+    _guardar_auth(auth)
+    logger.info("AUTH: Cuenta policía creada — %s (%s)", username, nombre)
+    return jsonify({"ok": True})
+
+
+@app.route("/api/auth/policia_usuarios/<username>", methods=["PATCH"])
+def policia_usuarios_actualizar(username):
+    """Activa/desactiva o cambia la contraseña/nombre de una cuenta de policía."""
+    if not _req_admin():
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    auth     = _cargar_auth()
+    usuarios = auth.get("policia_usuarios", {})
+    if username not in usuarios:
+        return jsonify({"ok": False, "error": "Usuario no encontrado."}), 404
+    data = request.get_json(silent=True) or {}
+    if "activo" in data:
+        usuarios[username]["activo"] = bool(data["activo"])
+        if not data["activo"]:
+            # Revocación inmediata: eliminar todos sus tokens activos
+            to_revoke = [t for t, p in list(_TOKENS.items())
+                         if p.get("rol") == "policia" and p.get("username") == username]
+            for t in to_revoke:
+                if _TOKENS[t].get("persistido"):
+                    _eliminar_token_persistido(t)
+                del _TOKENS[t]
+    if "password" in data:
+        nueva = data["password"].strip()
+        if len(nueva) < 6:
+            return jsonify({"ok": False, "error": "La contraseña debe tener al menos 6 caracteres."})
+        sal = secrets.token_hex(16)
+        usuarios[username]["hash"]       = _hash_password(nueva, sal)
+        usuarios[username]["salt"]       = sal
+        usuarios[username]["modificado"] = datetime.now().isoformat()
+    if "nombre" in data:
+        usuarios[username]["nombre"] = data["nombre"].strip()
+    auth["policia_usuarios"] = usuarios
+    _guardar_auth(auth)
+    logger.info("AUTH: Cuenta policía actualizada — %s", username)
+    return jsonify({"ok": True})
+
+
+@app.route("/api/auth/policia_usuarios/<username>", methods=["DELETE"])
+def policia_usuarios_eliminar(username):
+    """Elimina permanentemente una cuenta de policía y revoca sus tokens."""
+    if not _req_admin():
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    auth     = _cargar_auth()
+    usuarios = auth.get("policia_usuarios", {})
+    if username not in usuarios:
+        return jsonify({"ok": False, "error": "Usuario no encontrado."}), 404
+    del usuarios[username]
+    auth["policia_usuarios"] = usuarios
+    to_revoke = [t for t, p in list(_TOKENS.items())
+                 if p.get("rol") == "policia" and p.get("username") == username]
+    for t in to_revoke:
+        if _TOKENS[t].get("persistido"):
+            _eliminar_token_persistido(t)
+        del _TOKENS[t]
+    _guardar_auth(auth)
+    logger.info("AUTH: Cuenta policía eliminada — %s", username)
+    return jsonify({"ok": True})
 
 
 @app.route("/api/auth/logout", methods=["POST"])

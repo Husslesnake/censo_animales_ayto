@@ -32,12 +32,14 @@
  Estadísticas
  </button><button
  class="tab-btn solo-admin"
- onclick="
- mostrarPagina('logs', this);
- cargarListaLogs();
- "
+ onclick="mostrarPagina('logs', this);cargarListaLogs();"
  >
  Logs
+ </button><button
+ class="tab-btn solo-admin"
+ onclick="mostrarPagina('policia-admin', this);cargarAgentesPolicia();"
+ >
+ Agentes
  </button><button class="tab-btn" onclick="mostrarPagina('consulta', this)">
  Consulta
  </button><button class="tab-btn solo-policia-admin" id="tab-policia" onclick="mostrarPagina('policia',this);cargarIncidencias();">
