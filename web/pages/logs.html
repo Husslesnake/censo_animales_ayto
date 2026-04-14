@@ -1,0 +1,47 @@
+<div class="page" id="page-logs"><div class="section-header"><span class="section-num">LOG-01</span><h2>Registro de actividad</h2><p>Ficheros de log del servidor · Solo administrador</p></div><div id="alert-logs" class="alert"><span class="alert-icon"></span><span class="alert-msg"></span></div><div
+ style="
+ display: grid;
+ grid-template-columns: 300px 1fr;
+ gap: 1.25rem;
+ align-items: start;
+ "
+ ><div class="bloque" style="margin-bottom: 0"><div class="bloque-titulo"><h3>Ficheros disponibles</h3></div><div class="bloque-body" style="padding: 0.5rem 0"><div id="logs-lista" style="font-size: 0.88rem">Cargando…</div></div></div><div class="bloque" style="margin-bottom: 0"><div
+ class="bloque-titulo"
+ style="
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ "
+ ><h3 id="logs-fichero-titulo">Seleccione un fichero</h3><div style="display: flex; gap: 0.5rem"><span
+ id="logs-total-lineas"
+ style="
+ font-size: 0.80rem;
+ font-family: &quot;IBM Plex Mono&quot;, monospace;
+ color: var(--gris3);
+ "
+ ></span><button
+ class="btn btn-secondary"
+ style="padding: 0.2rem 0.6rem; font-size: 0.78rem"
+ id="btn-descargar-log"
+ style="display: none"
+ onclick="descargarLog()"
+ >
+ Descargar
+ </button></div></div><div class="bloque-body" style="padding: 0"><pre
+ id="logs-viewer"
+ style="
+ font-family: &quot;IBM Plex Mono&quot;, monospace;
+ font-size: 0.80rem;
+ line-height: 1.5;
+ overflow: auto;
+ max-height: 520px;
+ padding: 0.75rem 1rem;
+ background: var(--gris0);
+ color: var(--tinta2);
+ white-space: pre-wrap;
+ word-break: break-all;
+ min-height: 120px;
+ "
+ >
+Seleccione un fichero de la lista para visualizarlo.</pre
+ ></div></div></div></div>

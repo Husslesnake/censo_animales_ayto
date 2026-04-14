@@ -906,6 +906,97 @@
         _marcarIniciales();
         if (id === "inicio") cargarAlertas();
       };
+      async function cargarAlertas() {
+        const loading = document.getElementById("alertas-loading");
+        const cont = document.getElementById("alertas-content");
+        const badge = document.getElementById("alertas-badge");
+        if (!loading) return;
+        try {
+          const json = await (await fetch(API + "/alertas")).json();
+          if (!json.ok) {
+            if (loading)
+              loading.textContent = "No se pudieron cargar las alertas.";
+            return;
+          }
+          loading.style.display = "none";
+          cont.style.display = "block";
+
+          const nVac = json.vacunas_caducadas.length;
+          const nEd = json.proximos_baja.length;
+          const total = nVac + nEd;
+          if (badge)
+            badge.textContent = total
+              ? total + " aviso" + (total > 1 ? "s" : "")
+              : "Sin avisos";
+
+          const divVac = document.getElementById("alerta-vacunas");
+          if (nVac) {
+            divVac.innerHTML =
+              `<div style="font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--rojo);margin-bottom:.4rem;">
+        Vacuna antirrábica caducada — ${nVac} animal${nVac > 1 ? "es" : ""}
+      </div>` +
+              json.vacunas_caducadas
+                .slice(0, 5)
+                .map((a) => {
+                  const prop = [
+                    a.NOMBRE_PROP,
+                    a.PRIMER_APELLIDO,
+                    a.SEGUNDO_APELLIDO,
+                  ]
+                    .filter(Boolean)
+                    .join(" ");
+                  const fecha = a.FECHA_VACUNA
+                    ? (a.FECHA_VACUNA + "").substring(0, 10)
+                    : "sin fecha";
+                  return `<div onclick="abrirFicha('${(a.N_CHIP || "").replace(/'/g, "\\'")}'); " style="padding:.35rem .5rem;cursor:pointer;font-size:.82rem;border-bottom:1px solid var(--borde2);display:flex;gap:.75rem;align-items:center;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--gris3);flex-shrink:0;">${a.N_CHIP || "—"}</span>
+          <span style="font-weight:600;">${a.NOMBRE || "(sin nombre)"}</span>
+          <span style="color:var(--gris4);font-size:.78rem;">${a.ESPECIE || ""}</span>
+          <span style="margin-left:auto;font-size:.75rem;color:var(--rojo);">Últ. vacuna: ${fecha}</span>
+        </div>`;
+                })
+                .join("") +
+              (nVac > 5
+                ? `<div style="font-size:.75rem;color:var(--gris3);padding:.3rem .5rem;">…y ${nVac - 5} más</div>`
+                : "");
+          } else {
+            divVac.innerHTML =
+              '<div style="font-size:.82rem;color:var(--verde);margin-bottom:.4rem;">Sin animales con vacuna antirrábica caducada.</div>';
+          }
+
+          const divEd = document.getElementById("alerta-edad");
+          if (nEd) {
+            divEd.innerHTML =
+              `<div style="font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dorado2);margin-bottom:.4rem;margin-top:.75rem;">
+        Próximos a baja automática (≥90 años) — ${nEd} animal${nEd > 1 ? "es" : ""}
+      </div>` +
+              json.proximos_baja
+                .map((a) => {
+                  const prop = [
+                    a.NOMBRE_PROP,
+                    a.PRIMER_APELLIDO,
+                    a.SEGUNDO_APELLIDO,
+                  ]
+                    .filter(Boolean)
+                    .join(" ");
+                  return `<div onclick="abrirFicha('${(a.N_CHIP || "").replace(/'/g, "\\'")}');" style="padding:.35rem .5rem;cursor:pointer;font-size:.82rem;border-bottom:1px solid var(--borde2);display:flex;gap:.75rem;align-items:center;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--gris3);flex-shrink:0;">${a.N_CHIP || "—"}</span>
+          <span style="font-weight:600;">${a.NOMBRE || "(sin nombre)"}</span>
+          <span style="color:var(--gris4);font-size:.78rem;">${a.ESPECIE || ""}</span>
+          <span style="margin-left:auto;font-size:.75rem;color:var(--dorado2);">Nacido: ${a.AÑO_DE_NACIMIENTO || "—"}</span>
+        </div>`;
+                })
+                .join("");
+          } else {
+            divEd.innerHTML =
+              '<div style="font-size:.82rem;color:var(--verde);margin-top:.4rem;">Sin animales próximos a baja por edad.</div>';
+          }
+        } catch (e) {
+          logError(e?.message || "Error en ", "", e?.stack);
+          if (loading) loading.textContent = "Error al cargar alertas.";
+        }
+      }
+
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
           navigator.serviceWorker

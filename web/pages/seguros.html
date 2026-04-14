@@ -1,0 +1,72 @@
+<div class="page" id="page-seguros"><div class="section-header"><span class="section-num">FORM-03</span><h2>Pólizas de Seguro</h2><p>Registro y consulta de seguros de animales</p></div><div id="alert-seg" class="alert"><span class="alert-icon"></span><span class="alert-msg"></span></div><form id="form-seg" onsubmit="submitSeguro(event)"><div class="bloque"><div class="bloque-titulo"><h3>Nueva póliza</h3><span class="req-label">* campos obligatorios</span></div><div class="bloque-body"><div class="form-grid"><div class="form-group"><label>N.º chip del animal <span class="req">*</span></label><input
+ type="text"
+ name="N_CHIP"
+ id="seg-chip-input"
+ placeholder="CHIP0001"
+ required
+ maxlength="50"
+ inputmode="text"
+ autocomplete="off"
+ autocapitalize="characters"
+ oninput="this.value = this.value.toUpperCase()"
+ onblur="
+ comprobarChipExistente(
+ this,
+ 'hint-seg-chip',
+ 'alert-seg',
+ true,
+ )
+ "
+ /><span class="dni-hint" id="hint-seg-chip"></span></div><div class="form-group"><label>Compañía aseguradora <span class="req">*</span></label><input
+ type="text"
+ name="SEGURO_COMPANIA"
+ placeholder="Mapfre"
+ required
+ maxlength="50"
+ /></div><div class="form-group"><label>N.º póliza <span class="req">*</span></label><input
+ type="text"
+ name="SEGURO_POLIZA"
+ placeholder="POL-2024-0001"
+ required
+ maxlength="50"
+ /></div></div></div></div><div class="btn-row"><button type="submit" class="btn btn-primary" id="btn-seg"><div class="spinner" id="sp-seg"></div><span>Registrar póliza</span></button><button
+ type="button"
+ class="btn btn-secondary"
+ onclick="resetForm('form-seg', 'alert-seg')"
+ >
+ Limpiar
+ </button></div></form><div class="bloque" class="u-mt15"><div class="bloque-titulo"><h3>Pólizas registradas</h3></div><div class="bloque-body"><div
+ style="
+ margin-bottom: 1rem;
+ display: flex;
+ gap: 0.75rem;
+ flex-wrap: wrap;
+ align-items: center;
+ "
+ ><button class="btn btn-accion" onclick="cargarSeguros()">
+ Ver todas
+ </button><div class="busqueda-campo" style="min-width: 200px; flex: 1"><label class="busqueda-label">Buscar por chip</label><div class="busqueda-input-wrap"><input
+ type="text"
+ id="busq-seg-chip"
+ placeholder="CHIP0001"
+ maxlength="50"
+ onkeydown="
+ if (event.key === 'Enter') buscarSegurosPorChip();
+ "
+ /><button
+ class="btn btn-accion"
+ onclick="buscarSegurosPorChip()"
+ >
+ Buscar
+ </button></div></div></div><div class="table-header-row"><div id="seg-contador" class="contador"></div><button
+ class="btn-ocultar"
+ id="btn-ocultar-seg"
+ onclick="ocultarTabla('seg')"
+ style="display: none"
+ >
+ ▲ Ocultar registros
+ </button></div><div
+ id="tabla-wrap-seg"
+ class="table-wrap"
+ style="margin-top: 0.5rem"
+ ><table><thead><tr><th>ID</th><th>Chip</th><th>Animal</th><th>Especie</th><th>Compañía</th><th>N.º Póliza</th><th>Propietario</th><th>Acción</th></tr></thead><tbody id="tbody-seg"><tr class="empty-row"><td colspan="8">Pulse «Ver todas» o busque por chip.</td></tr></tbody></table></div><div id="pag-seg" class="paginacion"></div></div></div></div>

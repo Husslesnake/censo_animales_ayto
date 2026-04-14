@@ -1,0 +1,104 @@
+<div class="page" id="page-inicio"><div class="section-header"><span class="section-num">PANEL-01</span><h2 id="inicio-saludo">Bienvenido</h2><p id="inicio-desc">
+ Censo Municipal de Animales · Ayuntamiento de Navalcarnero
+ </p></div><div
+ style="
+ display: grid;
+ grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+ gap: 1rem;
+ margin-bottom: 1.5rem;
+ "
+ ><div
+ class="bloque"
+ style="margin: 0; cursor: pointer"
+ onclick="irA('propietarios')"
+ ><div class="bloque-titulo"><h3>Alta de Propietario</h3></div><div
+ class="bloque-body"
+ style="font-size: 0.88rem; color: var(--gris4)"
+ >
+ Registrar nuevo titular en el padrón municipal.
+ </div></div><div
+ class="bloque"
+ style="margin: 0; cursor: pointer"
+ onclick="irA('animales')"
+ ><div class="bloque-titulo"><h3>Alta de Animal</h3></div><div
+ class="bloque-body"
+ style="font-size: 0.88rem; color: var(--gris4)"
+ >
+ Inscribir una mascota en el censo municipal.
+ </div></div><div
+ class="bloque"
+ style="margin: 0; cursor: pointer"
+ onclick="irA('seguros')"
+ ><div class="bloque-titulo"><h3>Pólizas de Seguro</h3></div><div
+ class="bloque-body"
+ style="font-size: 0.88rem; color: var(--gris4)"
+ >
+ Registrar y consultar seguros de animales.
+ </div></div><div
+ class="bloque"
+ style="margin: 0; cursor: pointer"
+ onclick="irA('baja')"
+ ><div class="bloque-titulo"><h3>Baja de Animal</h3></div><div
+ class="bloque-body"
+ style="font-size: 0.88rem; color: var(--gris4)"
+ >
+ Tramitar la baja de un animal del censo.
+ </div></div><div
+ class="bloque"
+ style="margin: 0; cursor: pointer"
+ onclick="irA('consulta')"
+ ><div class="bloque-titulo"><h3>Consulta del Censo</h3></div><div
+ class="bloque-body"
+ style="font-size: 0.88rem; color: var(--gris4)"
+ >
+ Buscar propietarios, animales y bajas registradas.
+ </div></div><div
+ class="bloque"
+ style="margin: 0; cursor: pointer"
+ onclick="
+ irA('estadisticas');
+ cargarEstadisticas();
+ "
+ ><div class="bloque-titulo"><h3>Estadísticas</h3></div><div
+ class="bloque-body"
+ style="font-size: 0.88rem; color: var(--gris4)"
+ >
+ Gráficos sobre especies, sexo, peligrosidad, altas y bajas por
+ año.
+ </div></div><div
+ class="bloque"
+ style="margin: 0; cursor: pointer"
+ onclick="
+ irA('agenda');
+ cargarAgenda();
+ "
+ ><div class="bloque-titulo"><h3>Agenda de vacunas</h3></div><div
+ class="bloque-body"
+ style="font-size: 0.88rem; color: var(--gris4)"
+ >
+ Animales con vacuna antirrábica próxima a vencer.
+ </div></div></div><div
+ class="bloque solo-admin"
+ id="bloque-alertas"
+ style="margin-bottom: 1.25rem; border-left-color: var(--dorado)"
+ ><div class="bloque-titulo" style="background: var(--gris0)"><h3 style="color: var(--dorado2)">Alertas del padrón</h3><span
+ id="alertas-badge"
+ style="
+ font-family: &quot;IBM Plex Mono&quot;, monospace;
+ font-size: 0.78rem;
+ color: var(--dorado2);
+ border: 1px solid var(--dorado);
+ padding: 0.1rem 0.4rem;
+ "
+ ></span></div><div class="bloque-body" style="padding: 0.75rem 1.25rem"><div
+ id="alertas-loading"
+ style="font-size: 0.85rem; color: var(--gris3)"
+ >
+ Cargando alertas…
+ </div><div id="alertas-content" style="display: none"><div id="alerta-vacunas" style="margin-bottom: 0.75rem"></div><div id="alerta-edad"></div></div></div></div><div class="bloque solo-admin" style="margin-bottom: 1rem"><div class="bloque-titulo"><h3>Acceso de administrador</h3></div><div
+ class="bloque-body"
+ style="font-size: 0.88rem; color: var(--gris4)"
+ >
+ Como administrador puede ver el listado completo del censo sin
+ necesidad de filtrar por DNI.
+ </div></div></div>

@@ -1,0 +1,119 @@
+<div class="u-bar-inst"></div><header><div class="header-marca"><span class="marca-escudo" aria-label="Escudo de Navalcarnero"><svg
+ viewBox="0 0 200 292"
+ width="52"
+ height="76"
+ style="display: block"
+ ><defs><clipPath id="ecnv"><path
+ d="M16,124 H184 V236 C184,273 149,285 100,285 C51,285 16,273 16,236 Z"
+ /></clipPath></defs></svg></span><div class="marca-texto"><strong>Censo Municipal de Animales</strong><small>Gestión de Fauna Urbana</small></div></div><nav class="header-nav" id="header-nav"><button
+ class="tab-btn"
+ id="tab-inicio"
+ onclick="mostrarPagina('inicio', this)"
+ >
+ Inicio
+ </button><button
+ class="tab-btn active"
+ onclick="mostrarPagina('propietarios', this)"
+ >
+ Propietarios
+ </button><button class="tab-btn" onclick="mostrarPagina('animales', this)">
+ Animales
+ </button><button class="tab-btn" onclick="mostrarPagina('seguros', this)">
+ Seguros
+ </button><button class="tab-btn" onclick="mostrarPagina('baja', this)">
+ Baja de Animal
+ </button><button
+ class="tab-btn"
+ onclick="
+ mostrarPagina('estadisticas', this);
+ cargarEstadisticas();
+ "
+ >
+ Estadísticas
+ </button><button
+ class="tab-btn solo-admin"
+ onclick="
+ mostrarPagina('logs', this);
+ cargarListaLogs();
+ "
+ >
+ Logs
+ </button><button class="tab-btn" onclick="mostrarPagina('consulta', this)">
+ Consulta
+ </button><button class="tab-btn solo-policia-admin" id="tab-policia" onclick="mostrarPagina('policia',this);cargarIncidencias();">
+ Policía
+ </button></nav><div
+ style="
+ display: flex;
+ align-items: center;
+ padding: 0 0.75rem;
+ flex-shrink: 0;
+ border-left: 1px solid var(--borde);
+ position: relative;
+ "
+ id="busq-global-wrap"
+ ><input
+ type="text"
+ id="busq-global-input"
+ placeholder="Buscar chip, DNI, nombre…"
+ autocomplete="off"
+ autocapitalize="characters"
+ style="
+ border: 1px solid var(--borde);
+ padding: 0.35rem 0.7rem;
+ font-family: &quot;IBM Plex Mono&quot;, monospace;
+ font-size: 0.78rem;
+ width: 220px;
+ outline: none;
+ background: var(--blanco);
+ color: var(--tinta);
+ "
+ oninput="busquedaGlobalInput(this.value)"
+ /><div
+ id="busq-global-dropdown"
+ style="
+ display: none;
+ position: absolute;
+ top: 100%;
+ left: 0;
+ right: 0;
+ background: var(--blanco);
+ border: 1px solid var(--borde);
+ border-top: none;
+ z-index: 9990;
+ max-height: 360px;
+ overflow-y: auto;
+ box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+ min-width: 340px;
+ "
+ ></div></div><div
+ id="api-status"
+ style="
+ display: none;
+ align-items: center;
+ gap: 0.4rem;
+ padding: 0 0.75rem;
+ font-size: 0.78rem;
+ font-weight: 700;
+ letter-spacing: 0.04em;
+ text-transform: uppercase;
+ color: var(--rojo);
+ border-left: 1px solid var(--borde);
+ "
+ ><span
+ id="api-status-dot"
+ style="
+ width: 8px;
+ height: 8px;
+ border-radius: 50%;
+ background: var(--rojo);
+ flex-shrink: 0;
+ "
+ ></span
+ ><span id="api-status-txt">API sin conexión</span></div><div class="header-session" id="header-session" style="display: none"><div class="user-menu-wrapper" id="user-menu-wrapper"><span class="session-chip" id="session-chip" onclick="toggleUserMenu()" title="Opciones de cuenta"><span class="chip-dot"></span><span id="session-label"></span><span class="chip-arrow">▾</span></span><div class="user-dropdown" id="user-dropdown"><button class="user-dropdown-btn" onclick="abrirModalCambiarPass();cerrarUserMenu()">Cambiar contraseña</button><button class="user-dropdown-btn solo-admin" onclick="cerrarUserMenu();mostrarPagina('policia',document.getElementById('tab-policia'));cargarIncidencias();" style="color:var(--verde);">Panel de Policía</button></div></div><button class="btn-logout" onclick="doLogout()">Salir</button></div><button
+ class="nav-hamburger"
+ id="nav-hamburger"
+ aria-label="Menú"
+ aria-expanded="false"
+ onclick="toggleNav()"
+ ><span></span><span></span><span></span></button><div class="nav-overlay" id="nav-overlay" onclick="cerrarNav()"></div></header>

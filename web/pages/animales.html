@@ -1,0 +1,102 @@
+<div class="page" id="page-animales"><div class="section-header"><span class="section-num">FORM-02</span><h2>Alta de Animal</h2><p>Inscripción de mascota en el censo municipal</p></div><div id="alert-anim" class="alert"><span class="alert-icon"></span><span class="alert-msg"></span></div><form id="form-anim" onsubmit="submitAnimal(event)"><div class="bloque"><div class="bloque-titulo"><h3>Identificación</h3><span class="req-label">* campos obligatorios</span></div><div class="bloque-body"><div class="form-grid"><div class="form-group"><label>N.º de chip <span class="req">*</span></label><input
+ type="text"
+ name="N_CHIP"
+ id="anim-chip-input"
+ placeholder="CHIP0001"
+ required
+ maxlength="50"
+ inputmode="text"
+ autocomplete="off"
+ autocapitalize="characters"
+ oninput="this.value = this.value.toUpperCase()"
+ onblur="
+ comprobarChipExistente(
+ this,
+ 'hint-anim-chip',
+ 'alert-anim',
+ )
+ "
+ /><span class="dni-hint" id="hint-anim-chip"></span></div><div class="form-group"><label
+ >DNI / NIE propietario <span class="req">*</span></label
+ ><input
+ type="text"
+ name="DNI_PROPIETARIO"
+ id="anim-dni-prop"
+ placeholder="12345678A / X1234567A"
+ required
+ maxlength="9"
+ inputmode="text"
+ autocomplete="off"
+ autocapitalize="characters"
+ pattern="[0-9]{8}[A-Za-z]|[XxYyZz][0-9]{7}[A-Za-z]"
+ title="DNI: 8 dígitos + letra (12345678A) · NIE: X/Y/Z + 7 dígitos + letra (X1234567A)"
+ oninput="this.value = this.value.toUpperCase()"
+ onblur="
+ validarCampoDni(this, 'hint-anim-dni');
+ buscarPropietarioAnim(this.value);
+ "
+ /><span class="dni-hint" id="hint-anim-dni"></span></div><div class="form-group"><label>Nombre del animal</label><input type="text" name="NOMBRE" placeholder="Toby" /></div><div class="form-group"><label>N.º censo</label><div
+ id="anim-ncenso-display"
+ style="
+ padding: 0.5rem 0.6rem;
+ background: var(--gris0);
+ border: 1px solid var(--borde);
+ font-family: &quot;IBM Plex Mono&quot;, monospace;
+ font-size: 0.88rem;
+ color: var(--gris3);
+ "
+ >
+ Se asignará automáticamente
+ </div></div></div></div></div><div class="bloque"><div class="bloque-titulo"><h3>Características del animal</h3></div><div class="bloque-body"><div class="form-grid"><div class="form-group"><label>Especie</label><select name="ESPECIE"><option value="">— Seleccionar —</option><option>Perro</option><option>Gato</option><option>Conejo</option><option>Ave</option><option>Reptil</option><option>Roedor</option><option>Otro</option></select></div><div class="form-group"><label>Raza</label><input type="text" name="RAZA" placeholder="Labrador" /></div><div class="form-group"><label>Sexo</label><select name="SEXO" id="sel-sexo"><option value="">Cargando…</option></select></div><div class="form-group"><label>Color</label><input
+ type="text"
+ name="COLOR"
+ placeholder="Negro / Blanco"
+ /></div><div class="form-group"><label>Fecha de nacimiento</label><input
+ type="date"
+ name="FECHA_NACIMIENTO"
+ id="inp-fecha-nac"
+ max=""
+ /></div><div class="form-group"><label>Última vacuna antirrábica</label><input
+ type="date"
+ name="FECHA_ULTIMA_VACUNA_ANTIRRABICA"
+ id="inp-fecha-vac"
+ max=""
+ /></div></div><hr class="divisor" /><div class="form-grid"><div class="form-group"><label>Estado sanitario</label><div class="check-group"><input
+ type="checkbox"
+ class="check-doc"
+ id="chk-ester"
+ name="ESTERILIZADO"
+ value="1"
+ /><label class="check-doc-label" for="chk-ester"
+ >Esterilizado / castrado</label
+ ></div></div><div class="form-group"><label>Clasificación</label><div class="check-group"><input
+ type="checkbox"
+ class="check-doc"
+ id="chk-pelig"
+ name="PELIGROSO"
+ value="1"
+ /><label class="check-doc-label" for="chk-pelig"
+ >Animal potencialmente peligroso</label
+ ></div></div></div></div></div><div
+ id="anim-prop-card"
+ style="display: none; margin-bottom: 0.75rem"
+ ></div><div class="btn-row"><button type="submit" class="btn btn-primary" id="btn-anim"><div class="spinner" id="sp-anim"></div><span>Registrar animal</span></button><button
+ type="button"
+ class="btn btn-secondary"
+ onclick="
+ resetForm('form-anim', 'alert-anim');
+ limpiarPropCard();
+ limpiarChipHint();
+ "
+ >
+ Limpiar campos
+ </button></div><div
+ id="btn-otro-animal-wrap"
+ style="display: none; margin-top: 0.75rem"
+ ><button
+ type="button"
+ class="btn btn-accion"
+ onclick="otroAnimalMismoPropietario()"
+ >
+ + Registrar otro animal para este propietario
+ </button></div></form></div>

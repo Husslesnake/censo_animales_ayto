@@ -1,0 +1,186 @@
+<div class="page" id="page-consulta"><div class="section-header"><span class="section-num">CONS-01</span><h2>Consulta del Censo</h2><p>Búsqueda por índice o listado completo</p></div><div class="bloque" style="margin-bottom: 1.5rem"><div class="bloque-titulo"><h3>Propietarios</h3></div><div class="bloque-body"><div class="busqueda-bar"><div class="busqueda-campo"><label class="busqueda-label">Por DNI / NIE</label><div class="busqueda-input-wrap"><input
+ type="text"
+ id="busq-prop-dni"
+ placeholder="12345678A / X1234567A"
+ inputmode="text"
+ autocomplete="off"
+ autocapitalize="characters"
+ maxlength="20"
+ onkeydown="if (event.key === 'Enter') buscarPropietario();"
+ /><button class="btn btn-accion" onclick="buscarPropietario()">
+ Buscar
+ </button></div></div><div class="busqueda-campo solo-admin"><label class="busqueda-label">Por primer apellido</label><div class="busqueda-input-wrap"><input
+ type="text"
+ id="busq-prop-apellido1"
+ placeholder="García"
+ maxlength="60"
+ onkeydown="if (event.key === 'Enter') buscarPorApellidos();"
+ /><button class="btn btn-accion" onclick="buscarPorApellidos()">
+ Buscar
+ </button></div></div><div class="busqueda-campo"><label class="busqueda-label">Por segundo apellido</label><div class="busqueda-input-wrap"><input
+ type="text"
+ id="busq-prop-apellido2"
+ placeholder="López"
+ maxlength="60"
+ onkeydown="if (event.key === 'Enter') buscarPorApellidos();"
+ /><button class="btn btn-accion" onclick="buscarPorApellidos()">
+ Buscar
+ </button></div></div><div class="busqueda-sep"></div><button
+ class="btn btn-secondary solo-admin"
+ onclick="cargarPropietarios()"
+ >
+ Ver todos
+ </button></div><div
+ id="alert-busq-prop"
+ class="alert"
+ style="margin-top: 0.75rem; margin-bottom: 0"
+ ><span class="alert-icon"></span><span class="alert-msg"></span></div><div class="table-header-row" class="u-mt1"><div id="prop-contador" class="contador"></div><button
+ class="btn-ocultar"
+ id="btn-ocultar-prop"
+ onclick="ocultarTabla('prop')"
+ style="display: none"
+ >
+ ▲ Ocultar registros
+ </button></div><div id="tabla-wrap-prop" class="table-wrap"><table><thead><tr><th>DNI</th><th>Nombre</th><th>Primer Apellido</th><th>Segundo Apellido</th><th>Teléfono</th><th>Municipio</th></tr></thead><tbody id="tbody-prop"><tr class="empty-row"><td colspan="6">
+ Introduzca un criterio de búsqueda o pulse «Ver todos».
+ </td></tr></tbody></table></div><div id="pag-prop" class="paginacion"></div></div></div><div class="bloque"><div class="bloque-titulo"><h3>Animales</h3></div><div class="bloque-body"><div class="busqueda-bar"><div class="busqueda-campo"><label class="busqueda-label">Buscar por N.º chip</label><div class="busqueda-input-wrap"><input
+ type="text"
+ id="busq-anim-chip"
+ placeholder="CHIP0001"
+ maxlength="50"
+ onkeydown="if (event.key === 'Enter') buscarAnimal();"
+ /><button class="btn btn-accion" onclick="buscarAnimal()">
+ Buscar
+ </button></div></div><div class="busqueda-campo"><label class="busqueda-label">Por DNI / NIE propietario</label><div class="busqueda-input-wrap"><input
+ type="text"
+ id="busq-anim-dni"
+ placeholder="12345678A / X1234567A"
+ inputmode="text"
+ autocomplete="off"
+ autocapitalize="characters"
+ maxlength="20"
+ onkeydown="
+ if (event.key === 'Enter') buscarAnimalesPorDni();
+ "
+ /><button
+ class="btn btn-accion"
+ onclick="buscarAnimalesPorDni()"
+ >
+ Buscar
+ </button></div></div><div class="busqueda-sep"></div><button
+ class="btn btn-secondary solo-admin"
+ onclick="cargarAnimales()"
+ >
+ Ver todos
+ </button></div><div
+ id="alert-busq-anim"
+ class="alert"
+ style="margin-top: 0.75rem; margin-bottom: 0"
+ ><span class="alert-icon"></span><span class="alert-msg"></span></div><div class="table-header-row" class="u-mt1"><div id="anim-contador" class="contador"></div><button
+ class="btn-ocultar"
+ id="btn-ocultar-anim"
+ onclick="ocultarTabla('anim')"
+ style="display: none"
+ >
+ ▲ Ocultar registros
+ </button></div><div id="tabla-wrap-anim" class="table-wrap"><table><thead><tr><th>Chip</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Sexo</th><th>Propietario</th><th>Estado</th></tr></thead><tbody id="tbody-anim"><tr class="empty-row"><td colspan="7">
+ Introduzca un criterio de búsqueda o pulse «Ver todos».
+ </td></tr></tbody></table></div><div id="pag-anim" class="paginacion"></div></div></div><div class="bloque solo-admin" style="margin-top: 1.5rem"><div class="bloque-titulo"><h3>Editar animal</h3></div><div class="bloque-body"><p
+ style="
+ font-size: 0.88rem;
+ color: var(--gris4);
+ margin-bottom: 1rem;
+ "
+ >
+ Introduzca el número de chip del animal que desea modificar.
+ </p><div
+ style="
+ display: flex;
+ gap: 0.75rem;
+ align-items: flex-start;
+ flex-wrap: wrap;
+ "
+ ><div style="flex: 1; min-width: 200px"><input
+ class="campo-input"
+ type="text"
+ id="editar-busq-chip"
+ placeholder="CHIP0001"
+ maxlength="50"
+ oninput="this.value = this.value.toUpperCase()"
+ onkeydown="
+ if (event.key === 'Enter') {
+ event.preventDefault();
+ abrirEditorAnimal();
+ }
+ "
+ /></div><button
+ class="btn-enviar"
+ style="width: auto; padding: 0 1.5rem; margin-top: 0"
+ onclick="abrirEditorAnimal()"
+ >
+ Buscar y editar
+ </button></div><div
+ id="alert-editar-busq"
+ class="alert"
+ style="margin-top: 0.75rem; margin-bottom: 0"
+ ><span class="alert-icon"></span><span class="alert-msg"></span></div></div></div><div class="bloque" class="u-mt15"><div class="bloque-titulo"><h3>Animales de baja</h3></div><div class="bloque-body"><div class="busqueda-bar"><div class="busqueda-campo"><label class="busqueda-label">Por chip</label><div class="busqueda-input-wrap"><input
+ type="text"
+ id="busq-baja-chip"
+ placeholder="CHIP0001"
+ maxlength="50"
+ onkeydown="if (event.key === 'Enter') buscarBajas();"
+ /><button class="btn btn-accion" onclick="buscarBajas()">
+ Buscar
+ </button></div></div><div class="busqueda-campo"><label class="busqueda-label">Por DNI / NIE propietario</label><div class="busqueda-input-wrap"><input
+ type="text"
+ id="busq-baja-dni"
+ placeholder="12345678A / X1234567A"
+ inputmode="text"
+ autocomplete="off"
+ autocapitalize="characters"
+ maxlength="15"
+ onkeydown="if (event.key === 'Enter') buscarBajas();"
+ /><button class="btn btn-accion" onclick="buscarBajas()">
+ Buscar
+ </button></div></div><div class="busqueda-campo"><label class="busqueda-label">Por motivo</label><div class="busqueda-input-wrap"><select
+ id="busq-baja-motivo"
+ onchange="buscarBajas()"
+ style="border-right: none; flex: 1; min-width: 0"
+ ><option value="">— Todos —</option></select><button class="btn btn-accion" onclick="buscarBajas()">
+ Buscar
+ </button></div></div><div class="busqueda-sep"></div><button
+ class="btn btn-secondary solo-admin"
+ onclick="cargarBajas()"
+ >
+ Ver todas
+ </button></div><div class="table-header-row" class="u-mt1"><div id="baja-contador" class="contador"></div><button
+ class="btn-ocultar"
+ id="btn-ocultar-bajas"
+ onclick="ocultarTabla('bajas')"
+ style="display: none"
+ >
+ ▲ Ocultar registros
+ </button></div><div id="tabla-wrap-bajas" class="table-wrap"><table><thead><tr><th>Chip</th><th>Animal</th><th>Especie</th><th>Raza</th><th>Propietario</th><th>DNI</th><th>Motivo</th><th>Fecha baja</th><th>N.º baja</th><th>Observaciones</th></tr></thead><tbody id="tbody-bajas"><tr class="empty-row"><td colspan="10">
+ Introduzca un criterio o pulse «Ver todas».
+ </td></tr></tbody></table></div><div id="pag-bajas" class="paginacion"></div></div></div><div
+ class="bloque"
+ style="margin-top: 1.5rem; border-left-color: var(--rojo)"
+ ><div
+ class="bloque-titulo"
+ style="
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ "
+ ><h3 style="color: var(--rojo2)">
+ Vacuna antirrábica caducada — animales activos
+ </h3><div style="display: flex; align-items: center; gap: 0.75rem"><span id="vacunas-contador" class="contador"></span
+ ><button
+ class="btn btn-primary"
+ style="padding: 0.3rem 0.8rem; font-size: 0.80rem"
+ onclick="cargarVacunasCaducadas()"
+ >
+ Cargar
+ </button></div></div><div class="bloque-body" style="padding: 0"><div class="table-wrap"><table><thead><tr><th>Chip</th><th>Animal</th><th>Especie</th><th>Propietario</th><th>Teléfono</th><th>Última vacuna</th><th>Carta</th></tr></thead><tbody id="tbody-vacunas-cad"><tr class="empty-row"><td colspan="7">
+ Pulse «Cargar» para ver los animales con vacuna caducada.
+ </td></tr></tbody></table></div><div id="pag-vacunas-cad" class="paginacion"></div></div></div></div>

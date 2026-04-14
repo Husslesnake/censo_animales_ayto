@@ -1,0 +1,77 @@
+<div class="page" id="page-policia">
+  <div class="section-header">
+    <span class="section-num">POL-01</span>
+    <h2>Panel de Policía</h2>
+    <p>Consulta de animales por chip y registro de incidencias</p>
+  </div>
+
+  <!-- Búsqueda por chip -->
+  <div class="bloque" style="margin-bottom:1.25rem;">
+    <div class="bloque-titulo"><h3>Buscar animal por chip</h3></div>
+    <div class="bloque-body">
+      <div style="display:flex;gap:0.7rem;align-items:center;flex-wrap:wrap;">
+        <input type="text" id="pol-chip-input" class="login-input" style="max-width:260px;margin:0;" placeholder="N.º de chip del animal"
+          onkeydown="if(event.key==='Enter')buscarChipPolicia();" />
+        <button class="btn btn-enviar" onclick="buscarChipPolicia()">Buscar</button>
+      </div>
+      <div id="pol-chip-error" style="display:none;color:var(--rojo);font-size:0.82rem;margin-top:0.6rem;"></div>
+      <div id="pol-resultado" style="display:none;" class="pol-ficha">
+        <div class="pol-card">
+          <h4>Animal</h4>
+          <dl id="pol-animal-dl"></dl>
+        </div>
+        <div class="pol-card">
+          <h4>Propietario</h4>
+          <dl id="pol-prop-dl"></dl>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Registrar incidencia -->
+  <div class="bloque" style="margin-bottom:1.25rem;">
+    <div class="bloque-titulo"><h3>Registrar incidencia</h3></div>
+    <div class="bloque-body">
+      <div id="inc-alert" style="display:none;margin-bottom:0.8rem;padding:0.6rem 0.9rem;font-size:0.82rem;font-weight:600;"></div>
+      <div class="form-grid" style="margin-bottom:0.8rem;">
+        <div class="form-group">
+          <label style="font-size:0.8rem;color:var(--gris4);">N.º chip <span class="req">*</span></label>
+          <input type="text" id="inc-chip" class="login-input" style="margin:0;" placeholder="Chip del animal" />
+        </div>
+        <div class="form-group">
+          <label style="font-size:0.8rem;color:var(--gris4);">Tipo de incidencia <span class="req">*</span></label>
+          <select id="inc-tipo" class="login-input" style="margin:0;cursor:pointer;">
+            <option value="">Seleccione…</option>
+            <option value="Animal escapado">Animal escapado</option>
+            <option value="Animal agresivo">Animal agresivo</option>
+            <option value="Abandono">Abandono</option>
+            <option value="Animal sin identificación">Animal sin identificación</option>
+            <option value="Otra">Otra</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label style="font-size:0.8rem;color:var(--gris4);">Descripción / observaciones</label>
+        <textarea id="inc-descripcion" class="login-input" rows="3"
+          style="margin:0;resize:vertical;width:100%;box-sizing:border-box;"
+          placeholder="Detalles de la incidencia…"></textarea>
+      </div>
+      <button class="btn btn-enviar" onclick="registrarIncidencia()">Registrar incidencia</button>
+    </div>
+  </div>
+
+  <!-- Historial de incidencias -->
+  <div class="bloque">
+    <div class="bloque-titulo"><h3>Historial de incidencias</h3></div>
+    <div class="bloque-body">
+      <div class="table-wrap" id="tabla-wrap-incidencias">
+        <table>
+          <thead><tr><th>ID</th><th>Chip</th><th>Tipo</th><th>Descripción</th><th>Fecha</th></tr></thead>
+          <tbody id="tbody-incidencias">
+            <tr class="empty-row"><td colspan="5">No hay incidencias registradas.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

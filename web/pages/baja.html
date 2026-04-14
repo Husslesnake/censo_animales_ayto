@@ -1,0 +1,124 @@
+<div class="page" id="page-baja"><div class="section-header"><span class="section-num">FORM-05</span><h2>Baja de Animal</h2><p>
+ Solicitud de baja en el padrón municipal · Identificación previa del
+ propietario
+ </p></div><div class="baja-stepper"><div class="baja-step active" id="step-ind-1"><span class="step-num">1</span><span class="step-lbl">Identificación</span></div><div class="step-conector"></div><div class="baja-step" id="step-ind-2"><span class="step-num">2</span><span class="step-lbl">Selección</span></div><div class="step-conector"></div><div class="baja-step" id="step-ind-3"><span class="step-num">3</span><span class="step-lbl">Confirmación</span></div></div><div id="alert-baja" class="alert"><span class="alert-icon"></span><span class="alert-msg"></span></div><div id="baja-paso-1" class="baja-paso"><div class="bloque"><h3 class="bloque-titulo">Identificación del propietario</h3><p class="u-hint">
+ Introduzca su DNI o NIE para verificar su identidad y consultar
+ los animales registrados a su nombre.
+ </p><div class="campo-grupo"><label class="campo-label" for="baja-dni"
+ >DNI / NIE <span style="color: var(--rojo)">*</span></label
+ ><div style="display: flex; gap: 0.75rem; align-items: flex-start"><div style="flex: 1"><input
+ class="campo-input"
+ type="text"
+ id="baja-dni"
+ maxlength="9"
+ placeholder="12345678Z / X1234567A"
+ inputmode="text"
+ autocomplete="off"
+ autocapitalize="characters"
+ pattern="[0-9]{8}[A-Za-z]|[XxYyZz][0-9]{7}[A-Za-z]"
+ title="DNI: 8 dígitos + letra (12345678A) · NIE: X/Y/Z + 7 dígitos + letra (X1234567A)"
+ oninput="
+ this.value = this.value.toUpperCase();
+ validarDniBaja(this);
+ "
+ onkeydown="
+ if (event.key === 'Enter') {
+ event.preventDefault();
+ verificarPropietarioBaja();
+ }
+ "
+ /><span class="campo-hint" id="baja-dni-hint"></span></div><button
+ class="btn-enviar"
+ onclick="verificarPropietarioBaja()"
+ id="btn-verificar-baja"
+ style="margin-top: 0; width: auto; padding: 0 1.5rem"
+ >
+ Verificar
+ </button></div></div></div></div><div id="baja-paso-2" class="baja-paso" style="display: none"><div class="bloque"><div id="baja-info-propietario" class="baja-propietario-card"></div><h3 class="bloque-titulo" class="u-mt125">
+ Animales registrados a su nombre
+ </h3><p class="u-hint">
+ Seleccione el animal del que desea tramitar la baja. Solo se
+ muestran animales sin baja previa.
+ </p><div id="baja-lista-animales" class="baja-animal-grid"></div><button
+ class="btn-enviar"
+ onclick="bajaPaso2Cancelar()"
+ style="
+ width: auto;
+ padding: 0 1.5rem;
+ background: var(--gris3);
+ margin-top: 1rem;
+ "
+ >
+ &larr; Cambiar DNI
+ </button></div></div><div id="baja-paso-3" class="baja-paso" style="display: none"><div class="bloque"><div
+ id="baja-info-animal-seleccionado"
+ class="baja-animal-card"
+ ></div><h3 class="bloque-titulo" class="u-mt125">Datos de la baja</h3><div class="form-grid"><div class="campo-grupo"><label class="campo-label" for="baja-motivo"
+ >Motivo de baja
+ <span style="color: var(--rojo)">*</span></label
+ ><select class="campo-input" id="baja-motivo"><option value="">— Seleccionar —</option></select></div><div class="campo-grupo" style="display: none"><input type="hidden" id="baja-num" /></div><div class="campo-grupo"><label class="campo-label">N.º de baja</label><div
+ style="
+ padding: 0.55rem 0.85rem;
+ background: var(--gris0);
+ border: 1px solid var(--borde);
+ border-radius: 0;
+ font-family: &quot;IBM Plex Mono&quot;, monospace;
+ font-size: 0.85rem;
+ color: var(--gris3);
+ "
+ >
+ Se asignará automáticamente al confirmar
+ </div></div></div><div class="campo-grupo"><label class="campo-label" for="baja-obs">Observaciones</label><textarea
+ class="campo-input"
+ id="baja-obs"
+ rows="3"
+ placeholder="Información adicional sobre la baja..."
+ ></textarea></div><div class="baja-aviso"><span style="font-size: 1.1rem">&#9888;</span>
+ Esta acción registrará la baja del animal en el padrón municipal.
+ La operación quedará anotada en el histórico. No puede deshacerse
+ desde esta aplicación.
+ </div><div
+ style="
+ display: flex;
+ gap: 0.75rem;
+ flex-wrap: wrap;
+ margin-top: 1.5rem;
+ "
+ ><button
+ class="btn-enviar"
+ onclick="bajaPaso3Cancelar()"
+ style="width: auto; padding: 0 1.5rem; background: var(--gris3)"
+ >
+ &larr; Cambiar animal
+ </button><button
+ class="btn-enviar"
+ id="btn-confirmar-baja"
+ onclick="confirmarBaja()"
+ >
+ Registrar baja
+ </button></div></div></div><div id="baja-paso-ok" class="baja-paso" style="display: none"><div class="bloque" style="text-align: center; padding: 3rem 2rem"><div
+ style="
+ font-size: 3.5rem;
+ color: var(--verde);
+ margin-bottom: 1rem;
+ "
+ >
+ &#10003;
+ </div><h3
+ style="
+ font-family: &quot;Libre Baskerville&quot;, serif;
+ font-size: 1.3rem;
+ margin-bottom: 0.5rem;
+ "
+ >
+ Baja registrada correctamente
+ </h3><p
+ id="baja-ok-detalle"
+ style="color: var(--gris4); margin-bottom: 2rem"
+ ></p><button
+ class="btn-enviar"
+ style="width: auto; padding: 0 2rem"
+ onclick="bajaReiniciar()"
+ >
+ Tramitar otra baja
+ </button></div></div></div>

@@ -1,0 +1,233 @@
+<div
+ id="modal-editar"
+ style="
+ display: none;
+ position: fixed;
+ inset: 0;
+ z-index: 9997;
+ background: rgba(0, 0, 0, 0.6);
+ align-items: center;
+ justify-content: center;
+ padding: 1rem;
+ overflow-y: auto;
+ "
+ onclick="if (event.target === this) cerrarEditorAnimal();"
+ ><div
+ style="
+ background: var(--blanco);
+ border-radius: 0;
+ overflow: hidden;
+ width: 100%;
+ max-width: 640px;
+ max-height: 92vh;
+ display: flex;
+ flex-direction: column;
+ "
+ onclick="event.stopPropagation()"
+ ><div
+ style="
+ background: var(--azul);
+ padding: 0.85rem 1.25rem;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ flex-shrink: 0;
+ "
+ ><span
+ id="modal-editar-titulo"
+ style="
+ color: #fff;
+ font-family: &quot;Libre Baskerville&quot;, serif;
+ font-size: 1rem;
+ font-weight: 700;
+ "
+ ></span><button
+ onclick="cerrarEditorAnimal()"
+ style="
+ background: none;
+ border: none;
+ color: #fff;
+ font-size: 1.5rem;
+ cursor: pointer;
+ line-height: 1;
+ "
+ >
+ ×
+ </button></div><div style="padding: 1.25rem; overflow-y: auto; flex: 1"><div
+ id="alert-editar-modal"
+ class="alert"
+ style="margin-bottom: 1rem"
+ ><span class="alert-icon"></span><span class="alert-msg"></span></div><div class="form-grid" style="grid-template-columns: repeat(2, 1fr)"><div class="form-group" style="grid-column: span 2"><label class="campo-label"
+ >DNI / NIE del propietario
+ <span style="color: var(--rojo)">*</span></label
+ ><input
+ class="campo-input"
+ type="text"
+ id="edit-dni-prop"
+ maxlength="9"
+ placeholder="12345678A / X1234567A"
+ autocapitalize="characters"
+ autocomplete="off"
+ oninput="this.value = this.value.toUpperCase()"
+ onblur="validarCampoDni(this, 'hint-edit-dni')"
+ /><span class="dni-hint" id="hint-edit-dni"></span></div><div class="form-group"><label class="campo-label">Última vacuna antirrábica</label><input class="campo-input" type="date" id="edit-vacuna" /></div><div class="form-group"><label class="campo-label">Castrado / esterilizado</label><select class="campo-input" id="edit-esterilizado"><option value="0">No</option><option value="1">Sí</option></select></div><div class="form-group" style="grid-column: span 2"><label class="campo-label">N.º póliza de seguro</label><input
+ class="campo-input"
+ type="text"
+ id="edit-poliza"
+ placeholder="POL-00001"
+ maxlength="50"
+ /><span style="font-size: 0.80rem; color: var(--gris3)"
+ >Solo si ya tiene seguro registrado</span
+ ></div></div><div
+ style="
+ margin-top: 1rem;
+ padding: 0.75rem 1rem;
+ background: var(--gris0);
+ border-left: 3px solid var(--dorado);
+ font-size: 0.88rem;
+ color: var(--gris4);
+ "
+ ><strong style="color: var(--tinta2)">N.º Chip:</strong><span
+ id="edit-chip-display"
+ style="font-family: &quot;IBM Plex Mono&quot;, monospace"
+ ></span>
+ &nbsp;·&nbsp;
+ <strong style="color: var(--tinta2)">Propietario:</strong><span id="edit-prop-display"></span></div></div><div
+ style="
+ padding: 0.85rem 1.25rem;
+ border-top: 1px solid var(--borde);
+ display: flex;
+ gap: 0.75rem;
+ justify-content: flex-end;
+ background: var(--gris0);
+ flex-shrink: 0;
+ "
+ ><button class="btn btn-secondary" onclick="cerrarEditorAnimal()">
+ Cancelar
+ </button><button
+ class="btn btn-primary"
+ id="btn-guardar-editar"
+ onclick="guardarEdicionAnimal()"
+ ><div class="spinner" id="sp-editar"></div><span>Guardar cambios</span></button></div></div></div>
+
+<div
+ id="modal-ficha"
+ style="
+ display: none;
+ position: fixed;
+ inset: 0;
+ z-index: 9998;
+ background: rgba(0, 0, 0, 0.6);
+ align-items: center;
+ justify-content: center;
+ padding: 1rem;
+ overflow-y: auto;
+ "
+ onclick="if (event.target === this) cerrarFicha();"
+ ><div
+ style="
+ background: var(--blanco);
+ border-radius: 0;
+ overflow: hidden;
+ width: 100%;
+ max-width: 680px;
+ max-height: 92vh;
+ display: flex;
+ flex-direction: column;
+ "
+ ><div
+ style="
+ background: var(--azul);
+ padding: 0.85rem 1.25rem;
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ flex-shrink: 0;
+ "
+ ><span
+ id="ficha-titulo"
+ style="
+ color: #fff;
+ font-family: &quot;Libre Baskerville&quot;, serif;
+ font-size: 1rem;
+ font-weight: 700;
+ "
+ ></span
+ ><button
+ onclick="cerrarFicha()"
+ style="
+ background: none;
+ border: none;
+ color: #fff;
+ font-size: 1.5rem;
+ cursor: pointer;
+ line-height: 1;
+ "
+ >
+ ×
+ </button></div><div
+ id="ficha-body"
+ style="padding: 1.25rem; overflow-y: auto; flex: 1"
+ ></div><div
+ style="
+ padding: 0.75rem 1.25rem;
+ background: var(--gris0);
+ display: flex;
+ justify-content: flex-end;
+ flex-shrink: 0;
+ "
+ ><button class="btn btn-secondary" onclick="cerrarFicha()">
+ Cerrar
+ </button></div></div></div>
+
+<button
+ id="btn-dark-mode"
+ title="Alternar tema oscuro"
+ onclick="toggleDarkMode()"
+ aria-label="Tema oscuro"
+ >
+ ◑
+ </button>
+
+<div id="stats-print-wrap"><div class="no-print" style="background:#f0f0f0;padding:0.5rem 1rem;display:flex;gap:0.75rem;align-items:center;font-family:sans-serif;font-size:0.85rem;border-bottom:1px solid #ccc;flex-shrink:0;"><button onclick="window.print()" style="background:#7b2d40;color:#fff;border:none;padding:0.4rem 1rem;font-weight:700;cursor:pointer;font-family:sans-serif;">Imprimir / Guardar PDF</button><button onclick="cerrarStats()" style="background:none;border:1px solid #999;padding:0.4rem 1rem;cursor:pointer;font-family:sans-serif;">Cerrar</button></div><div id="stats-contenido"></div></div>
+
+<div id="carta-print"><div
+ class="no-print"
+ style="
+ position: sticky;
+ top: 0;
+ background: #f0f0f0;
+ padding: 0.5rem 1rem;
+ display: flex;
+ gap: 0.75rem;
+ align-items: center;
+ font-family: sans-serif;
+ font-size: 0.85rem;
+ border-bottom: 1px solid #ccc;
+ margin: -2.5cm -2.5cm 1.5cm;
+ "
+ ><button
+ onclick="window.print()"
+ style="
+ background: #7b2d40;
+ color: #fff;
+ border: none;
+ padding: 0.4rem 1rem;
+ font-weight: 700;
+ cursor: pointer;
+ font-family: sans-serif;
+ "
+ >
+ Imprimir / Guardar PDF
+ </button><button
+ onclick="cerrarCarta()"
+ style="
+ background: none;
+ border: 1px solid #999;
+ padding: 0.4rem 1rem;
+ cursor: pointer;
+ font-family: sans-serif;
+ "
+ >
+ Cerrar
+ </button></div><div id="carta-contenido"></div></div>
