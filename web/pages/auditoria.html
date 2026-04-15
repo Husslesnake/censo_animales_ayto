@@ -1,0 +1,103 @@
+<div class="page" id="page-auditoria">
+  <div class="section-header">
+    <span class="section-num">AUD-01</span>
+    <h2>Auditoría del Censo</h2>
+    <p>Registro de cambios en la base de datos · Solo administrador</p>
+  </div>
+
+  <div id="alert-auditoria" class="alert"><span class="alert-icon"></span><span class="alert-msg"></span></div>
+
+  <!-- Filtros -->
+  <div class="bloque" style="margin-bottom:1.25rem;">
+    <div class="bloque-titulo"><h3>Filtros</h3></div>
+    <div class="bloque-body" style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;">
+      <div class="form-group" style="min-width:140px;">
+        <label>Desde</label>
+        <input type="date" id="aud-desde" oninput="aplicarFiltrosAuditoria()" />
+      </div>
+      <div class="form-group" style="min-width:140px;">
+        <label>Hasta</label>
+        <input type="date" id="aud-hasta" oninput="aplicarFiltrosAuditoria()" />
+      </div>
+      <div class="form-group" style="min-width:140px;">
+        <label>Rol</label>
+        <select id="aud-rol" onchange="aplicarFiltrosAuditoria()">
+          <option value="">— Todos —</option>
+          <option value="admin">Administrador</option>
+          <option value="empleado">Empleado</option>
+          <option value="policia">Policía</option>
+          <option value="sistema">Sistema</option>
+        </select>
+      </div>
+      <div class="form-group" style="min-width:160px;">
+        <label>Acción</label>
+        <select id="aud-accion" onchange="aplicarFiltrosAuditoria()">
+          <option value="">— Todas —</option>
+          <option value="crear_propietario">Crear propietario</option>
+          <option value="crear_animal">Alta de animal</option>
+          <option value="actualizar_animal">Modificar animal</option>
+          <option value="baja_animal">Dar de baja</option>
+          <option value="baja_animal_automatica">Baja automática (edad)</option>
+          <option value="crear_seguro">Crear seguro</option>
+          <option value="eliminar_seguro">Eliminar seguro</option>
+          <option value="crear_incidencia">Crear incidencia</option>
+          <option value="crear_cuenta_policia">Crear agente</option>
+          <option value="actualizar_cuenta_policia">Modificar agente</option>
+          <option value="eliminar_cuenta_policia">Eliminar agente</option>
+        </select>
+      </div>
+      <div class="form-group" style="min-width:140px;flex:1;">
+        <label>Usuario</label>
+        <input type="text" id="aud-usuario" placeholder="admin, pol_garcia…" oninput="aplicarFiltrosAuditoria()" />
+      </div>
+      <div class="form-group" style="min-width:140px;flex:1;">
+        <label>IP</label>
+        <input type="text" id="aud-ip" placeholder="192.168…" oninput="aplicarFiltrosAuditoria()" />
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:flex-end;flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="resetFiltrosAuditoria()">Limpiar filtros</button>
+        <button class="btn btn-primary" onclick="descargarAuditoria()">Descargar JSONL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="bloque">
+    <div class="bloque-titulo" style="display:flex;align-items:center;justify-content:space-between;">
+      <h3>Registros</h3>
+      <span id="aud-contador" style="font-size:0.78rem;font-family:'IBM Plex Mono',monospace;color:var(--gris3);"></span>
+    </div>
+    <div class="bloque-body" style="padding:0;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="white-space:nowrap;">Fecha y hora</th>
+              <th>Rol</th>
+              <th>Usuario</th>
+              <th>IP</th>
+              <th>Acción</th>
+              <th>Estado</th>
+              <th>Detalle</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-auditoria">
+            <tr class="empty-row"><td colspan="7">Cargando…</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="pag-auditoria" class="paginacion" style="padding:0.6rem 1rem;"></div>
+    </div>
+  </div>
+
+  <!-- Modal detalle -->
+  <div id="modal-aud-detalle" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
+    <div style="background:var(--blanco);padding:1.6rem 1.8rem;max-width:640px;width:94%;border-top:4px solid var(--rojo);max-height:80vh;overflow:auto;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;">
+        <h2 style="font-family:'Libre Baskerville',serif;font-size:1rem;margin:0;color:var(--tinta);">Detalle del evento</h2>
+        <button class="btn btn-secondary" style="padding:0.15rem 0.55rem;font-size:0.8rem;" onclick="cerrarDetalleAuditoria()">Cerrar</button>
+      </div>
+      <pre id="aud-detalle-json" style="font-family:'IBM Plex Mono',monospace;font-size:0.78rem;background:var(--gris0);color:var(--tinta2);padding:0.9rem 1rem;white-space:pre-wrap;word-break:break-all;margin:0;"></pre>
+    </div>
+  </div>
+</div>

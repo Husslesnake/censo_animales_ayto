@@ -145,6 +145,71 @@ def _log_ip(ip: str, rol: str, evento: str, exito: bool):
     except Exception as e:
         logger.warning("No se pudo escribir en log-ip.txt: %s", e)
 
+
+# ── Logger de auditoría (cambios en la BD) ────────────────────────────────────
+# Cada línea es un objeto JSON independiente (.jsonl) para facilitar su lectura.
+_AUDIT_LOG_FILE = LOG_DIR / "auditoria.jsonl"
+
+try:
+    LOG_DIR.mkdir(parents=True, exist_ok=True)
+    if not _AUDIT_LOG_FILE.exists():
+        _AUDIT_LOG_FILE.touch()
+except Exception as _e:
+    print(f"WARN: No se pudo crear auditoria.jsonl: {_e}")
+
+
+def _usuario_desde_token() -> tuple[str, str]:
+    """Devuelve (rol, usuario) del token actual. Usuario es:
+       - 'admin' para admin
+       - username real para policía
+       - device_id (abreviado) para empleado
+       - 'anónimo' si no hay token válido.
+    """
+    token = request.headers.get("X-Token", "")
+    payload = _TOKENS.get(token)
+    if not payload or datetime.now() > payload.get("exp", datetime.now()):
+        # Si no hay token, intentamos inferir por cabecera de admin/empleado
+        if _es_admin_request():
+            return ("admin", "admin")
+        dev = _get_device_id()
+        return ("empleado", dev[:12] if dev else "anónimo")
+    rol = payload.get("rol", "desconocido")
+    if rol == "policia":
+        return (rol, payload.get("username", "policia"))
+    if rol == "admin":
+        return (rol, "admin")
+    # empleado → identificarlo por device_id
+    dev = _get_device_id()
+    return (rol, dev[:12] if dev else "empleado")
+
+
+def _log_auditoria(accion: str, detalle: dict | None = None, exito: bool = True):
+    """Registra un cambio en la base de datos en logs/auditoria.jsonl.
+    Campos: fecha, ip, rol, usuario, accion, exito, detalle.
+    Si no hay contexto de petición (p.ej. tarea programada), registra rol='sistema'.
+    """
+    try:
+        try:
+            rol, usuario = _usuario_desde_token()
+            ip = _get_client_ip()
+        except Exception:
+            rol, usuario, ip = "sistema", "scheduler", "—"
+        entrada = {
+            "fecha": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "ip": ip,
+            "rol": rol,
+            "usuario": usuario,
+            "accion": accion,
+            "exito": bool(exito),
+            "detalle": detalle or {},
+        }
+        LOG_DIR.mkdir(parents=True, exist_ok=True)
+        with open(_AUDIT_LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(json.dumps(entrada, ensure_ascii=False) + "\n")
+    except Exception as e:
+        logger.warning("No se pudo escribir en auditoria.jsonl: %s", e)
+
+
 # Tokens de sesión en memoria: {token: {"rol": "admin"|"empleado", "exp": datetime}}
 _TOKENS: dict = {}
 _TOKEN_TTL_HOURS = 12
@@ -615,6 +680,7 @@ def policia_usuarios_crear():
     }
     _guardar_auth(auth)
     logger.info("AUTH: Cuenta policía creada — %s (%s)", username, nombre)
+    _log_auditoria("crear_cuenta_policia", {"username": username, "nombre": nombre})
     return jsonify({"ok": True})
 
 
@@ -651,6 +717,11 @@ def policia_usuarios_actualizar(username):
     auth["policia_usuarios"] = usuarios
     _guardar_auth(auth)
     logger.info("AUTH: Cuenta policía actualizada — %s", username)
+    campos = []
+    if "activo" in data: campos.append("activo=" + ("sí" if data["activo"] else "no"))
+    if "password" in data: campos.append("contraseña")
+    if "nombre" in data: campos.append("nombre")
+    _log_auditoria("actualizar_cuenta_policia", {"username": username, "cambios": campos})
     return jsonify({"ok": True})
 
 
@@ -663,6 +734,7 @@ def policia_usuarios_eliminar(username):
     usuarios = auth.get("policia_usuarios", {})
     if username not in usuarios:
         return jsonify({"ok": False, "error": "Usuario no encontrado."}), 404
+    nombre_prev = usuarios[username].get("nombre", username)
     del usuarios[username]
     auth["policia_usuarios"] = usuarios
     to_revoke = [t for t, p in list(_TOKENS.items())
@@ -673,6 +745,7 @@ def policia_usuarios_eliminar(username):
         del _TOKENS[t]
     _guardar_auth(auth)
     logger.info("AUTH: Cuenta policía eliminada — %s", username)
+    _log_auditoria("eliminar_cuenta_policia", {"username": username, "nombre": nombre_prev})
     return jsonify({"ok": True})
 
 
@@ -858,15 +931,22 @@ def insertar_propietario():
         )
         conn.commit()
         conn.close()
+        _log_auditoria("crear_propietario", {
+            "DNI": d.get("DNI"),
+            "nombre": f"{d.get('NOMBRE','') or ''} {d.get('PRIMER_APELLIDO','') or ''} {d.get('SEGUNDO_APELLIDO','') or ''}".strip(),
+            "municipio": d.get("MINICIPIO"),
+        })
         return jsonify({"ok": True, "mensaje": "Propietario registrado correctamente."})
     except mysql.connector.IntegrityError as e:
         _log_request_error(request.endpoint or "unknown", e)
+        _log_auditoria("crear_propietario", {"DNI": d.get("DNI"), "error": "DNI duplicado"}, exito=False)
         return (
             jsonify({"ok": False, "error": "El DNI ya existe en la base de datos."}),
             409,
         )
     except Exception as e:
         _log_request_error(request.endpoint or "unknown", e)
+        _log_auditoria("crear_propietario", {"DNI": d.get("DNI"), "error": str(e)[:200]}, exito=False)
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
@@ -1016,10 +1096,18 @@ def actualizar_animal(chip):
 
         conn.commit()
         conn.close()
+        campos_mod = [k for k in ("DNI_PROPIETARIO", "FECHA_ULTIMA_VACUNA_ANTIRRABICA",
+                                    "ESTERILIZADO", "SEGURO_POLIZA") if k in d]
+        _log_auditoria("actualizar_animal", {
+            "N_CHIP": chip,
+            "campos_modificados": campos_mod,
+            "valores": {k: d.get(k) for k in campos_mod},
+        })
         return jsonify({"ok": True, "mensaje": "Animal actualizado correctamente."})
 
     except Exception as e:
         _log_request_error(request.endpoint or "unknown", e)
+        _log_auditoria("actualizar_animal", {"N_CHIP": chip, "error": str(e)[:200]}, exito=False)
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
@@ -1177,6 +1265,13 @@ def insertar_animal():
         conn.commit()
 
         conn.close()
+        _log_auditoria("crear_animal", {
+            "N_CHIP": d.get("N_CHIP"),
+            "nombre": d.get("NOMBRE"),
+            "especie": d.get("ESPECIE"),
+            "DNI_propietario": d.get("DNI_PROPIETARIO"),
+            "N_CENSO": n_censo_auto,
+        })
         return jsonify(
             {
                 "ok": True,
@@ -1187,6 +1282,7 @@ def insertar_animal():
 
     except mysql.connector.IntegrityError as e:
         _log_request_error(request.endpoint or "unknown", e)
+        _log_auditoria("crear_animal", {"N_CHIP": d.get("N_CHIP"), "error": f"integridad_{e.errno}"}, exito=False)
         msgs = {
             1062: f"El número de chip ya existe. Detalle: {e}",
             1452: f"El DNI del propietario no existe. Regístrelo primero. Detalle: {e}",
@@ -1202,6 +1298,7 @@ def insertar_animal():
         )
     except Exception as e:
         _log_request_error(request.endpoint or "unknown", e)
+        _log_auditoria("crear_animal", {"N_CHIP": d.get("N_CHIP"), "error": str(e)[:200]}, exito=False)
         return jsonify({"ok": False, "error": f"Error inesperado: {e}"}), 500
 
 
@@ -1324,10 +1421,17 @@ def insertar_seguro():
         conn.commit()
         nuevo_id = c.lastrowid
         conn.close()
+        _log_auditoria("crear_seguro", {
+            "id": nuevo_id,
+            "N_CHIP": d.get("N_CHIP"),
+            "compania": d.get("SEGURO_COMPANIA"),
+            "poliza": d.get("SEGURO_POLIZA"),
+        })
         return jsonify(
             {"ok": True, "mensaje": "Seguro registrado correctamente.", "id": nuevo_id}
         )
     except mysql.connector.IntegrityError as e:
+        _log_auditoria("crear_seguro", {"N_CHIP": d.get("N_CHIP"), "error": f"integridad_{e.errno}"}, exito=False)
         msg = (
             "El número de chip no existe en el censo de animales."
             if e.errno == 1452
@@ -1336,6 +1440,7 @@ def insertar_seguro():
         return jsonify({"ok": False, "error": msg}), 409
     except Exception as e:
         _log_request_error(request.endpoint or "unknown", e)
+        _log_auditoria("crear_seguro", {"N_CHIP": d.get("N_CHIP"), "error": str(e)[:200]}, exito=False)
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
@@ -1344,12 +1449,18 @@ def eliminar_seguro(id_seguro):
     try:
         conn = get_conn()
         c = cur(conn)
+        # Leer datos antes de borrar para poder auditarlo
+        c.execute("SELECT * FROM SEGUROS WHERE ID_SEGUROS = %s", (id_seguro,))
+        row = c.fetchone()
+        detalle_prev = fila_a_dict(c, row) if row else None
         c.execute("DELETE FROM SEGUROS WHERE ID_SEGUROS = %s", (id_seguro,))
         conn.commit()
         conn.close()
+        _log_auditoria("eliminar_seguro", {"id": id_seguro, "datos": detalle_prev})
         return jsonify({"ok": True, "mensaje": "Seguro eliminado."})
     except Exception as e:
         _log_request_error(request.endpoint or "unknown", e)
+        _log_auditoria("eliminar_seguro", {"id": id_seguro, "error": str(e)[:200]}, exito=False)
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
@@ -1513,6 +1624,13 @@ def registrar_baja():
         _insertar_baja(conn, chip_col, chip, dni, motivo, obs, n_baja_auto)
         conn.commit()
         conn.close()
+        _log_auditoria("baja_animal", {
+            "N_CHIP": chip,
+            "DNI_propietario": dni,
+            "motivo": motivo,
+            "observaciones": obs,
+            "n_baja": n_baja_auto,
+        })
         return jsonify(
             {
                 "ok": True,
@@ -1523,9 +1641,11 @@ def registrar_baja():
 
     except mysql.connector.IntegrityError as e:
         _log_request_error(request.endpoint or "unknown", e)
+        _log_auditoria("baja_animal", {"N_CHIP": chip, "error": f"integridad_{e.errno}"}, exito=False)
         return jsonify({"ok": False, "error": f"Error de integridad: {e}"}), 409
     except Exception as e:
         _log_request_error(request.endpoint or "unknown", e)
+        _log_auditoria("baja_animal", {"N_CHIP": chip, "error": str(e)[:200]}, exito=False)
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
@@ -1598,6 +1718,13 @@ def baja_automatica_por_edad():
             try:
                 _insertar_baja(conn, chip_col, chip, dni_prop, "1001", obs, n_baja)
                 dados_baja.append(chip)
+                _log_auditoria("baja_animal_automatica", {
+                    "N_CHIP": chip,
+                    "DNI_propietario": dni_prop,
+                    "motivo": "1001",
+                    "n_baja": n_baja,
+                    "observaciones": obs,
+                })
             except Exception:
                 pass  # Un fallo individual no detiene el resto
 
@@ -2205,6 +2332,83 @@ def listar_logs():
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
+@app.route("/api/auditoria", methods=["GET"])
+def listar_auditoria():
+    """Devuelve las entradas de auditoría. Solo administrador.
+    Parámetros opcionales (query string):
+      - desde, hasta  → rango de fechas 'YYYY-MM-DD'
+      - rol           → admin | empleado | policia | sistema
+      - usuario       → coincidencia parcial (case-insensitive)
+      - accion        → coincidencia parcial (case-insensitive)
+      - ip            → coincidencia parcial
+      - limit         → máximo de entradas devueltas (por defecto 500, máx 5000)
+    """
+    if not _req_admin():
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    try:
+        desde   = (request.args.get("desde")   or "").strip()
+        hasta   = (request.args.get("hasta")   or "").strip()
+        rol_f   = (request.args.get("rol")     or "").strip().lower()
+        usr_f   = (request.args.get("usuario") or "").strip().lower()
+        acc_f   = (request.args.get("accion")  or "").strip().lower()
+        ip_f    = (request.args.get("ip")      or "").strip()
+        try:
+            limit = int(request.args.get("limit") or 500)
+        except ValueError:
+            limit = 500
+        limit = max(1, min(limit, 5000))
+
+        if not _AUDIT_LOG_FILE.exists():
+            return jsonify({"ok": True, "datos": [], "total": 0})
+
+        entradas: list[dict] = []
+        with open(_AUDIT_LOG_FILE, "r", encoding="utf-8", errors="replace") as f:
+            for linea in f:
+                linea = linea.strip()
+                if not linea:
+                    continue
+                try:
+                    e = json.loads(linea)
+                except Exception:
+                    continue
+                fecha = str(e.get("fecha", ""))[:10]  # YYYY-MM-DD
+                if desde and fecha < desde:
+                    continue
+                if hasta and fecha > hasta:
+                    continue
+                if rol_f and rol_f not in str(e.get("rol", "")).lower():
+                    continue
+                if usr_f and usr_f not in str(e.get("usuario", "")).lower():
+                    continue
+                if acc_f and acc_f not in str(e.get("accion", "")).lower():
+                    continue
+                if ip_f and ip_f not in str(e.get("ip", "")):
+                    continue
+                entradas.append(e)
+
+        total = len(entradas)
+        # Últimas N entradas en orden cronológico inverso (más recientes primero)
+        entradas = list(reversed(entradas[-limit:]))
+        return jsonify({"ok": True, "datos": entradas, "total": total})
+    except Exception as e:
+        _log_request_error("listar_auditoria", e)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/auditoria/descargar", methods=["GET"])
+def descargar_auditoria():
+    """Descarga el fichero de auditoría completo (solo admin)."""
+    if not _req_admin():
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    try:
+        if not _AUDIT_LOG_FILE.exists():
+            return jsonify({"ok": False, "error": "No hay registros de auditoría."}), 404
+        return send_file(_AUDIT_LOG_FILE, as_attachment=True, download_name="auditoria.jsonl")
+    except Exception as e:
+        _log_request_error("descargar_auditoria", e)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 @app.route("/api/logs/<nombre>", methods=["GET"])
 def descargar_log(nombre):
     """Descarga o muestra un fichero de log."""
@@ -2359,9 +2563,16 @@ def registrar_incidencia():
         inc_id = c.lastrowid
         conn.close()
         logger.info("POL: incidencia #%d registrada — chip=%s tipo=%s", inc_id, chip, tipo)
+        _log_auditoria("crear_incidencia", {
+            "id": inc_id,
+            "N_CHIP": chip,
+            "tipo": tipo,
+            "descripcion": descripcion[:500] if descripcion else "",
+        })
         return jsonify({"ok": True, "id": inc_id})
     except Exception as e:
         _log_request_error(request.endpoint or "unknown", e)
+        _log_auditoria("crear_incidencia", {"N_CHIP": chip, "error": str(e)[:200]}, exito=False)
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
