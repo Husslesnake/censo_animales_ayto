@@ -97,13 +97,13 @@ header {
   border: none;
   border-bottom: 3px solid transparent;
   margin-bottom: -4px;
-  padding: 0 0.7rem;
+  padding: 0 0.55rem;
   cursor: pointer;
   font-family: "Source Sans 3", sans-serif;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 600;
   color: var(--gris);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   transition: color 0.15s, border-color 0.15s;
   white-space: nowrap;

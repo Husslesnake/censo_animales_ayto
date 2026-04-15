@@ -3,9 +3,10 @@
   "configurations": [
     {
       "name": "censo-web",
-      "runtimeExecutable": "cmd",
-      "runtimeArgs": ["/c", "echo already running"],
-      "port": 80
+      "runtimeExecutable": "python",
+      "runtimeArgs": [".claude/preview-proxy.py"],
+      "port": 8889,
+      "autoPort": true
     }
   ]
 }

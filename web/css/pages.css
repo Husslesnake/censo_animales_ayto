@@ -180,6 +180,162 @@ body.dark-mode .login-error {
   color: var(--verde);
   border: 1px solid #9fc9af;
 }
+/* Indicador visual de scroll horizontal en la barra de pestañas (desktop) */
+.header-nav {
+  position: relative;
+}
+.header-nav::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 28px;
+  background: linear-gradient(to right, transparent, var(--blanco));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.header-nav.scroll-overflow::after {
+  opacity: 1;
+}
+/* Pantallas medianas y grandes: activar menú hamburguesa para que todas las
+   pestañas sean accesibles vía dropdown. Por encima de 1700px (admin con 11
+   pestañas) suelen caber horizontalmente. */
+@media (max-width: 1700px) and (min-width: 769px) {
+  .nav-hamburger {
+    display: flex;
+    margin-left: 0.5rem;
+    align-self: center;
+  }
+  .header-nav {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--blanco);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    border-top: 1px solid var(--borde);
+    border-bottom: 1px solid var(--borde);
+  }
+  .header-nav.open {
+    display: flex;
+  }
+  .header-nav::after {
+    display: none;
+  }
+  .tab-btn {
+    padding: 0.85rem 1.25rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--gris1);
+    border-left: 3px solid transparent;
+    text-align: left;
+    width: 100%;
+    margin-bottom: 0;
+    letter-spacing: 0.04em;
+  }
+  .tab-btn:last-child {
+    border-bottom: none;
+  }
+  .tab-btn.active {
+    border-left-color: var(--rojo);
+    border-bottom-color: var(--gris1);
+    background: var(--gris0);
+  }
+  /* Reducir un poco el ancho del input de búsqueda para no quitar tanto sitio */
+  #busq-global-input {
+    width: 170px !important;
+  }
+}
+/* Pantallas medianas-pequeñas (no móvil): el header se envuelve en varias
+   filas para que la búsqueda y la sesión no provoquen overflow horizontal. */
+@media (max-width: 1023px) and (min-width: 769px) {
+  header {
+    flex-wrap: wrap;
+    min-height: auto;
+  }
+  .header-marca {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    border-right: none;
+    border-bottom: 1px solid var(--borde);
+  }
+  .nav-hamburger {
+    margin-left: auto !important;
+    align-self: stretch;
+    border-bottom: 1px solid var(--borde);
+  }
+  #busq-global-wrap {
+    flex-shrink: 1 !important;
+    width: 100%;
+    order: 3;
+    border-left: none !important;
+    border-bottom: 1px solid var(--borde);
+    padding: 0.5rem 1rem !important;
+  }
+  #busq-global-input {
+    width: 100% !important;
+  }
+  .header-session {
+    padding: 0.5rem 1rem;
+    border-top: none;
+    border-left: none !important;
+    justify-content: space-between;
+    width: 100%;
+    order: 4;
+  }
+}
+/* Administradores: 11 pestañas no caben en monitores estándar (<2000px),
+   por lo que el menú hamburguesa se aplica también en pantallas muy anchas. */
+@media (min-width: 1701px) {
+  body.rol-admin .nav-hamburger {
+    display: flex;
+    margin-left: 0.5rem;
+    align-self: center;
+  }
+  body.rol-admin .header-nav {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--blanco);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    border-top: 1px solid var(--borde);
+    border-bottom: 1px solid var(--borde);
+  }
+  body.rol-admin .header-nav.open {
+    display: flex;
+  }
+  body.rol-admin .header-nav::after {
+    display: none;
+  }
+  body.rol-admin .tab-btn {
+    padding: 0.85rem 1.25rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--gris1);
+    border-left: 3px solid transparent;
+    text-align: left;
+    width: 100%;
+    margin-bottom: 0;
+    letter-spacing: 0.04em;
+  }
+  body.rol-admin .tab-btn:last-child {
+    border-bottom: none;
+  }
+  body.rol-admin .tab-btn.active {
+    border-left-color: var(--rojo);
+    border-bottom-color: var(--gris1);
+    background: var(--gris0);
+  }
+}
 @media (max-width: 768px) {
   header {
     flex-wrap: wrap;
