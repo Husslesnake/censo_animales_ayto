@@ -426,3 +426,143 @@
 [2026-04-15 11:32:26] INFO     >>> GET /api/sexos
 [2026-04-15 11:32:55] INFO     >>> GET /api/sexos
 [2026-04-15 11:32:57] INFO     >>> GET /api/sexos
+[2026-04-15 11:33:42] INFO     ================================================================================
+[2026-04-15 11:33:42] INFO     APPLICATION STARTUP - Timestamp: 2026-04-15T11:33:42.453038
+[2026-04-15 11:33:42] INFO     ================================================================================
+[2026-04-15 11:33:42] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-15 11:33:42] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-15 11:33:42] DEBUG    Log file log_2026-04-13.txt is within 30-day retention: 2026-04-13T12:26:32.968979
+[2026-04-15 11:33:42] DEBUG    Log file log_2026-04-14.txt is within 30-day retention: 2026-04-14T12:28:43.556528
+[2026-04-15 11:33:42] INFO     AUTH: 5 token(s) de larga duración restaurados desde auth.json
+[2026-04-15 11:33:42] INFO     DB: tabla INCIDENCIAS lista
+[2026-04-15 11:33:56] INFO     >>> GET /api/sexos
+[2026-04-15 11:33:57] INFO     >>> GET /api/sexos
+[2026-04-15 11:34:07] INFO     >>> GET /api/auth/verificar
+[2026-04-15 11:34:07] INFO     >>> GET /api/sexos
+[2026-04-15 11:34:07] INFO     >>> GET /api/motivos_baja
+[2026-04-15 11:34:08] INFO     >>> GET /api/alertas
+[2026-04-15 11:34:17] INFO     >>> GET /api/sexos
+[2026-04-15 11:34:17] INFO     >>> GET /api/auth/verificar
+[2026-04-15 11:34:17] INFO     >>> POST /api/log
+[2026-04-15 11:34:17] ERROR    FRONTEND | ERROR | estadoBajas is not defined | Contexto: _initSession
+ReferenceError: estadoBajas is not defined
+    at aplicarRol (http://localhost/js/auth.js:383:11)
+    at _initSession (http://localhost/js/auth.js:406:15)
+[2026-04-15 11:34:17] INFO     >>> GET /api/auth/estado
+[2026-04-15 11:34:17] INFO     >>> GET /api/motivos_baja
+[2026-04-15 11:34:21] INFO     >>> POST /api/auth/login
+[2026-04-15 11:34:21] INFO     AUTH: Login exitoso desde 172.19.0.1 (rol=empleado)
+[2026-04-15 11:34:22] INFO     >>> GET /api/alertas
+[2026-04-15 11:34:22] INFO     >>> GET /api/alertas
+[2026-04-15 11:34:25] INFO     >>> POST /api/auth/logout
+[2026-04-15 11:34:25] INFO     >>> GET /api/auth/estado
+[2026-04-15 11:34:26] INFO     >>> GET /api/sexos
+[2026-04-15 11:34:29] INFO     >>> GET /api/sexos
+[2026-04-15 11:34:29] INFO     >>> GET /api/auth/verificar
+[2026-04-15 11:34:29] INFO     >>> GET /api/motivos_baja
+[2026-04-15 11:34:29] INFO     >>> GET /api/alertas
+[2026-04-15 11:34:39] INFO     >>> GET /api/sexos
+[2026-04-15 11:34:39] INFO     >>> GET /api/auth/estado
+[2026-04-15 11:34:39] INFO     >>> GET /api/motivos_baja
+[2026-04-15 11:34:44] INFO     >>> GET /api/sexos
+[2026-04-15 11:34:44] INFO     >>> GET /api/auth/verificar
+[2026-04-15 11:34:44] INFO     >>> GET /api/motivos_baja
+[2026-04-15 11:34:45] INFO     >>> GET /api/alertas
+[2026-04-15 11:34:56] INFO     >>> GET /api/sexos
+[2026-04-15 11:35:14] INFO     >>> GET /api/sexos
+[2026-04-15 11:35:26] INFO     >>> GET /api/sexos
+[2026-04-15 11:35:44] INFO     >>> GET /api/sexos
+[2026-04-15 11:35:56] INFO     >>> GET /api/sexos
+[2026-04-15 11:36:14] INFO     >>> GET /api/sexos
+[2026-04-15 11:36:26] INFO     >>> GET /api/sexos
+[2026-04-15 11:36:44] INFO     >>> GET /api/sexos
+[2026-04-15 11:36:56] INFO     >>> GET /api/sexos
+[2026-04-15 11:37:15] INFO     >>> GET /api/sexos
+[2026-04-15 11:37:26] INFO     >>> GET /api/sexos
+[2026-04-15 11:37:45] INFO     >>> GET /api/sexos
+[2026-04-15 11:37:55] INFO     >>> GET /api/sexos
+[2026-04-15 11:38:20] INFO     >>> GET /api/auditoria
+[2026-04-15 11:38:20] WARNING  <<< GET /api/auditoria -> 403
+[2026-04-15 11:38:26] INFO     >>> GET /api/sexos
+[2026-04-15 11:38:27] INFO     >>> GET /api/auditoria
+[2026-04-15 11:38:46] INFO     >>> POST /api/propietarios
+[2026-04-15 11:38:51] INFO     >>> POST /api/propietarios
+[2026-04-15 11:38:51] ERROR    ENDPOINT=insertar_propietario METHOD=POST ARGS={} ERROR=1062 (23000): Duplicate entry '99999999X' for key 'PRIMARY'
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/connection_cext.py", line 772, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Duplicate entry '99999999X' for key 'PRIMARY'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/app.py", line 914, in insertar_propietario
+    c.execute(
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/cursor_cext.py", line 353, in execute
+    self._connection.cmd_query(
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/opentelemetry/context_propagation.py", line 97, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/connection_cext.py", line 781, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.IntegrityError: 1062 (23000): Duplicate entry '99999999X' for key 'PRIMARY'
+
+[2026-04-15 11:38:51] WARNING  <<< POST /api/propietarios -> 409
+[2026-04-15 11:38:55] INFO     >>> GET /api/sexos
+[2026-04-15 11:38:57] INFO     >>> GET /api/sexos
+[2026-04-15 11:39:15] INFO     >>> POST /api/animales
+[2026-04-15 11:39:20] INFO     >>> PUT /api/animales/724000000999999
+[2026-04-15 11:39:20] WARNING  <<< PUT /api/animales/724000000999999 -> 400
+[2026-04-15 11:39:26] INFO     >>> GET /api/sexos
+[2026-04-15 11:39:34] INFO     >>> PUT /api/animales/724000000999999
+[2026-04-15 11:39:39] INFO     >>> PUT /api/animales/000000000000000
+[2026-04-15 11:39:39] WARNING  <<< PUT /api/animales/000000000000000 -> 404
+[2026-04-15 11:39:54] INFO     >>> POST /api/seguros
+[2026-04-15 11:39:54] ERROR    ENDPOINT=insertar_seguro METHOD=POST ARGS={} ERROR=1364 (HY000): Field 'ID_SEGUROS' doesn't have a default value
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/connection_cext.py", line 772, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Field 'ID_SEGUROS' doesn't have a default value
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/app.py", line 1416, in insertar_seguro
+    c.execute(
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/cursor_cext.py", line 353, in execute
+    self._connection.cmd_query(
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/opentelemetry/context_propagation.py", line 97, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/connection_cext.py", line 781, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.DatabaseError: 1364 (HY000): Field 'ID_SEGUROS' doesn't have a default value
+
+[2026-04-15 11:39:54] WARNING  <<< POST /api/seguros -> 500
+[2026-04-15 11:39:55] INFO     >>> DELETE /api/seguros/
+[2026-04-15 11:39:55] WARNING  <<< DELETE /api/seguros/ -> 404
+[2026-04-15 11:39:55] INFO     >>> GET /api/sexos
+[2026-04-15 11:39:57] INFO     >>> GET /api/sexos
+[2026-04-15 11:40:12] INFO     >>> GET /api/auditoria
+[2026-04-15 11:40:26] INFO     >>> GET /api/auditoria
+[2026-04-15 11:40:26] INFO     >>> GET /api/sexos
+[2026-04-15 11:40:26] INFO     >>> GET /api/auditoria
+[2026-04-15 11:40:26] INFO     >>> GET /api/auditoria
+[2026-04-15 11:40:27] INFO     >>> GET /api/auditoria
+[2026-04-15 11:40:27] INFO     >>> GET /api/auditoria
+[2026-04-15 11:40:27] INFO     >>> GET /api/auditoria
+[2026-04-15 11:40:28] INFO     >>> GET /api/auditoria
+[2026-04-15 11:40:28] INFO     >>> GET /api/auditoria
+[2026-04-15 11:40:38] INFO     >>> GET /api/auditoria/descargar
+[2026-04-15 11:40:39] INFO     >>> GET /api/auditoria/descargar
+[2026-04-15 11:40:39] WARNING  <<< GET /api/auditoria/descargar -> 403
+[2026-04-15 11:40:50] INFO     >>> GET /api/sexos
+[2026-04-15 11:40:50] INFO     >>> GET /api/auth/verificar
+[2026-04-15 11:40:50] INFO     >>> GET /api/motivos_baja
+[2026-04-15 11:40:50] INFO     >>> GET /api/alertas
+[2026-04-15 11:40:57] INFO     >>> GET /api/sexos
+[2026-04-15 11:40:59] INFO     >>> GET /api/auditoria
+[2026-04-15 11:41:20] INFO     >>> GET /api/sexos
+[2026-04-15 11:41:50] INFO     >>> GET /api/sexos
+[2026-04-15 11:41:57] INFO     >>> GET /api/sexos
+[2026-04-15 11:42:20] INFO     >>> GET /api/sexos
