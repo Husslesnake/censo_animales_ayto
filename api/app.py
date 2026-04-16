@@ -966,6 +966,7 @@ def insertar_propietario():
     try:
         conn = get_conn()
         c = cur(conn)
+        # Insertar propietario (DOMICILIO/CP/MINICIPIO se mantienen por compatibilidad)
         c.execute(
             """INSERT INTO PROPIETARIOS
                  (DNI, PRIMER_APELLIDO, SEGUNDO_APELLIDO, NOMBRE,
@@ -984,12 +985,22 @@ def insertar_propietario():
                 d.get("CODIGO"),
             ),
         )
+        # Insertar domicilios asociados (lista de {DOMICILIO, CP, MINICIPIO})
+        direcciones = d.get("DIRECCIONES", [])
+        for dr in direcciones:
+            dom = dr.get("DOMICILIO", "").strip()
+            if dom:
+                c.execute(
+                    """INSERT INTO PROPIETARIO_DIRECCION (DNI, DOMICILIO, CP, MINICIPIO)
+                       VALUES (%s, %s, %s, %s)""",
+                    (d.get("DNI"), dom, dr.get("CP"), dr.get("MINICIPIO")),
+                )
         conn.commit()
         conn.close()
         _log_auditoria("crear_propietario", {
             "DNI": d.get("DNI"),
             "nombre": f"{d.get('NOMBRE','') or ''} {d.get('PRIMER_APELLIDO','') or ''} {d.get('SEGUNDO_APELLIDO','') or ''}".strip(),
-            "municipio": d.get("MINICIPIO"),
+            "direcciones": len(direcciones),
         })
         return jsonify({"ok": True, "mensaje": "Propietario registrado correctamente."})
     except mysql.connector.IntegrityError as e:
@@ -1002,6 +1013,100 @@ def insertar_propietario():
     except Exception as e:
         _log_request_error(request.endpoint or "unknown", e)
         _log_auditoria("crear_propietario", {"DNI": d.get("DNI"), "error": str(e)[:200]}, exito=False)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+# Endpoints — Direcciones de propietarios
+
+
+@app.route("/api/propietarios/<dni>/direcciones", methods=["GET"])
+def listar_direcciones(dni):
+    try:
+        conn = get_conn()
+        c = cur(conn)
+        chip_col = detectar_chip(c)
+        # Devolver direcciones con conteo de animales activos asociados
+        c.execute(
+            f"""SELECT pd.*,
+                       (SELECT COUNT(*)
+                        FROM ANIMALES a
+                        WHERE a.ID_DOMICILIO = pd.CODIGO
+                          AND a.`{chip_col}` NOT IN (
+                              SELECT b.`{chip_col}` FROM BAJA_ANIMAL b
+                              WHERE b.`{chip_col}` IS NOT NULL
+                          )
+                       ) AS NUM_ANIMALES
+                FROM PROPIETARIO_DIRECCION pd
+                WHERE pd.DNI = %s
+                ORDER BY pd.CODIGO""",
+            (dni,),
+        )
+        rows = [fila_a_dict(c, r) for r in c.fetchall()]
+        conn.close()
+        return jsonify({"ok": True, "direcciones": rows})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/propietarios/<dni>/direcciones", methods=["POST"])
+def crear_direccion(dni):
+    d = request.get_json()
+    if not d.get("DOMICILIO", "").strip():
+        return jsonify({"ok": False, "error": "El domicilio es obligatorio."}), 400
+    try:
+        conn = get_conn()
+        c = cur(conn)
+        # Verificar que el propietario existe
+        c.execute("SELECT DNI FROM PROPIETARIOS WHERE DNI = %s", (dni,))
+        if not c.fetchone():
+            conn.close()
+            return jsonify({"ok": False, "error": "Propietario no encontrado."}), 404
+        c.execute(
+            """INSERT INTO PROPIETARIO_DIRECCION (DNI, DOMICILIO, CP, MINICIPIO)
+               VALUES (%s, %s, %s, %s)""",
+            (dni, d.get("DOMICILIO"), d.get("CP"), d.get("MINICIPIO")),
+        )
+        new_id = c.lastrowid
+        conn.commit()
+        conn.close()
+        _log_auditoria("crear_direccion", {"DNI": dni, "CODIGO": new_id, "DOMICILIO": d.get("DOMICILIO")})
+        return jsonify({"ok": True, "mensaje": "Domicilio añadido.", "CODIGO": new_id})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/propietarios/<dni>/direcciones/<int:codigo>", methods=["DELETE"])
+def eliminar_direccion(dni, codigo):
+    try:
+        conn = get_conn()
+        c = cur(conn)
+        # Verificar que no hay animales asociados a este domicilio
+        c.execute(
+            "SELECT COUNT(*) AS n FROM ANIMALES WHERE ID_DOMICILIO = %s", (codigo,)
+        )
+        row = c.fetchone()
+        n = row[0] if row else 0
+        if n > 0:
+            conn.close()
+            return jsonify({
+                "ok": False,
+                "error": f"No se puede eliminar: hay {n} animal(es) censado(s) en este domicilio.",
+            }), 409
+        c.execute(
+            "DELETE FROM PROPIETARIO_DIRECCION WHERE CODIGO = %s AND DNI = %s",
+            (codigo, dni),
+        )
+        if c.rowcount == 0:
+            conn.close()
+            return jsonify({"ok": False, "error": "Domicilio no encontrado."}), 404
+        conn.commit()
+        conn.close()
+        _log_auditoria("eliminar_direccion", {"DNI": dni, "CODIGO": codigo})
+        return jsonify({"ok": True, "mensaje": "Domicilio eliminado."})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
@@ -1244,7 +1349,39 @@ def insertar_animal():
             "ESTERILIZADO": "ESTERILIZADO",
             "DNI_PROPIETARIO": "DNI_PROPIETARIO",
             "PELIGROSO": "PELIGROSO",
+            "ID_DOMICILIO": "ID_DOMICILIO",
         }
+
+        # ── Verificar límite de 5 animales por domicilio ──
+        id_dom = d.get("ID_DOMICILIO")
+        if id_dom:
+            try:
+                id_dom = int(id_dom)
+            except (ValueError, TypeError):
+                id_dom = None
+        if id_dom:
+            c.execute(
+                f"""SELECT COUNT(*)
+                    FROM ANIMALES a
+                    WHERE a.ID_DOMICILIO = %s
+                      AND a.`{chip_col}` NOT IN (
+                          SELECT b.`{chip_col}` FROM BAJA_ANIMAL b
+                          WHERE b.`{chip_col}` IS NOT NULL
+                      )""",
+                (id_dom,),
+            )
+            animales_en_dom = c.fetchone()[0]
+            if animales_en_dom >= 5:
+                conn.close()
+                return (
+                    jsonify({
+                        "ok": False,
+                        "error": f"El domicilio seleccionado ya tiene {animales_en_dom} animal(es) activo(s). "
+                        "El límite máximo es de 5 animales por domicilio.",
+                        "limite_alcanzado": True,
+                    }),
+                    409,
+                )
 
         # Añadir N_CENSO al insert si la columna existe
         col_censo = next(
@@ -2350,6 +2487,13 @@ def ficha_propietario(dni):
         )
         animales = [fila_a_dict(c, r) for r in c.fetchall()]
 
+        # Direcciones del propietario
+        c.execute(
+            "SELECT * FROM PROPIETARIO_DIRECCION WHERE DNI = %s ORDER BY CODIGO",
+            (dni,),
+        )
+        direcciones = [fila_a_dict(c, r) for r in c.fetchall()]
+
         # Seguros
         c.execute(
             f"""SELECT s.*, a.NOMBRE AS NOMBRE_ANIMAL, a.ESPECIE
@@ -2362,7 +2506,7 @@ def ficha_propietario(dni):
 
         conn.close()
         return jsonify(
-            {"ok": True, "propietario": prop, "animales": animales, "seguros": seguros}
+            {"ok": True, "propietario": prop, "animales": animales, "seguros": seguros, "direcciones": direcciones}
         )
     except Exception as e:
         _log_request_error(request.endpoint or "unknown", e)

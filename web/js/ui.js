@@ -31,6 +31,12 @@
       function resetForm(formId, alertId) {
         document.getElementById(formId).reset();
         document.getElementById(alertId).classList.remove("show");
+        // Limpiar domicilios dinámicos extra (dejar solo el primero)
+        const cont = document.getElementById("domicilios-container");
+        if (cont) {
+          const rows = cont.querySelectorAll(".domicilio-row");
+          rows.forEach((r, i) => { if (i > 0) r.remove(); });
+        }
       }
       function filasProp(datos) {
         return datos

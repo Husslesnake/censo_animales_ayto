@@ -5,3 +5,5 @@
 {"fecha": "2026-04-15 11:39:54", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "crear_seguro", "exito": false, "detalle": {"N_CHIP": "724000000999999", "error": "1364 (HY000): Field 'ID_SEGUROS' doesn't have a default value"}}
 {"fecha": "2026-04-16 07:02:45", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "crear_cuenta_policia", "exito": true, "detalle": {"username": "lucia_bautista", "nombre": "Lucía Bautista"}}
 {"fecha": "2026-04-16 07:19:36", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "crear_cuenta_policia", "exito": true, "detalle": {"username": "test_agent", "nombre": "Agente Test"}}
+{"fecha": "2026-04-16 07:58:16", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "crear_cuenta_policia", "exito": true, "detalle": {"username": "pablo_lopez", "nombre": "Pablo López"}}
+{"fecha": "2026-04-16 08:13:25", "ip": "172.19.0.1", "rol": "policia", "usuario": "pablo_lopez", "accion": "crear_incidencia", "exito": true, "detalle": {"id": 37, "N_CHIP": "123123123123", "tipo": "Animal agresivo", "descripcion": "soy yo"}}

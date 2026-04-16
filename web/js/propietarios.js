@@ -1,3 +1,42 @@
+      // ── Gestión dinámica de domicilios ──────────────────────
+      let _domIdx = 1;
+      function addDomicilioRow() {
+        const container = document.getElementById("domicilios-container");
+        const idx = _domIdx++;
+        const row = document.createElement("div");
+        row.className = "domicilio-row";
+        row.dataset.idx = idx;
+        row.innerHTML =
+          `<div class="form-grid" style="align-items:end;">` +
+          `<div class="form-group span2"><label>Domicilio</label>` +
+          `<input type="text" class="dom-domicilio" placeholder="Calle Mayor, 1" /></div>` +
+          `<div class="form-group"><label>C.P.</label>` +
+          `<input type="text" class="dom-cp" placeholder="28001" maxlength="10" inputmode="numeric" /></div>` +
+          `<div class="form-group" style="display:flex;gap:.4rem;align-items:end;">` +
+          `<div style="flex:1"><label>Municipio</label>` +
+          `<input type="text" class="dom-municipio" placeholder="Madrid" /></div>` +
+          `<button type="button" class="btn btn-secondary" ` +
+          `style="padding:.35rem .6rem;font-size:.75rem;color:var(--rojo);border-color:var(--rojo);margin-bottom:0;" ` +
+          `onclick="removeDomicilioRow(${idx})" title="Quitar domicilio">✕</button>` +
+          `</div></div>`;
+        container.appendChild(row);
+      }
+      function removeDomicilioRow(idx) {
+        const row = document.querySelector(`.domicilio-row[data-idx='${idx}']`);
+        if (row) row.remove();
+      }
+      function recogerDomicilios() {
+        const rows = document.querySelectorAll("#domicilios-container .domicilio-row");
+        const dirs = [];
+        rows.forEach((r) => {
+          const dom = (r.querySelector(".dom-domicilio")?.value || "").trim();
+          const cp = (r.querySelector(".dom-cp")?.value || "").trim();
+          const mun = (r.querySelector(".dom-municipio")?.value || "").trim();
+          if (dom) dirs.push({ DOMICILIO: dom, CP: cp, MINICIPIO: mun });
+        });
+        return dirs;
+      }
+
       async function submitPropietario(e) {
         e.preventDefault();
         const dniInput = document.getElementById("input-prop-dni");
@@ -20,6 +59,15 @@
         Object.keys(data).forEach((k) => {
           if (!data[k]) delete data[k];
         });
+        // Recoger domicilios dinámicos
+        const direcciones = recogerDomicilios();
+        if (direcciones.length) {
+          data.DIRECCIONES = direcciones;
+          // Guardar primer domicilio también en campos legacy
+          if (!data.DOMICILIO) data.DOMICILIO = direcciones[0].DOMICILIO;
+          if (!data.CP) data.CP = direcciones[0].CP;
+          if (!data.MINICIPIO) data.MINICIPIO = direcciones[0].MINICIPIO;
+        }
         try {
           const res = await fetch(API + "/propietarios", {
             method: "POST",
@@ -30,6 +78,12 @@
           if (json.ok) {
             mostrarAlerta("alert-prop", "ok", json.mensaje);
             e.target.reset();
+            // Limpiar domicilios extra
+            const cont = document.getElementById("domicilios-container");
+            if (cont) {
+              const rows = cont.querySelectorAll(".domicilio-row");
+              rows.forEach((r, i) => { if (i > 0) r.remove(); });
+            }
           } else if (json.error && json.error.includes("ya existe")) {
             try {
               const dni2 = data.DNI || "";
@@ -220,9 +274,6 @@
             ["Nombre", nom || "—"],
             ["Teléfono 1", p.TELEFONO1 || "—"],
             ["Teléfono 2", p.TELEFONO2 || "—"],
-            ["Domicilio", p.DOMICILIO || "—"],
-            ["C.P.", p.CP || "—"],
-            ["Municipio", p.MINICIPIO || p.MUNICIPIO || "—"],
           ];
           const filasDatos = camposProp
             .map(
@@ -232,6 +283,38 @@
                 `<td style="font-size:.85rem;padding:.35rem .75rem;font-family:'IBM Plex Mono',monospace;">${v}</td></tr>`,
             )
             .join("");
+
+          // Direcciones del propietario
+          const dirs = json.direcciones || [];
+          let htmlDirs = '';
+          if (dirs.length) {
+            htmlDirs = `<table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+              <thead><tr>
+                <th style="background:var(--azul);color:#fff;padding:.3rem .6rem;text-align:left;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;">Domicilio</th>
+                <th style="background:var(--azul);color:#fff;padding:.3rem .6rem;text-align:left;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;">C.P.</th>
+                <th style="background:var(--azul);color:#fff;padding:.3rem .6rem;text-align:left;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;">Municipio</th>
+                <th style="background:var(--azul);color:#fff;padding:.3rem .6rem;text-align:center;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;width:60px;"></th>
+              </tr></thead>
+              <tbody>${dirs.map(d =>
+                `<tr style="border-bottom:1px solid var(--borde2);" id="dir-row-${d.CODIGO}">` +
+                `<td style="padding:.3rem .6rem;">${d.DOMICILIO || '—'}</td>` +
+                `<td style="padding:.3rem .6rem;font-family:'IBM Plex Mono',monospace;">${d.CP || '—'}</td>` +
+                `<td style="padding:.3rem .6rem;">${d.MINICIPIO || '—'}</td>` +
+                `<td style="padding:.3rem .6rem;text-align:center;">` +
+                `<button onclick="eliminarDireccionFicha('${dni}',${d.CODIGO})" ` +
+                `style="background:none;border:1px solid var(--rojo);color:var(--rojo);padding:.15rem .4rem;` +
+                `font-size:.7rem;cursor:pointer;border-radius:2px;" title="Quitar domicilio">✕</button></td></tr>`
+              ).join('')}</tbody></table>`;
+          } else {
+            htmlDirs = '<p style="font-size:.82rem;color:var(--gris3);font-style:italic;">Sin domicilios registrados.</p>';
+          }
+          // Formulario para añadir nuevo domicilio
+          const htmlAddDir = `<div style="margin-top:.6rem;display:flex;gap:.4rem;align-items:end;flex-wrap:wrap;" id="ficha-add-dir">
+            <input type="text" id="ficha-new-dom" placeholder="Domicilio" style="flex:2;min-width:140px;padding:.3rem .5rem;font-size:.8rem;border:1px solid var(--borde);font-family:inherit;" />
+            <input type="text" id="ficha-new-cp" placeholder="C.P." maxlength="10" style="width:70px;padding:.3rem .5rem;font-size:.8rem;border:1px solid var(--borde);font-family:inherit;" />
+            <input type="text" id="ficha-new-mun" placeholder="Municipio" style="flex:1;min-width:100px;padding:.3rem .5rem;font-size:.8rem;border:1px solid var(--borde);font-family:inherit;" />
+            <button onclick="addDireccionFicha('${dni}')" style="background:var(--azul);color:#fff;border:none;padding:.35rem .7rem;font-size:.75rem;cursor:pointer;white-space:nowrap;">+ Añadir</button>
+          </div>`;
 
           const activos = json.animales.filter((a) => !a.DADO_DE_BAJA);
           const inactivos = json.animales.filter((a) => a.DADO_DE_BAJA);
@@ -305,6 +388,10 @@
               `<table style="width:100%;border-collapse:collapse;">${filasDatos}</table>`,
             ) +
             sec(
+              `Domicilios (${dirs.length})`,
+              htmlDirs + htmlAddDir,
+            ) +
+            sec(
               `Animales activos (${activos.length})`,
               tablaAnimales(activos, false),
             ) +
@@ -318,5 +405,47 @@
         } catch (err) {
           logError(err?.message || "Error en ", "", err?.stack);
           body.innerHTML = `<div style="padding:1.5rem;color:var(--rojo);">Error: ${err.message}</div>`;
+        }
+      }
+
+      // ── CRUD de direcciones desde la ficha ──────────────────
+      async function addDireccionFicha(dni) {
+        const dom = document.getElementById("ficha-new-dom")?.value.trim();
+        const cp = document.getElementById("ficha-new-cp")?.value.trim();
+        const mun = document.getElementById("ficha-new-mun")?.value.trim();
+        if (!dom) return;
+        try {
+          const res = await fetch(API + "/propietarios/" + encodeURIComponent(dni) + "/direcciones", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ DOMICILIO: dom, CP: cp, MINICIPIO: mun }),
+          });
+          const json = await res.json();
+          if (json.ok) {
+            abrirFichaProp(dni); // recargar ficha
+          } else {
+            alert(json.error || "Error al añadir domicilio.");
+          }
+        } catch (err) {
+          logError(err?.message || "Error al añadir dirección", "addDireccionFicha", err?.stack);
+          alert("No se pudo conectar con el servidor.");
+        }
+      }
+      async function eliminarDireccionFicha(dni, codigo) {
+        if (!confirm("¿Eliminar este domicilio del registro?")) return;
+        try {
+          const res = await fetch(
+            API + "/propietarios/" + encodeURIComponent(dni) + "/direcciones/" + codigo,
+            { method: "DELETE" },
+          );
+          const json = await res.json();
+          if (json.ok) {
+            abrirFichaProp(dni); // recargar ficha
+          } else {
+            alert(json.error || "Error al eliminar domicilio.");
+          }
+        } catch (err) {
+          logError(err?.message || "Error al eliminar dirección", "eliminarDireccionFicha", err?.stack);
+          alert("No se pudo conectar con el servidor.");
         }
       }

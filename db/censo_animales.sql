@@ -2,9 +2,9 @@
 -- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Host: mariadb_animales:3306
--- Generation Time: Apr 09, 2026 at 12:21 PM
--- Server version: 12.2.2-MariaDB-ubu2404
+-- Host: mariadb:3306
+-- Generation Time: Apr 16, 2026 at 11:24 AM
+-- Server version: 10.11.16-MariaDB-ubu2204
 -- PHP Version: 8.3.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -1091,6 +1091,7 @@ CREATE TABLE `ANIMALES` (
   `CERTIFICADO_ADIESTRADOR_Nº` text DEFAULT NULL,
   `ESTERILIZADO` text DEFAULT NULL,
   `DOMICILIO_HABITUAL_ANIMAL` text DEFAULT NULL,
+  `ID_DOMICILIO` int(11) DEFAULT NULL,
   `DNI_PROPIETARIO` varchar(100) DEFAULT NULL,
   `Nº_CENSO` text DEFAULT NULL,
   `CODIGO_CENSO` text DEFAULT NULL,
@@ -2112,7 +2113,8 @@ INSERT INTO `ANIMALES` (`Nº_CHIP`, `ESPECIE`, `RAZA`, `SEXO`, `NOMBRE`, `COLOR`
 ('123123123123', 'Perro', 'Pogona', NULL, 'Polo', 'Naranja', '2026-03-05', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL, '31231231A', NULL, NULL, '1', NULL, NULL),
 ('ko8765', 'Roedor', 'Zarigüeya', 'Macho', 'Jose', 'Marrón', '2026-03-19', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL, '12312312R', NULL, NULL, '0', NULL, NULL),
 ('1001001', 'Reptil', 'Pogona', NULL, 'adrian', 'Naranja', '2026-03-05', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0', NULL, '54334567B', NULL, NULL, '1', NULL, NULL),
-('12512532', 'Perro', 'Labrador', 'HEMBRA', 'Lucía', 'Marrón', '2022-02-03', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL, 'X1234567L', 'CEN-006', NULL, '0', NULL, NULL);
+('12512532', 'Perro', 'Labrador', 'HEMBRA', 'Lucía', 'Marrón', '2022-02-03', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL, 'X1234567L', 'CEN-006', NULL, '0', NULL, NULL),
+('724000000999999', 'PERRO', 'MESTIZO', 'MACHO', 'TEST_AUDIT', 'NEGRO', '2023-01-15', '2025-03-20', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', NULL, '99999999X', 'CEN-006', NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2838,6 +2840,65 @@ INSERT INTO `HISTORICO_MASCOTAS` (`ID_HISTORICO`, `Nº_CHIP`, `FECHA`, `ID_ESTAD
 (4, 'CHIP0004', '2018-06-20 00:00:00', 1, 'CEN-004', '44332211D', 'Alta inicial'),
 (5, 'CHIP0005', '2023-06-20 00:00:00', 2, 'CEN-004', '44332211D', 'Baja voluntaria'),
 (6, 'CHIP0006', '2022-03-25 00:00:00', 1, 'CEN-005', '55667788E', 'Alta inicial');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `INCIDENCIAS`
+--
+
+CREATE TABLE `INCIDENCIAS` (
+  `ID` int(11) NOT NULL,
+  `N_CHIP` varchar(50) NOT NULL,
+  `TIPO` varchar(100) NOT NULL,
+  `DESCRIPCION` text DEFAULT NULL,
+  `FECHA` datetime NOT NULL,
+  `ROL_AGENTE` varchar(20) DEFAULT 'admin',
+  `AGENTE` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+
+--
+-- Dumping data for table `INCIDENCIAS`
+--
+
+INSERT INTO `INCIDENCIAS` (`ID`, `N_CHIP`, `TIPO`, `DESCRIPCION`, `FECHA`, `ROL_AGENTE`, `AGENTE`) VALUES
+(1, '123123123123', 'Animal escapado', '', '2026-04-13 12:17:54', 'admin', NULL),
+(2, '123123123123', 'Animal escapado', '', '2026-04-14 12:11:22', 'admin', NULL),
+(3, '123123123123', 'Animal agresivo', '', '2026-04-14 12:11:27', 'admin', NULL),
+(4, '123123123123', 'Abandono', '', '2026-04-14 12:11:29', 'admin', NULL),
+(5, '123123123123', 'Animal sin identificación', '', '2026-04-14 12:11:31', 'admin', NULL),
+(6, '123123123123', 'Otra', '', '2026-04-14 12:11:32', 'admin', NULL),
+(7, '123123123123', 'Animal escapado', '', '2026-04-14 12:11:34', 'admin', NULL),
+(8, '123123123123', 'Animal agresivo', '', '2026-04-14 12:11:35', 'admin', NULL),
+(9, '123123123123', 'Abandono', '', '2026-04-14 12:11:37', 'admin', NULL),
+(10, '123123123123', 'Animal sin identificación', '', '2026-04-14 12:11:39', 'admin', NULL),
+(11, '123123123123', 'Animal escapado', '', '2026-04-14 12:11:43', 'admin', NULL),
+(12, '123123123123', 'Animal escapado', '', '2026-04-14 12:11:45', 'admin', NULL),
+(13, '123123123123', 'Animal escapado', '', '2026-04-14 12:11:47', 'admin', NULL),
+(14, '123123123123', 'Animal escapado', '', '2026-04-14 12:11:48', 'admin', NULL),
+(15, '123123123123', 'Animal escapado', '', '2026-04-14 12:11:50', 'admin', NULL),
+(16, '123123123123', 'Animal escapado', '', '2026-04-14 12:11:51', 'admin', NULL),
+(17, '123123123123', 'Animal escapado', '', '2026-04-14 12:11:53', 'admin', NULL),
+(18, '123123123123', 'Animal agresivo', '', '2026-04-14 12:11:54', 'admin', NULL),
+(19, '123123123123', 'Animal escapado', '', '2026-04-14 12:11:56', 'admin', NULL),
+(20, '123123123123', 'Animal escapado', '', '2026-04-14 12:11:58', 'admin', NULL),
+(21, '123123123123', 'Animal escapado', '', '2026-04-14 12:11:59', 'admin', NULL),
+(22, '123123123123', 'Animal escapado', '', '2026-04-14 12:12:01', 'admin', NULL),
+(23, '123123123123', 'Animal escapado', '', '2026-04-14 12:12:02', 'admin', NULL),
+(24, '123123123123', 'Animal escapado', '', '2026-04-14 12:12:04', 'admin', NULL),
+(25, '123123123123', 'Animal escapado', '', '2026-04-14 12:12:06', 'admin', NULL),
+(26, '123123123123', 'Animal agresivo', '', '2026-04-14 12:12:07', 'admin', NULL),
+(27, '123123123123', 'Animal agresivo', '', '2026-04-14 12:12:09', 'admin', NULL),
+(28, '123123123123', 'Animal escapado', '', '2026-04-14 12:12:11', 'admin', NULL),
+(29, '123123123123', 'Animal escapado', '', '2026-04-14 12:12:13', 'admin', NULL),
+(30, '123123123123', 'Animal escapado', '', '2026-04-14 12:12:14', 'admin', NULL),
+(31, '123123123123', 'Animal escapado', '', '2026-04-14 12:12:17', 'admin', NULL),
+(32, '123123123123', 'Animal agresivo', '', '2026-04-14 12:12:18', 'admin', NULL),
+(33, '123123123123', 'Animal agresivo', '', '2026-04-14 12:12:20', 'admin', NULL),
+(34, '123123123123', 'Animal agresivo', '', '2026-04-14 12:12:21', 'admin', NULL),
+(35, '123123123123', 'Animal escapado', '', '2026-04-14 12:12:22', 'admin', NULL),
+(36, '123123123123', 'Animal agresivo', '', '2026-04-14 12:12:23', 'admin', NULL),
+(37, '123123123123', 'Animal agresivo', 'soy yo', '2026-04-16 08:13:25', 'policia', 'Pablo López');
 
 -- --------------------------------------------------------
 
@@ -3914,6 +3975,7 @@ INSERT INTO `PROPIETARIOS` (`DNI`, `PRIMER_APELLIDO`, `SEGUNDO_APELLIDO`, `NOMBR
 ('12312312R', 'Lopez', 'Lopez', 'pablo', '432543567', '7654567432', 'Calle Menor', '28600', 'Navalcarnero', NULL),
 ('31231231A', 'Cholo', 'Polo', 'Lolo', '676767676', '696969696', 'ola', '28600', 'Navalcarnero', NULL),
 ('54334567b', 'Bautista', 'Sansuán', 'Lucía', '113123123', '123123123', 'Calypo 2', '10101', 'A tomar por culo', NULL),
+('99999999X', 'TEST', 'AUDITORIA', 'USUARIO', '600000000', NULL, 'CALLE TEST 1', '28600', 'NAVALCARNERO', NULL),
 ('X1234567L', 'mahudl', 'xasda', 'mahmoud', '123123', '123123', 'Calle Menor', '28600', 'Navalcarnero', NULL);
 
 -- --------------------------------------------------------
@@ -3935,11 +3997,46 @@ CREATE TABLE `PROPIETARIO_DIRECCION` (
 --
 
 INSERT INTO `PROPIETARIO_DIRECCION` (`CODIGO`, `DNI`, `DOMICILIO`, `CP`, `MINICIPIO`) VALUES
-(1, '10000000A', 'Calle Mayor 1', '28001', 'Madrid'),
-(2, '10000007B', 'Avenida del Parque 5', '28002', 'Madrid'),
-(3, '10000014C', 'Calle del Sol 12', '28003', 'Madrid'),
-(4, '10000021D', 'Plaza España 3', '28004', 'Madrid'),
-(5, '10000028E', 'Calle Luna 8', '28005', 'Madrid');
+(1, '10000001B', 'Calle Mayor 1', '28001', 'MADRID'),
+(2, '10000001B', 'Avenida de la Constitución 15, 3ºB', '28911', 'LEGANES'),
+(3, '10000002C', 'Calle del Sol 12, Bajo A', '28002', 'ALCORCON'),
+(4, '10000002C', 'Paseo de las Acacias 7, 2ºD', '28005', 'MADRID'),
+(5, '10000003D', 'Plaza España 3, 1ºA', '28003', 'LEGANES'),
+(6, '10000004E', 'Calle Luna 8, 4ºC', '28004', 'MOSTOLES'),
+(7, '10000004E', 'Avenida de Portugal 22, Bajo', '28011', 'MADRID'),
+(8, '10000004E', 'Calle Roble 5, 2ºA', '28934', 'MOSTOLES'),
+(9, '10000005F', 'Calle Gran Vía 45, 6ºB', '28005', 'MADRID'),
+(10, '10000005F', 'Calle Princesa 12, 1ºD', '28008', 'MADRID'),
+(11, '10000006G', 'Avenida del Parque 5, 3ºA', '28006', 'GETAFE'),
+(12, '10000007H', 'Calle Alcalá 100, 5ºC', '28007', 'ALCORCON'),
+(13, '10000007H', 'Calle Velázquez 30, 2ºB', '28001', 'MADRID'),
+(14, '10000008I', 'Paseo de la Castellana 80, 8ºA', '28008', 'LEGANES'),
+(15, '10000009J', 'Calle Serrano 55, 4ºD', '28009', 'MOSTOLES'),
+(16, '10000009J', 'Calle Goya 18, 1ºA', '28001', 'MADRID'),
+(17, '10000010K', 'Calle Fuencarral 120, 3ºB', '28010', 'MADRID'),
+(18, '10000010K', 'Avenida de América 25, 7ºC', '28002', 'MADRID'),
+(19, '10000011L', 'Calle Bravo Murillo 200, 2ºA', '28011', 'GETAFE'),
+(20, '10000012M', 'Calle Atocha 40, Bajo B', '28012', 'ALCORCON'),
+(21, '10000013N', 'Calle Embajadores 75, 5ºD', '28013', 'LEGANES'),
+(22, '10000014O', 'Calle Toledo 60, 3ºC', '28014', 'MOSTOLES'),
+(23, '10000014O', 'Calle Segovia 14, 1ºB', '28005', 'MADRID'),
+(24, '10000015P', 'Paseo del Prado 10, 6ºA', '28015', 'MADRID'),
+(25, '10000016Q', 'Calle Hortaleza 90, 4ºB', '28016', 'GETAFE'),
+(26, '10000017R', 'Calle Montera 35, 2ºD', '28017', 'ALCORCON'),
+(27, '10000018S', 'Calle Arenal 20, 1ºC', '28018', 'LEGANES'),
+(28, '10000019T', 'Calle Preciados 8, 3ºA', '28019', 'MOSTOLES'),
+(29, '10000020U', 'Gran Vía 32, 5ºB', '28020', 'MADRID'),
+(30, '10000020U', 'Calle Bailén 15, 2ºA', '28013', 'MADRID'),
+(31, '10000021V', 'Calle Mayor 50, 4ºC', '28021', 'GETAFE'),
+(32, '10000022W', 'Avenida Complutense 10, 1ºD', '28022', 'ALCORCON'),
+(33, '10000023A', 'Calle Doctor Esquerdo 40, 6ºA', '28023', 'LEGANES'),
+(34, '10000024B', 'Calle O Donnell 25, 3ºB', '28024', 'MOSTOLES'),
+(35, '10000025C', 'Calle Narváez 60, 2ºC', '28025', 'MADRID'),
+(36, '10000026D', 'Calle Ibiza 15, 5ºD', '28026', 'GETAFE'),
+(37, '10000027E', 'Calle Menéndez Pelayo 70, 4ºA', '28027', 'ALCORCON'),
+(38, '10000028F', 'Calle Conde de Peñalver 50, 1ºB', '28028', 'LEGANES'),
+(39, '10000029G', 'Calle Jorge Juan 80, 7ºC', '28029', 'MOSTOLES'),
+(40, '10000030H', 'Calle Hermosilla 95, 3ºD', '28030', 'MADRID');
 
 -- --------------------------------------------------------
 
@@ -4012,7 +4109,8 @@ ALTER TABLE `ANIMALES`
   ADD KEY `idx_anim_sexo` (`SEXO`),
   ADD KEY `idx_anim_licencia` (`Nº_LICENCIA_ANIMALES_PELIGROSOS`),
   ADD KEY `idx_anim_especie` (`ESPECIE`(50)),
-  ADD KEY `idx_anim_anio` (`AÑO_DE_NACIMIENTO`(4));
+  ADD KEY `idx_anim_anio` (`AÑO_DE_NACIMIENTO`(4)),
+  ADD KEY `idx_anim_domicilio` (`ID_DOMICILIO`);
 
 --
 -- Indexes for table `ANIMALES_PELIGROSOS`
@@ -4053,6 +4151,12 @@ ALTER TABLE `HISTORICO_MASCOTAS`
   ADD KEY `idx_hist_estado` (`ID_ESTADO`),
   ADD KEY `idx_hist_propietario` (`DNI_PROPIETARIO`),
   ADD KEY `idx_hist_fecha` (`FECHA`);
+
+--
+-- Indexes for table `INCIDENCIAS`
+--
+ALTER TABLE `INCIDENCIAS`
+  ADD PRIMARY KEY (`ID`);
 
 --
 -- Indexes for table `LICENCIAS`
@@ -4117,6 +4221,18 @@ ALTER TABLE `BAJA_ANIMAL`
   MODIFY `ID_BAJA` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=512;
 
 --
+-- AUTO_INCREMENT for table `INCIDENCIAS`
+--
+ALTER TABLE `INCIDENCIAS`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT for table `PROPIETARIO_DIRECCION`
+--
+ALTER TABLE `PROPIETARIO_DIRECCION`
+  MODIFY `CODIGO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -4138,7 +4254,8 @@ ALTER TABLE `ALTA_ANIMAL`
 ALTER TABLE `ANIMALES`
   ADD CONSTRAINT `fk_animales_licencia` FOREIGN KEY (`Nº_LICENCIA_ANIMALES_PELIGROSOS`) REFERENCES `LICENCIAS` (`N_LICENCIA_ANIMALES_PELIGROSOS`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_animales_propietario` FOREIGN KEY (`DNI_PROPIETARIO`) REFERENCES `PROPIETARIOS` (`DNI`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_animales_sexo` FOREIGN KEY (`SEXO`) REFERENCES `SEXO` (`SEXO`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_animales_sexo` FOREIGN KEY (`SEXO`) REFERENCES `SEXO` (`SEXO`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_animales_domicilio` FOREIGN KEY (`ID_DOMICILIO`) REFERENCES `PROPIETARIO_DIRECCION` (`CODIGO`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `ANIMALES_PELIGROSOS`

@@ -46,17 +46,7 @@
  maxlength="15"
  inputmode="tel"
  autocomplete="tel"
- /></div></div></div></div><div class="bloque"><div class="bloque-titulo"><h3>Domicilio</h3></div><div class="bloque-body"><div class="form-grid"><div class="form-group span2"><label>Domicilio</label><input
- type="text"
- name="DOMICILIO"
- placeholder="Calle Mayor, 1"
- /></div><div class="form-group"><label>Código Postal</label><input
- type="text"
- name="CP"
- placeholder="28001"
- maxlength="10"
- inputmode="numeric"
- /></div><div class="form-group"><label>Municipio</label><input type="text" name="MINICIPIO" placeholder="Madrid" /></div></div></div></div><div class="btn-row"><button type="submit" class="btn btn-primary" id="btn-prop"><div class="spinner" id="sp-prop"></div><span>Registrar propietario</span></button><button
+ /></div></div></div></div><div class="bloque"><div class="bloque-titulo"><h3>Domicilios</h3><button type="button" class="btn btn-secondary" style="margin-left:auto;padding:.25rem .75rem;font-size:.78rem;" onclick="addDomicilioRow()">+ Añadir domicilio</button></div><div class="bloque-body"><div id="domicilios-container"><div class="domicilio-row" data-idx="0"><div class="form-grid" style="align-items:end;"><div class="form-group span2"><label>Domicilio</label><input type="text" class="dom-domicilio" placeholder="Calle Mayor, 1" /></div><div class="form-group"><label>C.P.</label><input type="text" class="dom-cp" placeholder="28001" maxlength="10" inputmode="numeric" /></div><div class="form-group"><label>Municipio</label><input type="text" class="dom-municipio" placeholder="Madrid" /></div></div></div></div><p style="font-size:.75rem;color:var(--gris3);margin-top:.5rem;">Cada domicilio admite un máximo de 5 animales censados.</p></div></div><div class="btn-row"><button type="submit" class="btn btn-primary" id="btn-prop"><div class="spinner" id="sp-prop"></div><span>Registrar propietario</span></button><button
  type="button"
  class="btn btn-secondary"
  onclick="resetForm('form-prop', 'alert-prop')"

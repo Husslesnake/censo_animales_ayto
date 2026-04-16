@@ -90,16 +90,15 @@
       async function buscarPropietarioAnim(dni) {
         if (!dni || dni.length < 8) return;
         const card = document.getElementById("anim-prop-card");
+        const sel = document.getElementById("sel-domicilio-anim");
         try {
-          const json = await (
-            await fetch(
-              API +
-                "/propietarios/" +
-                encodeURIComponent(dni.trim().toUpperCase()),
-            )
-          ).json();
-          if (json.ok && json.datos) {
-            const p = json.datos;
+          const dniNorm = encodeURIComponent(dni.trim().toUpperCase());
+          const [jsonProp, jsonDirs] = await Promise.all([
+            fetch(API + "/propietarios/" + dniNorm).then(r => r.json()),
+            fetch(API + "/propietarios/" + dniNorm + "/direcciones").then(r => r.json()),
+          ]);
+          if (jsonProp.ok && jsonProp.datos) {
+            const p = jsonProp.datos;
             const nombre = [p.NOMBRE, p.PRIMER_APELLIDO, p.SEGUNDO_APELLIDO]
               .filter(Boolean)
               .join(" ");
@@ -108,6 +107,27 @@
           } else {
             card.style.display = "none";
           }
+          // Poblar select de domicilios (excluir los que ya tienen 5 animales)
+          if (sel) {
+            sel.innerHTML = '<option value="">— Seleccionar domicilio —</option>';
+            if (jsonDirs.ok && jsonDirs.direcciones) {
+              const disponibles = jsonDirs.direcciones.filter(d => (d.NUM_ANIMALES || 0) < 5);
+              if (disponibles.length === 0) {
+                sel.innerHTML = '<option value="">— Sin domicilios disponibles —</option>';
+              } else {
+                disponibles.forEach(d => {
+                  const txt = [d.DOMICILIO, d.CP, d.MINICIPIO].filter(Boolean).join(", ");
+                  const n = d.NUM_ANIMALES || 0;
+                  const opt = document.createElement("option");
+                  opt.value = d.CODIGO;
+                  opt.textContent = txt + ` (${n}/5 animales)`;
+                  sel.appendChild(opt);
+                });
+              }
+            } else {
+              sel.innerHTML = '<option value="">— Sin domicilios registrados —</option>';
+            }
+          }
         } catch (e) {
           logError(
             e?.message || "Error al buscar propietario",
@@ -115,6 +135,7 @@
             e?.stack,
           );
           card.style.display = "none";
+          if (sel) sel.innerHTML = '<option value="">— Error al cargar domicilios —</option>';
         }
       }
       function otroAnimalMismoPropietario() {
@@ -158,6 +179,8 @@
           el.style.color = "";
           el.style.fontWeight = "";
         }
+        var sel = document.getElementById("sel-domicilio-anim");
+        if (sel) sel.innerHTML = '<option value="">— Introduzca DNI del propietario —</option>';
       }
       async function cargarAnimales() {
         const tbody = document.getElementById("tbody-anim");
