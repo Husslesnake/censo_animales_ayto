@@ -1240,3 +1240,65 @@ ReferenceError: cargarIncidencias is not defined
 [2026-04-16 12:01:03] INFO     >>> GET /api/sexos
 [2026-04-16 12:01:06] INFO     >>> GET /api/sexos
 [2026-04-16 12:01:33] INFO     >>> GET /api/sexos
+[2026-04-16 12:02:03] INFO     >>> GET /api/sexos
+[2026-04-16 12:02:06] INFO     >>> GET /api/sexos
+[2026-04-16 12:02:25] INFO     >>> GET /api/animales
+[2026-04-16 12:02:32] INFO     >>> GET /api/sexos
+[2026-04-16 12:02:38] INFO     >>> GET /api/propietarios/55555555A
+[2026-04-16 12:03:03] INFO     >>> GET /api/sexos
+[2026-04-16 12:03:23] INFO     ================================================================================
+[2026-04-16 12:03:23] INFO     APPLICATION STARTUP - Timestamp: 2026-04-16T12:03:23.046461
+[2026-04-16 12:03:23] INFO     ================================================================================
+[2026-04-16 12:03:23] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-16 12:03:23] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-16 12:03:23] DEBUG    Log file log_2026-04-13.txt is within 30-day retention: 2026-04-13T12:26:32.968979
+[2026-04-16 12:03:23] DEBUG    Log file log_2026-04-14.txt is within 30-day retention: 2026-04-14T12:28:43.556528
+[2026-04-16 12:03:23] DEBUG    Log file log_2026-04-15.txt is within 30-day retention: 2026-04-15T22:06:49.956053
+[2026-04-16 12:03:23] INFO     AUTH: 5 token(s) de larga duración restaurados desde auth.json
+[2026-04-16 12:03:23] INFO     DB: tabla INCIDENCIAS lista
+[2026-04-16 12:03:33] INFO     >>> GET /api/sexos
+[2026-04-16 12:03:57] INFO     >>> GET /api/auth/verificar
+[2026-04-16 12:03:57] INFO     >>> GET /api/sexos
+[2026-04-16 12:03:57] INFO     >>> GET /api/motivos_baja
+[2026-04-16 12:03:57] INFO     >>> GET /api/alertas
+[2026-04-16 12:04:05] INFO     >>> GET /api/propietarios/55555555A
+[2026-04-16 12:04:06] INFO     >>> GET /api/sexos
+[2026-04-16 12:04:16] INFO     >>> GET /api/propietarios
+[2026-04-16 12:04:21] INFO     >>> GET /api/propietarios
+[2026-04-16 12:04:23] INFO     >>> GET /api/propietarios
+[2026-04-16 12:04:27] INFO     >>> GET /api/sexos
+[2026-04-16 12:04:29] INFO     >>> GET /api/ficha_propietario/99999999X
+[2026-04-16 12:04:57] INFO     >>> GET /api/sexos
+[2026-04-16 12:05:06] INFO     >>> GET /api/sexos
+[2026-04-16 12:05:27] INFO     >>> GET /api/sexos
+[2026-04-16 12:05:57] INFO     >>> GET /api/sexos
+[2026-04-16 12:06:06] INFO     >>> GET /api/sexos
+[2026-04-16 12:06:27] INFO     >>> GET /api/sexos
+[2026-04-16 12:06:57] INFO     >>> GET /api/sexos
+[2026-04-16 12:07:06] INFO     >>> GET /api/sexos
+[2026-04-16 12:08:06] INFO     >>> GET /api/sexos
+[2026-04-16 12:08:06] INFO     >>> GET /api/sexos
+[2026-04-16 12:09:06] INFO     >>> GET /api/sexos
+[2026-04-16 12:09:06] INFO     >>> GET /api/sexos
+[2026-04-16 12:09:42] INFO     ================================================================================
+[2026-04-16 12:09:42] INFO     APPLICATION STARTUP - Timestamp: 2026-04-16T12:09:42.554289
+[2026-04-16 12:09:42] INFO     ================================================================================
+[2026-04-16 12:09:42] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-16 12:09:42] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-16 12:09:42] DEBUG    Log file log_2026-04-13.txt is within 30-day retention: 2026-04-13T12:26:32.968979
+[2026-04-16 12:09:42] DEBUG    Log file log_2026-04-14.txt is within 30-day retention: 2026-04-14T12:28:43.556528
+[2026-04-16 12:09:42] DEBUG    Log file log_2026-04-15.txt is within 30-day retention: 2026-04-15T22:06:49.956053
+[2026-04-16 12:09:42] INFO     AUTH: 5 token(s) de larga duración restaurados desde auth.json
+[2026-04-16 12:09:42] INFO     DB: tabla INCIDENCIAS lista
+[2026-04-16 12:10:06] INFO     >>> GET /api/sexos
+[2026-04-16 12:10:06] INFO     >>> GET /api/sexos
+[2026-04-16 12:11:22] INFO     ================================================================================
+[2026-04-16 12:11:22] INFO     APPLICATION STARTUP - Timestamp: 2026-04-16T12:11:22.294484
+[2026-04-16 12:11:22] INFO     ================================================================================
+[2026-04-16 12:11:22] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-16 12:11:22] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-16 12:11:22] DEBUG    Log file log_2026-04-13.txt is within 30-day retention: 2026-04-13T12:26:32.968979
+[2026-04-16 12:11:22] DEBUG    Log file log_2026-04-14.txt is within 30-day retention: 2026-04-14T12:28:43.556528
+[2026-04-16 12:11:22] DEBUG    Log file log_2026-04-15.txt is within 30-day retention: 2026-04-15T22:06:49.956053
+[2026-04-16 12:11:22] INFO     AUTH: 5 token(s) de larga duración restaurados desde auth.json
+[2026-04-16 12:11:22] INFO     DB: tabla INCIDENCIAS lista
