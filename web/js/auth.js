@@ -194,9 +194,11 @@
       function abrirModalCambiarPass() {
         var rol = sesion && sesion.rol;
         var esAdmin = rol === "admin";
-        var minLen = esAdmin ? 6 : 4;
+        var minLen = (esAdmin || rol === "policia") ? 6 : 4;
         document.getElementById("cambiar-pass-title").textContent =
-          esAdmin ? "Cambiar contraseña de administrador" : "Cambiar contraseña de empleado";
+          esAdmin ? "Cambiar contraseña de administrador"
+          : rol === "policia" ? "Cambiar contraseña de agente"
+          : "Cambiar contraseña de empleado";
         document.getElementById("cambiar-nueva-label").textContent =
           "Nueva contraseña (mín. " + minLen + " caracteres)";
         document.getElementById("modal-cambiar-pass").style.display = "flex";
@@ -334,13 +336,13 @@
         var labels = { admin: "Administrador", empleado: "Empleado", policia: "Policía" };
         lbl.textContent = labels[rol] || rol;
         document.getElementById("header-session").style.display = "";
+        // Police: skip all non-police UI setup
+        if (rol === "policia") return;
         var s = document.getElementById("inicio-saludo");
         var d = document.getElementById("inicio-desc");
         if (s) s.textContent = rol === "admin" ? "Panel de Administrador"
-                              : rol === "policia" ? "Panel de Policía"
                               : "Panel de Empleado";
         if (d) d.textContent = rol === "admin" ? "Acceso completo al censo municipal"
-                              : rol === "policia" ? "Consulta de animales y registro de incidencias"
                               : "Acceso restringido · Búsqueda por DNI requerida";
         if (rol !== "admin") {
           var empty =
@@ -405,8 +407,14 @@
               sesion = { rol: data.rol, token: saved.token };
               aplicarRol(data.rol);
               document.getElementById("login-screen").classList.add("oculto");
-              var btnInicio = document.getElementById("tab-inicio");
-              if (btnInicio) mostrarPagina("inicio", btnInicio);
+              if (data.rol === "policia") {
+                var btnPol = document.getElementById("tab-policia");
+                if (btnPol) mostrarPagina("policia", btnPol);
+                cargarIncidencias();
+              } else {
+                var btnInicio = document.getElementById("tab-inicio");
+                if (btnInicio) mostrarPagina("inicio", btnInicio);
+              }
               return;
             }
           } catch(e) {

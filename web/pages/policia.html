@@ -10,7 +10,7 @@
     <div class="bloque-titulo"><h3>Buscar animal por chip</h3></div>
     <div class="bloque-body">
       <div style="display:flex;gap:0.7rem;align-items:center;flex-wrap:wrap;">
-        <input type="text" id="pol-chip-input" class="login-input" style="max-width:260px;margin:0;" placeholder="N.º de chip del animal"
+        <input type="text" id="pol-chip-input" class="login-input" style="max-width:260px;margin:0;" placeholder="N.º de chip del animal" inputmode="numeric"
           onkeydown="if(event.key==='Enter')buscarChipPolicia();" />
         <button class="btn btn-enviar" onclick="buscarChipPolicia()">Buscar</button>
       </div>
@@ -66,12 +66,13 @@
     <div class="bloque-body">
       <div class="table-wrap" id="tabla-wrap-incidencias">
         <table>
-          <thead><tr><th>ID</th><th>Chip</th><th>Tipo</th><th>Descripción</th><th>Fecha</th></tr></thead>
+          <thead><tr><th>ID</th><th>Chip</th><th>Tipo</th><th>Descripción</th><th>Fecha</th><th>Agente</th></tr></thead>
           <tbody id="tbody-incidencias">
-            <tr class="empty-row"><td colspan="5">No hay incidencias registradas.</td></tr>
+            <tr class="empty-row"><td colspan="6">No hay incidencias registradas.</td></tr>
           </tbody>
         </table>
       </div>
+      <div class="paginacion" id="pag-incidencias" style="margin-top:0.75rem;"></div>
     </div>
   </div>
 </div>

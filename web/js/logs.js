@@ -118,14 +118,26 @@
             var estadoTag = a.activo
               ? '<span class="tag" style="background:rgba(30,107,60,0.1);color:var(--verde);border:1px solid rgba(30,107,60,0.3);">Activo</span>'
               : '<span class="tag" style="background:rgba(123,45,64,0.1);color:var(--rojo);border:1px solid rgba(123,45,64,0.3);">Desactivado</span>';
-            var creado = a.creado ? a.creado.replace("T", " ").slice(0, 16) : "—";
+            // Último acceso + aviso de inactividad próxima (>150 días = 5 meses)
+            var ultimoAccesoStr = "—";
+            var ultimoAccesoStyle = "";
+            if (a.ultimo_acceso) {
+              var diasInactivo = Math.floor((Date.now() - new Date(a.ultimo_acceso)) / 86400000);
+              ultimoAccesoStr = a.ultimo_acceso.replace("T", " ").slice(0, 16);
+              if (diasInactivo > 150) {
+                ultimoAccesoStyle = "color:var(--rojo);font-weight:600;";
+                ultimoAccesoStr += ' <span title="Próximo a bloqueo por inactividad">⚠</span>';
+              }
+            } else if (a.activo) {
+              ultimoAccesoStr = '<span style="color:var(--gris3);font-size:0.76rem;">Sin accesos aún</span>';
+            }
             var toggleLabel = a.activo ? "Desactivar" : "Activar";
             var toggleColor = a.activo ? "color:var(--rojo);" : "color:var(--verde);";
             return '<tr>' +
               '<td><span class="tag tag-id">' + a.username + '</span></td>' +
               '<td>' + a.nombre + '</td>' +
               '<td>' + estadoTag + '</td>' +
-              '<td style="font-size:0.78rem;color:var(--gris3);">' + creado + '</td>' +
+              '<td style="font-size:0.78rem;' + ultimoAccesoStyle + '">' + ultimoAccesoStr + '</td>' +
               '<td style="white-space:nowrap;display:flex;gap:0.4rem;flex-wrap:wrap;">' +
                 '<button class="btn btn-secondary" style="font-size:0.75rem;padding:0.15rem 0.5rem;" ' +
                   'onclick="abrirModalResetPolicia(\'' + a.username + '\',\'' + a.nombre.replace(/'/g,"\\'" ) + '\')">' +

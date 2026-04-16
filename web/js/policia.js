@@ -1,4 +1,6 @@
       // ── Panel de Policía ───────────────────────────────────────────────────────
+      var _incidencias = { datos: [], pagina: 1, porPagina: 2 };
+
       async function buscarChipPolicia() {
         var chip = document.getElementById("pol-chip-input").value.trim();
         var errEl = document.getElementById("pol-chip-error");
@@ -88,17 +90,73 @@
         try {
           var res = await apiFetch("/api/incidencias");
           var data = await res.json();
-          var tbody = document.getElementById("tbody-incidencias");
           if (!data.ok || !data.datos || data.datos.length === 0) {
-            tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No hay incidencias registradas.</td></tr>';
+            _incidencias.datos = [];
+            _incidencias.pagina = 1;
+            var tbody = document.getElementById("tbody-incidencias");
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="6">No hay incidencias registradas.</td></tr>';
+            var pagEl = document.getElementById("pag-incidencias");
+            if (pagEl) pagEl.innerHTML = "";
             return;
           }
-          tbody.innerHTML = data.datos.map(function(inc) {
-            var fecha = inc.FECHA ? inc.FECHA.replace("T", " ").slice(0,16) : "—";
-            return "<tr><td>" + (inc.ID||"") + "</td><td>" + (inc.N_CHIP||"") +
-              "</td><td>" + (inc.TIPO||"") + "</td><td style='max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'>" +
-              (inc.DESCRIPCION||"—") + "</td><td>" + fecha + "</td></tr>";
-          }).join("");
+          _incidencias.datos = data.datos;
+          _incidencias.pagina = 1;
+          renderIncidenciasPagina(1);
         } catch(e) { logError(e.message, "cargarIncidencias", e.stack); }
+      }
+
+      function renderIncidenciasPagina(pagina) {
+        var d = _incidencias;
+        var total = d.datos.length;
+        var npags = Math.ceil(total / d.porPagina);
+        pagina = Math.max(1, Math.min(pagina, npags));
+        d.pagina = pagina;
+
+        var inicio = (pagina - 1) * d.porPagina;
+        var trozo = d.datos.slice(inicio, inicio + d.porPagina);
+        var tbody = document.getElementById("tbody-incidencias");
+
+        tbody.innerHTML = trozo.map(function(inc) {
+          var fecha = inc.FECHA ? inc.FECHA.replace("T", " ").slice(0,16) : "—";
+          return '<tr>' +
+            '<td data-label="ID">' + (inc.ID||"") + '</td>' +
+            '<td data-label="Chip">' + (inc.N_CHIP||"") + '</td>' +
+            '<td data-label="Tipo">' + (inc.TIPO||"") + '</td>' +
+            '<td data-label="Descripción">' + (inc.DESCRIPCION||"—") + '</td>' +
+            '<td data-label="Fecha">' + fecha + '</td>' +
+            '<td data-label="Agente">' + (inc.AGENTE||"—") + '</td>' +
+            '</tr>';
+        }).join("");
+
+        // Render pagination controls
+        var pagEl = document.getElementById("pag-incidencias");
+        if (!pagEl) return;
+        if (npags <= 1) { pagEl.innerHTML = ""; return; }
+
+        var html = '<button onclick="renderIncidenciasPagina(' + (pagina - 1) + ')" ' +
+          (pagina === 1 ? 'disabled' : '') + '>‹</button>';
+        // Windowed page buttons (max 5 visible)
+        var ventana = [];
+        if (npags <= 7) {
+          for (var i = 1; i <= npags; i++) ventana.push(i);
+        } else {
+          ventana.push(1);
+          if (pagina > 3) ventana.push("…");
+          for (var i = Math.max(2, pagina - 1); i <= Math.min(npags - 1, pagina + 1); i++) ventana.push(i);
+          if (pagina < npags - 2) ventana.push("…");
+          ventana.push(npags);
+        }
+        ventana.forEach(function(p) {
+          if (p === "…") {
+            html += '<button disabled>…</button>';
+          } else {
+            html += '<button class="' + (p === pagina ? 'activa' : '') +
+              '" onclick="renderIncidenciasPagina(' + p + ')">' + p + '</button>';
+          }
+        });
+        html += '<button onclick="renderIncidenciasPagina(' + (pagina + 1) + ')" ' +
+          (pagina === npags ? 'disabled' : '') + '>›</button>';
+        html += '<span class="pag-info">pág. ' + pagina + ' / ' + npags + ' · ' + total + ' incidencias</span>';
+        pagEl.innerHTML = html;
       }
       // ── Fin panel policía ──────────────────────────────────────────────────────

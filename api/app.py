@@ -215,6 +215,20 @@ _TOKENS: dict = {}
 _TOKEN_TTL_HOURS = 12
 _TOKEN_TTL_RECORDAR_DIAS = 365
 
+# Inactividad: usuarios bloqueados si no han accedido en este número de días
+_INACTIVIDAD_DIAS = 180
+
+
+def _check_inactividad(ultimo_acceso_iso: str | None) -> bool:
+    """Devuelve True si el usuario lleva más de _INACTIVIDAD_DIAS sin acceder."""
+    if not ultimo_acceso_iso:
+        return False  # Cuenta nueva sin acceso previo → no bloquear
+    try:
+        ultimo = datetime.fromisoformat(ultimo_acceso_iso)
+        return (datetime.now() - ultimo).days > _INACTIVIDAD_DIAS
+    except Exception:
+        return False
+
 
 def _cargar_tokens_persistidos():
     """Al arrancar, carga en _TOKENS los tokens de larga duración guardados en auth.json."""
@@ -358,7 +372,8 @@ def _crear_token(rol: str, recordar: bool = False, **extra) -> str:
 
 def _validar_token(token: str) -> dict | None:
     """Devuelve el payload del token si es válido y no ha expirado.
-    Para tokens de policía, verifica además que la cuenta siga activa en auth.json."""
+    Para tokens de policía y empleado, verifica además que la cuenta/dispositivo
+    siga activo en auth.json (revocación en sesión activa)."""
     payload = _TOKENS.get(token)
     if not payload:
         return None
@@ -372,6 +387,15 @@ def _validar_token(token: str) -> dict | None:
         if username:
             user = _cargar_auth().get("policia_usuarios", {}).get(username, {})
             if not user.get("activo", False):
+                if payload.get("persistido"):
+                    _eliminar_token_persistido(token)
+                del _TOKENS[token]
+                return None
+    if payload["rol"] == "empleado":
+        device_id = payload.get("device_id")
+        if device_id:
+            dev = _cargar_auth().get("devices", {}).get(device_id, {})
+            if not dev.get("activo", True):
                 if payload.get("persistido"):
                     _eliminar_token_persistido(token)
                 del _TOKENS[token]
@@ -550,10 +574,21 @@ def auth_login():
         if not user.get("activo", False):
             _log_ip(ip, "policia", "login", False)
             return jsonify({"ok": False, "error": "Cuenta desactivada. Contacte con el administrador."})
+        if _check_inactividad(user.get("ultimo_acceso")):
+            # Bloquear automáticamente y persistir el cambio
+            auth["policia_usuarios"][username]["activo"] = False
+            _guardar_auth(auth)
+            _log_ip(ip, "policia", "login_inactividad", False)
+            logger.warning("AUTH: Cuenta policía bloqueada por inactividad — %s", username)
+            _log_auditoria("bloqueo_inactividad", {"username": username, "motivo": "sin_acceso_6_meses"})
+            return jsonify({"ok": False, "error": "Cuenta bloqueada por inactividad. Contacte con el administrador."})
         if _hash_password(password, user["salt"]) != user["hash"]:
             logger.warning("AUTH: Login policía fallido — %s desde %s", username, ip)
             _log_ip(ip, "policia", "login", False)
             return jsonify({"ok": False, "error": "Usuario o contraseña incorrectos."})
+        # Login correcto → actualizar último acceso
+        auth["policia_usuarios"][username]["ultimo_acceso"] = datetime.now().isoformat()
+        _guardar_auth(auth)
         token = _crear_token("policia", recordar=recordar, username=username)
         logger.info("AUTH: Login policía exitoso — %s desde %s", username, ip)
         _log_ip(ip, "policia", "login", True)
@@ -585,7 +620,26 @@ def auth_login():
         _log_ip(ip, rol, "login", False)
         return jsonify({"ok": False, "error": "Contraseña incorrecta."})
 
-    token = _crear_token(rol, recordar=recordar)
+    # ── Comprobaciones post-contraseña para empleados (admin no caduca ni se bloquea) ──
+    if rol == "empleado":
+        # 1. Bloqueo manual tiene prioridad sobre cualquier otra razón
+        if not entrada.get("activo", True):
+            _log_ip(ip, rol, "login", False)
+            return jsonify({"ok": False, "error": "Cuenta desactivada. Contacte con el administrador."})
+        # 2. Inactividad → bloquear automáticamente
+        if _check_inactividad(entrada.get("ultimo_acceso")):
+            auth["devices"][device_id]["activo"] = False
+            _guardar_auth(auth)
+            _log_ip(ip, rol, "login_inactividad", False)
+            logger.warning("AUTH: Dispositivo empleado bloqueado por inactividad — %s", device_id[:12])
+            _log_auditoria("bloqueo_inactividad", {"device_id": device_id[:12], "motivo": "sin_acceso_6_meses"})
+            return jsonify({"ok": False, "error": "Acceso bloqueado por inactividad. Contacte con el administrador."})
+        # 3. Login correcto → actualizar último acceso
+        auth["devices"][device_id]["ultimo_acceso"] = datetime.now().isoformat()
+        _guardar_auth(auth)
+
+    token = _crear_token(rol, recordar=recordar,
+                         **({"device_id": device_id} if rol == "empleado" else {}))
     logger.info("AUTH: Login exitoso desde %s (rol=%s)", ip, rol)
     _log_ip(ip, rol, "login", True)
     return jsonify({"ok": True, "token": token, "rol": rol, "recordar": recordar})
@@ -650,7 +704,8 @@ def policia_usuarios_listar():
     usuarios = auth.get("policia_usuarios", {})
     datos = [
         {"username": u, "nombre": d.get("nombre", u),
-         "activo": d.get("activo", False), "creado": d.get("creado", "")}
+         "activo": d.get("activo", False), "creado": d.get("creado", ""),
+         "ultimo_acceso": d.get("ultimo_acceso", "")}
         for u, d in usuarios.items()
     ]
     return jsonify({"ok": True, "datos": datos})
@@ -2484,9 +2539,16 @@ def _init_incidencias():
                 TIPO       VARCHAR(100) NOT NULL,
                 DESCRIPCION TEXT,
                 FECHA      DATETIME     NOT NULL,
-                ROL_AGENTE VARCHAR(20)  DEFAULT 'admin'
+                ROL_AGENTE VARCHAR(20)  DEFAULT 'admin',
+                AGENTE     VARCHAR(100) DEFAULT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)
+        # Añadir columna AGENTE si la tabla ya existía sin ella
+        try:
+            c.execute("ALTER TABLE INCIDENCIAS ADD COLUMN AGENTE VARCHAR(100) DEFAULT NULL")
+            conn.commit()
+        except Exception:
+            pass  # columna ya existe
         conn.commit()
         conn.close()
         logger.info("DB: tabla INCIDENCIAS lista")
@@ -2555,9 +2617,17 @@ def registrar_incidencia():
         if c.fetchone()[0] == 0:
             conn.close()
             return jsonify({"ok": False, "error": "No existe ningún animal con ese chip."})
+        # Determinar nombre del agente
+        agente_nombre = None
+        if payload["rol"] == "policia":
+            username = payload.get("username", "")
+            pol_user = _cargar_auth().get("policia_usuarios", {}).get(username, {})
+            agente_nombre = pol_user.get("nombre", username)
+        elif payload["rol"] == "admin":
+            agente_nombre = "Administrador"
         c.execute(
-            "INSERT INTO INCIDENCIAS (N_CHIP, TIPO, DESCRIPCION, FECHA, ROL_AGENTE) VALUES (%s,%s,%s,%s,%s)",
-            (chip, tipo, descripcion, datetime.now(), payload["rol"])
+            "INSERT INTO INCIDENCIAS (N_CHIP, TIPO, DESCRIPCION, FECHA, ROL_AGENTE, AGENTE) VALUES (%s,%s,%s,%s,%s,%s)",
+            (chip, tipo, descripcion, datetime.now(), payload["rol"], agente_nombre)
         )
         conn.commit()
         inc_id = c.lastrowid
@@ -2593,6 +2663,46 @@ def listar_incidencias():
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
+def _bloquear_usuarios_inactivos():
+    """Tarea programada: desactiva cuentas que lleven más de 6 meses sin acceder.
+    Aplica a policía y empleados (dispositivos). No afecta al admin.
+    """
+    try:
+        auth    = _cargar_auth()
+        cambios = 0
+
+        # Policía
+        for username, user in auth.get("policia_usuarios", {}).items():
+            if user.get("activo", False) and _check_inactividad(user.get("ultimo_acceso")):
+                auth["policia_usuarios"][username]["activo"] = False
+                cambios += 1
+                logger.info("SCHEDULER: cuenta policía bloqueada por inactividad — %s", username)
+                _log_auditoria("bloqueo_inactividad",
+                               {"username": username, "motivo": "sin_acceso_6_meses"})
+                # Revocar tokens activos en memoria
+                to_revoke = [t for t, p in list(_TOKENS.items())
+                             if p.get("rol") == "policia" and p.get("username") == username]
+                for t in to_revoke:
+                    if _TOKENS[t].get("persistido"):
+                        _eliminar_token_persistido(t)
+                    del _TOKENS[t]
+
+        # Empleados (por dispositivo)
+        for device_id, dev in auth.get("devices", {}).items():
+            if dev.get("activo", True) and _check_inactividad(dev.get("ultimo_acceso")):
+                auth["devices"][device_id]["activo"] = False
+                cambios += 1
+                logger.info("SCHEDULER: dispositivo empleado bloqueado por inactividad — %s", device_id[:12])
+                _log_auditoria("bloqueo_inactividad",
+                               {"device_id": device_id[:12], "motivo": "sin_acceso_6_meses"})
+
+        if cambios:
+            _guardar_auth(auth)
+            logger.info("SCHEDULER: %d cuenta(s) bloqueadas por inactividad", cambios)
+    except Exception as e:
+        logger.error("SCHEDULER: error en _bloquear_usuarios_inactivos: %s", e)
+
+
 # ── Arranque ──────────────────────────────────────────────────────────────────
 
 # Inicializar scheduler (tanto para `python app.py` como para Docker)
@@ -2613,6 +2723,14 @@ try:
             hour=2,
             minute=0,
             id="cleanup_logs",
+            replace_existing=True,
+        )
+        scheduler.add_job(
+            _bloquear_usuarios_inactivos,
+            trigger="cron",
+            hour=3,
+            minute=0,
+            id="bloqueo_inactividad",
             replace_existing=True,
         )
         scheduler.start()

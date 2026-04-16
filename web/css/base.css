@@ -243,6 +243,141 @@ body.rol-policia .solo-policia-admin { display: revert; }
 .pol-card dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.7rem; font-size: 0.82rem; }
 .pol-card dt { color: var(--gris4); font-weight: 600; white-space: nowrap; }
 .pol-card dd { margin: 0; color: var(--tinta); }
+
+/* ── Police-only layout: hide everything except police panel ─── */
+body.rol-policia .container,
+body.rol-policia footer,
+body.rol-policia #busq-global-wrap,
+body.rol-policia #api-status,
+body.rol-policia .header-nav,
+body.rol-policia .nav-hamburger,
+body.rol-policia .nav-overlay,
+body.rol-policia #page-policia-admin {
+  display: none !important;
+}
+/* Slim police header */
+body.rol-policia header {
+  min-height: 48px;
+  flex-wrap: nowrap;
+  border-bottom-width: 3px;
+}
+body.rol-policia .header-marca {
+  flex: 1;
+  padding: 0.4rem 0.8rem;
+  border-right: none;
+}
+body.rol-policia .marca-texto strong {
+  font-size: 0.85rem;
+}
+body.rol-policia .marca-texto small {
+  display: none;
+}
+body.rol-policia .header-session {
+  display: flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-left: 1px solid var(--borde);
+}
+/* Police page: always visible, full-width, no container margin */
+body.rol-policia #page-policia {
+  display: block !important;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0.75rem;
+}
+body.rol-policia #page-policia .section-header {
+  padding: 0.7rem 0;
+  border-bottom: 2px solid var(--rojo);
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+body.rol-policia #page-policia .section-num {
+  display: none;
+}
+/* Center form elements inside police blocks */
+body.rol-policia #page-policia .bloque-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+body.rol-policia #page-policia .bloque-body > * {
+  width: 100%;
+  max-width: 480px;
+}
+body.rol-policia #page-policia .bloque-body > .pol-ficha,
+body.rol-policia #page-policia .bloque-body > .table-wrap {
+  max-width: 100%;
+}
+body.rol-policia #page-policia .form-grid {
+  grid-template-columns: 1fr;
+}
+body.rol-policia #page-policia .bloque-titulo {
+  text-align: center;
+}
+/* Chip search: stack input + button vertically, full width */
+body.rol-policia #page-policia #pol-chip-input {
+  max-width: 100% !important;
+}
+/* Bigger touch targets for police mobile */
+body.rol-policia #page-policia input,
+body.rol-policia #page-policia select,
+body.rol-policia #page-policia textarea {
+  font-size: 1rem;
+  padding: 0.75rem 0.9rem;
+  min-height: 48px;
+}
+body.rol-policia #page-policia .btn,
+body.rol-policia #page-policia .btn-enviar {
+  min-height: 48px;
+  font-size: 0.95rem;
+  width: 100%;
+}
+body.rol-policia #page-policia .bloque {
+  margin-bottom: 1rem;
+}
+body.rol-policia #page-policia .bloque-body {
+  padding: 0.85rem;
+}
+body.rol-policia #page-policia .bloque-titulo h3 {
+  font-size: 0.82rem;
+}
+/* Police result cards stack on mobile */
+body.rol-policia .pol-ficha {
+  grid-template-columns: 1fr;
+}
+/* Incidence table: card layout on police phones */
+body.rol-policia #page-policia table thead { display: none; }
+body.rol-policia #page-policia table tr {
+  display: block;
+  border: 1px solid var(--borde);
+  background: var(--blanco);
+  margin-bottom: 0.6rem;
+  padding: 0.6rem 0.8rem;
+}
+body.rol-policia #page-policia table td {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.3rem 0;
+  border: none;
+  border-bottom: 1px solid var(--gris1);
+  font-size: 0.88rem;
+  gap: 0.5rem;
+}
+body.rol-policia #page-policia table td:last-child { border-bottom: none; }
+body.rol-policia #page-policia table td::before {
+  content: attr(data-label);
+  font-weight: 700;
+  font-size: 0.76rem;
+  color: var(--gris3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+body.rol-policia #page-policia .empty-row td { display: block; text-align: center; }
+body.rol-policia #page-policia .empty-row td::before { display: none; }
+
 .btn-logout {
   background: none;
   border: 1.5px solid var(--gris2);
