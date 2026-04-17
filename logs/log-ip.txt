@@ -45,3 +45,4 @@
 [2026-04-16 08:37:41] OK   ip=172.19.0.1           rol=empleado   evento=login
 [2026-04-16 08:38:26] OK   ip=172.19.0.1           rol=policia    evento=login
 [2026-04-16 11:06:11] OK   ip=172.19.0.1           rol=policia    evento=login
+[2026-04-17 06:42:53] OK   ip=172.19.0.1           rol=empleado   evento=login

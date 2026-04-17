@@ -256,12 +256,46 @@
       }
 
       function togglePoliciaLogin() {
-        var form = document.getElementById("policia-login-form");
-        var visible = form.style.display !== "none";
-        form.style.display = visible ? "none" : "block";
-        document.getElementById("btn-toggle-policia").textContent =
-          visible ? "Acceso de Policía Municipal" : "Ocultar acceso policial";
-        if (!visible) document.getElementById("pol-login-user").focus();
+        var formPol = document.getElementById("policia-login-form");
+        var formEmp = document.getElementById("empleado-login-form");
+        var badge = document.getElementById("login-rol-badge");
+        var errEmp = document.getElementById("login-error");
+        var errPol = document.getElementById("pol-login-error");
+        var visible = formPol.style.display !== "none";
+        if (visible) {
+          // Volver al login de empleado
+          formPol.style.display = "none";
+          if (formEmp) formEmp.style.display = "";
+          document.getElementById("btn-toggle-policia").textContent =
+            "Acceso de Policía Municipal";
+          if (badge && _loginEstado) {
+            if (_loginEstado.es_admin_ip) {
+              badge.textContent = "Puerto de administración — Administrador";
+              badge.style.borderColor = "var(--rojo)";
+              badge.style.color = "var(--rojo)";
+            } else {
+              badge.textContent = "Acceso de empleado";
+              badge.style.borderColor = "var(--azul)";
+              badge.style.color = "var(--azul)";
+            }
+          }
+          if (errPol) errPol.classList.remove("show");
+          document.getElementById("login-pass").focus();
+        } else {
+          // Cambiar a login de policía (reemplaza al de empleado)
+          if (formEmp) formEmp.style.display = "none";
+          formPol.style.display = "block";
+          document.getElementById("btn-toggle-policia").textContent =
+            "Volver a acceso de empleado";
+          if (badge) {
+            badge.textContent = "Acceso de Policía Municipal";
+            badge.style.borderColor = "var(--azul)";
+            badge.style.color = "var(--azul)";
+            badge.style.display = "block";
+          }
+          if (errEmp) errEmp.classList.remove("show");
+          document.getElementById("pol-login-user").focus();
+        }
       }
 
       async function doLoginPolicia() {

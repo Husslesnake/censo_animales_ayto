@@ -389,7 +389,9 @@
  stroke-width="0.7"
  rx="0.5"
  /></svg
- ></span><h1>Censo Municipal de Animales</h1><p>Ayuntamiento de Navalcarnero · Acceso restringido</p></div><div class="login-body"><div class="login-error" id="login-error">Contraseña incorrecta.</div><div id="login-rol-badge" style="display:none;text-align:center;margin-bottom:1rem;padding:0.45rem 0.8rem;font-size:0.78rem;font-family:'IBM Plex Mono',monospace;letter-spacing:0.04em;border:1px solid var(--borde);color:var(--gris4);">Detectando acceso…</div><label class="login-label" for="login-pass" id="login-pass-label">Contraseña</label><input
+ ></span><h1>Censo Municipal de Animales</h1><p>Ayuntamiento de Navalcarnero · Acceso restringido</p></div><div class="login-body"><div class="login-error" id="login-error">Contraseña incorrecta.</div><div id="login-rol-badge" style="display:none;text-align:center;margin-bottom:1rem;padding:0.45rem 0.8rem;font-size:0.78rem;font-family:'IBM Plex Mono',monospace;letter-spacing:0.04em;border:1px solid var(--borde);color:var(--gris4);">Detectando acceso…</div>
+<div id="empleado-login-form">
+<label class="login-label" for="login-pass" id="login-pass-label">Contraseña</label><input
  class="login-input"
  type="password"
  id="login-pass"
@@ -397,19 +399,20 @@
  autocomplete="current-password"
  onkeydown="if (event.key === 'Enter') doLogin();"
  /><label class="login-recordar" style="margin-bottom:1rem;"><input type="checkbox" id="login-recordar" /><span>Recordar en este equipo</span></label><button class="login-btn" onclick="doLogin()">Entrar</button>
+</div>
+<div id="policia-login-form" style="display:none;">
+  <div id="pol-login-error" class="login-error" style="margin-bottom:0.5rem;"></div>
+  <label class="login-label" for="pol-login-user">Usuario</label>
+  <input class="login-input" type="text" id="pol-login-user" placeholder="Nombre de usuario" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('pol-login-pass').focus();" />
+  <label class="login-label" for="pol-login-pass" style="margin-top:0.5rem;">Contraseña</label>
+  <input class="login-input" type="password" id="pol-login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLoginPolicia();" />
+  <label class="login-recordar" style="margin:0.6rem 0 0.8rem;"><input type="checkbox" id="pol-login-recordar" /><span>Recordar en este equipo</span></label>
+  <button class="login-btn" onclick="doLoginPolicia()">Entrar como policía</button>
+</div>
 <div style="margin-top:1rem;padding-top:0.9rem;border-top:1px solid var(--borde);">
   <button type="button" id="btn-toggle-policia" class="btn btn-secondary" style="width:100%;font-size:0.8rem;" onclick="togglePoliciaLogin()">
     Acceso de Policía Municipal
   </button>
-  <div id="policia-login-form" style="display:none;margin-top:0.9rem;">
-    <div id="pol-login-error" class="login-error" style="margin-bottom:0.5rem;"></div>
-    <label class="login-label" for="pol-login-user">Usuario</label>
-    <input class="login-input" type="text" id="pol-login-user" placeholder="Nombre de usuario" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('pol-login-pass').focus();" />
-    <label class="login-label" for="pol-login-pass" style="margin-top:0.5rem;">Contraseña</label>
-    <input class="login-input" type="password" id="pol-login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLoginPolicia();" />
-    <label class="login-recordar" style="margin:0.6rem 0 0.8rem;"><input type="checkbox" id="pol-login-recordar" /><span>Recordar en este equipo</span></label>
-    <button class="login-btn" onclick="doLoginPolicia()">Entrar como policía</button>
-  </div>
 </div>
 <p class="login-footer">Acceso exclusivo para personal municipal autorizado</p></div></div></div>
 <!-- Modal setup contraseña (primera vez, cualquier IP) -->
