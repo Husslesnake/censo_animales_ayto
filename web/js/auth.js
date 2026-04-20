@@ -127,15 +127,17 @@
             err.classList.remove("show");
             sesion = { rol: data.rol, token: data.token };
             _setToken(sesion, !!recordar);
-            aplicarRol(data.rol);
-            document.getElementById("login-screen").classList.add("oculto");
             document.getElementById("login-pass").value = "";
             if (userEl) userEl.value = "";
-            var btnInicio = document.getElementById("tab-inicio");
-            mostrarPagina("inicio", btnInicio);
-            setTimeout(cargarAlertas, 200);
             if (data.must_change) {
+              // Forzar cambio de contraseña antes de entrar a la app
               abrirModalCambiarPass(true, data.motivo_cambio || "primer_acceso");
+            } else {
+              aplicarRol(data.rol);
+              document.getElementById("login-screen").classList.add("oculto");
+              var btnInicio = document.getElementById("tab-inicio");
+              mostrarPagina("inicio", btnInicio);
+              setTimeout(cargarAlertas, 200);
             }
           } else if (data.error === "configure_primero") {
             document.getElementById("modal-setup-admin").style.display = "flex";
@@ -321,12 +323,22 @@
           });
           var data = await res.json();
           if (data.ok) {
+            var eraObligatorio = _cambioObligatorio;
             sesion = { rol: data.rol, token: data.token };
-            _setToken(sesion);
+            _setToken(sesion, !!localStorage.getItem("censo_token"));
             okEl.textContent = "Contraseña cambiada correctamente.";
             okEl.style.display = "block";
             _cambioObligatorio = false;
-            setTimeout(cerrarModalCambiarPass, 1500);
+            setTimeout(function() {
+              cerrarModalCambiarPass();
+              if (eraObligatorio) {
+                aplicarRol(sesion.rol);
+                document.getElementById("login-screen").classList.add("oculto");
+                var btnInicio = document.getElementById("tab-inicio");
+                if (btnInicio) mostrarPagina("inicio", btnInicio);
+                setTimeout(cargarAlertas, 200);
+              }
+            }, 1500);
           } else {
             errEl.textContent = data.error || "Error al cambiar contraseña.";
             errEl.style.display = "block";
@@ -522,6 +534,10 @@
             var data = await res.json();
             if (data.ok && data.rol) {
               sesion = { rol: data.rol, token: saved.token };
+              if (data.must_change) {
+                abrirModalCambiarPass(true, data.motivo_cambio || "primer_acceso");
+                return;
+              }
               aplicarRol(data.rol);
               document.getElementById("login-screen").classList.add("oculto");
               if (data.rol === "policia") {
@@ -531,9 +547,6 @@
               } else {
                 var btnInicio = document.getElementById("tab-inicio");
                 if (btnInicio) mostrarPagina("inicio", btnInicio);
-              }
-              if (data.must_change) {
-                abrirModalCambiarPass(true, data.motivo_cambio || "primer_acceso");
               }
               return;
             }
