@@ -178,7 +178,10 @@ def _usuario_desde_token() -> tuple[str, str]:
         return (rol, payload.get("username", "policia"))
     if rol == "admin":
         return (rol, "admin")
-    # empleado → identificarlo por device_id
+    # empleado → preferir username (cuenta nominal); fallback a device_id (legado)
+    username = payload.get("username")
+    if username:
+        return (rol, username)
     dev = _get_device_id()
     return (rol, dev[:12] if dev else "empleado")
 
@@ -392,14 +395,23 @@ def _validar_token(token: str) -> dict | None:
                 del _TOKENS[token]
                 return None
     if payload["rol"] == "empleado":
-        device_id = payload.get("device_id")
-        if device_id:
-            dev = _cargar_auth().get("devices", {}).get(device_id, {})
-            if not dev.get("activo", True):
+        username = payload.get("username")
+        if username:
+            emp = _cargar_auth().get("empleado_usuarios", {}).get(username, {})
+            if not emp.get("activo", False):
                 if payload.get("persistido"):
                     _eliminar_token_persistido(token)
                 del _TOKENS[token]
                 return None
+        else:
+            device_id = payload.get("device_id")
+            if device_id:
+                dev = _cargar_auth().get("devices", {}).get(device_id, {})
+                if not dev.get("activo", True):
+                    if payload.get("persistido"):
+                        _eliminar_token_persistido(token)
+                    del _TOKENS[token]
+                    return None
     return payload
 
 
@@ -500,18 +512,25 @@ def auth_cambiar():
     Requiere token de sesión activo y contraseña actual correcta.
     """
     ip = _get_client_ip()
-    es_admin = _es_admin_request()
-    rol = "admin" if es_admin else "empleado"
-
     token_header = request.headers.get("X-Token", "")
-    if not _validar_token(token_header):
+    payload = _validar_token(token_header)
+    if not payload:
         return jsonify({"ok": False, "error": "Se requiere sesión activa."})
+    rol = payload.get("rol", "empleado")
 
     auth = _cargar_auth()
 
-    if es_admin:
+    if rol == "admin":
         entrada = auth.get("admin", {})
         bucket, key = "admin", None
+    elif rol == "empleado" and payload.get("username"):
+        key = payload["username"]
+        entrada = auth.get("empleado_usuarios", {}).get(key, {})
+        bucket = "empleado_usuarios"
+    elif rol == "policia" and payload.get("username"):
+        key = payload["username"]
+        entrada = auth.get("policia_usuarios", {}).get(key, {})
+        bucket = "policia_usuarios"
     else:
         device_id = _get_device_id()
         entrada = auth.get("devices", {}).get(device_id, {}) if device_id else {}
@@ -527,7 +546,7 @@ def auth_cambiar():
     if _hash_password(actual, entrada["salt"]) != entrada["hash"]:
         return jsonify({"ok": False, "error": "La contraseña actual no es correcta."})
 
-    min_len = 6 if es_admin else 4
+    min_len = 6 if rol in ("admin", "policia") else 4
     if len(nueva) < min_len:
         return jsonify({"ok": False, "error": f"La nueva contraseña debe tener al menos {min_len} caracteres."})
 
@@ -538,13 +557,14 @@ def auth_cambiar():
     if bucket == "admin":
         auth["admin"].update(nuevos)
     else:
-        auth["devices"][key].update(nuevos)
+        auth[bucket][key].update(nuevos)
 
     _guardar_auth(auth)
-    logger.info("AUTH: Contraseña cambiada — %s (rol=%s)", "admin" if es_admin else device_id, rol)
+    logger.info("AUTH: Contraseña cambiada — %s (rol=%s)", key or "admin", rol)
     _log_ip(ip, rol, "cambio_password", True)
 
-    token = _crear_token(rol)
+    extra = {"username": key} if bucket in ("empleado_usuarios", "policia_usuarios") else {}
+    token = _crear_token(rol, **extra)
     return jsonify({"ok": True, "token": token, "rol": rol})
 
 
@@ -560,13 +580,39 @@ def auth_login():
     data = request.get_json(silent=True) or {}
     recordar = bool(data.get("recordar", False))
 
-    # ── Rama policía ──────────────────────────────────────────────────────────
-    username = data.get("username", "").strip()
+    # ── Rama usuario nominal (policía o empleado) ──────────────────────────────
+    username = data.get("username", "").strip().lower()
     if username:
         password = data.get("password", "").strip()
         if not password:
             return jsonify({"ok": False, "error": "Introduzca la contraseña."})
         auth = _cargar_auth()
+
+        # Empleado por username (creado por admin)
+        emp = auth.get("empleado_usuarios", {}).get(username)
+        if emp and emp.get("hash"):
+            if not emp.get("activo", False):
+                _log_ip(ip, "empleado", "login", False)
+                return jsonify({"ok": False, "error": "Cuenta desactivada. Contacte con el administrador."})
+            if _check_inactividad(emp.get("ultimo_acceso")):
+                auth["empleado_usuarios"][username]["activo"] = False
+                _guardar_auth(auth)
+                _log_ip(ip, "empleado", "login_inactividad", False)
+                logger.warning("AUTH: Cuenta empleado bloqueada por inactividad — %s", username)
+                _log_auditoria("bloqueo_inactividad", {"username": username, "motivo": "sin_acceso_6_meses"})
+                return jsonify({"ok": False, "error": "Cuenta bloqueada por inactividad. Contacte con el administrador."})
+            if _hash_password(password, emp["salt"]) != emp["hash"]:
+                logger.warning("AUTH: Login empleado fallido — %s desde %s", username, ip)
+                _log_ip(ip, "empleado", "login", False)
+                return jsonify({"ok": False, "error": "Usuario o contraseña incorrectos."})
+            auth["empleado_usuarios"][username]["ultimo_acceso"] = datetime.now().isoformat()
+            _guardar_auth(auth)
+            token = _crear_token("empleado", recordar=recordar, username=username)
+            logger.info("AUTH: Login empleado exitoso — %s desde %s", username, ip)
+            _log_ip(ip, "empleado", "login", True)
+            return jsonify({"ok": True, "token": token, "rol": "empleado",
+                            "nombre": emp.get("nombre", username), "recordar": recordar})
+
         user = auth.get("policia_usuarios", {}).get(username)
         if not user or not user.get("hash"):
             _log_ip(ip, "policia", "login", False)
@@ -804,6 +850,118 @@ def policia_usuarios_eliminar(username):
     return jsonify({"ok": True})
 
 
+# ── Gestión de usuarios empleado (solo admin) ─────────────────────────────────
+
+@app.route("/api/auth/empleado_usuarios", methods=["GET"])
+def empleado_usuarios_listar():
+    """Lista todas las cuentas de empleado. Requiere sesión de administrador."""
+    if not _req_admin():
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    auth = _cargar_auth()
+    usuarios = auth.get("empleado_usuarios", {})
+    datos = [
+        {"username": u, "nombre": d.get("nombre", u),
+         "activo": d.get("activo", False), "creado": d.get("creado", ""),
+         "ultimo_acceso": d.get("ultimo_acceso", "")}
+        for u, d in usuarios.items()
+    ]
+    return jsonify({"ok": True, "datos": datos})
+
+
+@app.route("/api/auth/empleado_usuarios", methods=["POST"])
+def empleado_usuarios_crear():
+    """Crea una nueva cuenta de empleado. Requiere sesión de administrador."""
+    if not _req_admin():
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    data = request.get_json(silent=True) or {}
+    username = data.get("username", "").strip().lower()
+    nombre   = data.get("nombre", "").strip()
+    password = data.get("password", "").strip()
+    if not username or not nombre or not password:
+        return jsonify({"ok": False, "error": "Usuario, nombre y contraseña son obligatorios."})
+    if len(password) < 4:
+        return jsonify({"ok": False, "error": "La contraseña debe tener al menos 4 caracteres."})
+    auth = _cargar_auth()
+    if username in auth.get("empleado_usuarios", {}):
+        return jsonify({"ok": False, "error": f"El usuario '{username}' ya existe."})
+    if username in auth.get("policia_usuarios", {}):
+        return jsonify({"ok": False, "error": f"El nombre de usuario '{username}' ya está en uso."})
+    sal    = secrets.token_hex(16)
+    hashed = _hash_password(password, sal)
+    auth.setdefault("empleado_usuarios", {})[username] = {
+        "hash": hashed, "salt": sal, "nombre": nombre,
+        "activo": True, "creado": datetime.now().isoformat()
+    }
+    _guardar_auth(auth)
+    logger.info("AUTH: Cuenta empleado creada — %s (%s)", username, nombre)
+    _log_auditoria("crear_cuenta_empleado", {"username": username, "nombre": nombre})
+    return jsonify({"ok": True})
+
+
+@app.route("/api/auth/empleado_usuarios/<username>", methods=["PATCH"])
+def empleado_usuarios_actualizar(username):
+    """Activa/desactiva o cambia la contraseña/nombre de una cuenta de empleado."""
+    if not _req_admin():
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    auth     = _cargar_auth()
+    usuarios = auth.get("empleado_usuarios", {})
+    if username not in usuarios:
+        return jsonify({"ok": False, "error": "Usuario no encontrado."}), 404
+    data = request.get_json(silent=True) or {}
+    if "activo" in data:
+        usuarios[username]["activo"] = bool(data["activo"])
+        if not data["activo"]:
+            to_revoke = [t for t, p in list(_TOKENS.items())
+                         if p.get("rol") == "empleado" and p.get("username") == username]
+            for t in to_revoke:
+                if _TOKENS[t].get("persistido"):
+                    _eliminar_token_persistido(t)
+                del _TOKENS[t]
+    if "password" in data:
+        nueva = data["password"].strip()
+        if len(nueva) < 4:
+            return jsonify({"ok": False, "error": "La contraseña debe tener al menos 4 caracteres."})
+        sal = secrets.token_hex(16)
+        usuarios[username]["hash"]       = _hash_password(nueva, sal)
+        usuarios[username]["salt"]       = sal
+        usuarios[username]["modificado"] = datetime.now().isoformat()
+    if "nombre" in data:
+        usuarios[username]["nombre"] = data["nombre"].strip()
+    auth["empleado_usuarios"] = usuarios
+    _guardar_auth(auth)
+    logger.info("AUTH: Cuenta empleado actualizada — %s", username)
+    campos = []
+    if "activo" in data: campos.append("activo=" + ("sí" if data["activo"] else "no"))
+    if "password" in data: campos.append("contraseña")
+    if "nombre" in data: campos.append("nombre")
+    _log_auditoria("actualizar_cuenta_empleado", {"username": username, "cambios": campos})
+    return jsonify({"ok": True})
+
+
+@app.route("/api/auth/empleado_usuarios/<username>", methods=["DELETE"])
+def empleado_usuarios_eliminar(username):
+    """Elimina permanentemente una cuenta de empleado y revoca sus tokens."""
+    if not _req_admin():
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    auth     = _cargar_auth()
+    usuarios = auth.get("empleado_usuarios", {})
+    if username not in usuarios:
+        return jsonify({"ok": False, "error": "Usuario no encontrado."}), 404
+    nombre_prev = usuarios[username].get("nombre", username)
+    del usuarios[username]
+    auth["empleado_usuarios"] = usuarios
+    to_revoke = [t for t, p in list(_TOKENS.items())
+                 if p.get("rol") == "empleado" and p.get("username") == username]
+    for t in to_revoke:
+        if _TOKENS[t].get("persistido"):
+            _eliminar_token_persistido(t)
+        del _TOKENS[t]
+    _guardar_auth(auth)
+    logger.info("AUTH: Cuenta empleado eliminada — %s", username)
+    _log_auditoria("eliminar_cuenta_empleado", {"username": username, "nombre": nombre_prev})
+    return jsonify({"ok": True})
+
+
 @app.route("/api/auth/logout", methods=["POST"])
 def auth_logout():
     """Invalida el token del cliente (memoria y auth.json si era persistido)."""
@@ -875,15 +1033,6 @@ def fila_a_dict(cursor, fila):
 
 
 def detectar_chip(c):
-    for nombre in ("N_CHIP", "Nº_CHIP", "NÃº_CHIP"):
-        c.execute(
-            "SELECT COUNT(*) FROM information_schema.COLUMNS "
-            "WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='ANIMALES' "
-            "AND COLUMN_NAME=%s",
-            (nombre,),
-        )
-        if c.fetchone()[0]:
-            return nombre
     return "N_CHIP"
 
 
@@ -894,9 +1043,9 @@ def _siguiente_n_baja(conn, anio: int) -> str:
     """
     c = cur(conn)
     c.execute(
-        "SELECT `Nº_BAJA` FROM BAJA_ANIMAL "
-        "WHERE `Nº_BAJA` LIKE %s "
-        "ORDER BY `Nº_BAJA` DESC LIMIT 1",
+        "SELECT N_BAJA FROM BAJA_ANIMAL "
+        "WHERE N_BAJA LIKE %s "
+        "ORDER BY N_BAJA DESC LIMIT 1",
         (f"BAJA-{anio}-%",),
     )
     fila = c.fetchone()
@@ -913,9 +1062,9 @@ def _insertar_baja(
     fecha_hoy = date.today().isoformat()
 
     cur(conn).execute(
-        f"INSERT INTO BAJA_ANIMAL (`{chip_col}`, FECHA, `Nº_BAJA`, MOTIVO, BAJA) "
-        "VALUES (%s, %s, %s, %s, %s)",
-        (chip, fecha_hoy, n_baja, motivo, obs or None),
+        f"INSERT INTO BAJA_ANIMAL (`{chip_col}`, FECHA, N_BAJA, MOTIVO) "
+        "VALUES (%s, %s, %s, %s)",
+        (chip, fecha_hoy, n_baja, motivo),
     )
     cur(conn).execute(
         f"INSERT INTO HISTORICO_MASCOTAS "
@@ -966,12 +1115,11 @@ def insertar_propietario():
     try:
         conn = get_conn()
         c = cur(conn)
-        # Insertar propietario (DOMICILIO/CP/MINICIPIO se mantienen por compatibilidad)
         c.execute(
             """INSERT INTO PROPIETARIOS
                  (DNI, PRIMER_APELLIDO, SEGUNDO_APELLIDO, NOMBRE,
-                  TELEFONO1, TELEFONO2, DOMICILIO, CP, MINICIPIO, CODIGO)
-               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                  TELEFONO1, TELEFONO2)
+               VALUES (%s, %s, %s, %s, %s, %s)""",
             (
                 d.get("DNI"),
                 d.get("PRIMER_APELLIDO"),
@@ -979,21 +1127,16 @@ def insertar_propietario():
                 d.get("NOMBRE"),
                 d.get("TELEFONO1"),
                 d.get("TELEFONO2"),
-                d.get("DOMICILIO"),
-                d.get("CP"),
-                d.get("MINICIPIO"),
-                d.get("CODIGO"),
             ),
         )
-        # Insertar domicilios asociados (lista de {DOMICILIO, CP, MINICIPIO})
         direcciones = d.get("DIRECCIONES", [])
         for dr in direcciones:
             dom = dr.get("DOMICILIO", "").strip()
             if dom:
                 c.execute(
-                    """INSERT INTO PROPIETARIO_DIRECCION (DNI, DOMICILIO, CP, MINICIPIO)
+                    """INSERT INTO PROPIETARIO_DIRECCION (DNI, DOMICILIO, CP, MUNICIPIO)
                        VALUES (%s, %s, %s, %s)""",
-                    (d.get("DNI"), dom, dr.get("CP"), dr.get("MINICIPIO")),
+                    (d.get("DNI"), dom, dr.get("CP"), dr.get("MUNICIPIO") or dr.get("MINICIPIO")),
                 )
         conn.commit()
         conn.close()
@@ -1063,9 +1206,9 @@ def crear_direccion(dni):
             conn.close()
             return jsonify({"ok": False, "error": "Propietario no encontrado."}), 404
         c.execute(
-            """INSERT INTO PROPIETARIO_DIRECCION (DNI, DOMICILIO, CP, MINICIPIO)
+            """INSERT INTO PROPIETARIO_DIRECCION (DNI, DOMICILIO, CP, MUNICIPIO)
                VALUES (%s, %s, %s, %s)""",
-            (dni, d.get("DOMICILIO"), d.get("CP"), d.get("MINICIPIO")),
+            (dni, d.get("DOMICILIO"), d.get("CP"), d.get("MUNICIPIO") or d.get("MINICIPIO")),
         )
         new_id = c.lastrowid
         conn.commit()
@@ -1335,7 +1478,7 @@ def insertar_animal():
         col_nacimiento = (
             "FECHA_NACIMIENTO"
             if "FECHA_NACIMIENTO" in cols_tabla
-            else "AÑO_DE_NACIMIENTO"
+            else "ANIO_NACIMIENTO"
         )
         mapa = {
             "N_CHIP": chip_col,
@@ -1385,7 +1528,7 @@ def insertar_animal():
 
         # Añadir N_CENSO al insert si la columna existe
         col_censo = next(
-            (c_ for c_ in cols_tabla if c_ in ("Nº_CENSO", "N_CENSO")), None
+            (c_ for c_ in cols_tabla if c_ == "N_CENSO"), None
         )
 
         insert_cols, insert_vals = [], []
@@ -1440,14 +1583,7 @@ def insertar_animal():
         try:
             c2 = cur(conn)
             c2.execute(
-                "SELECT COLUMN_NAME FROM information_schema.COLUMNS "
-                "WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='CENSO' "
-                "AND COLUMN_NAME IN ('Nº_CHIP','N_CHIP','NÃº_CHIP') LIMIT 1"
-            )
-            censo_chip_row = c2.fetchone()
-            censo_chip_col = censo_chip_row[0] if censo_chip_row else chip_col
-            c2.execute(
-                f"INSERT INTO CENSO (`{censo_chip_col}`, N_CENSO, FECHA_ALTA) "
+                "INSERT INTO CENSO (N_CHIP, N_CENSO, FECHA_ALTA) "
                 "VALUES (%s, %s, CURDATE())",
                 (chip_val, n_censo_auto),
             )
@@ -1668,10 +1804,10 @@ def listar_bajas():
         c.execute(
             f"""SELECT b.`{chip_col}`      AS N_CHIP,
                        b.FECHA             AS FECHA_BAJA,
-                       b.`Nº_BAJA`        AS N_BAJA,
+                       b.N_BAJA           AS N_BAJA,
                        b.MOTIVO,
                        mb.MOTIVO_BAJA      AS MOTIVO_DESC,
-                       b.BAJA              AS OBSERVACIONES,
+                       h.OBSERVACIONES     AS OBSERVACIONES,
                        a.NOMBRE            AS NOMBRE_ANIMAL,
                        a.ESPECIE,
                        a.RAZA,
@@ -1684,6 +1820,11 @@ def listar_bajas():
                 LEFT JOIN ANIMALES a     ON b.`{chip_col}` = a.`{chip_col}`
                 LEFT JOIN MOTIVO_BAJA mb ON b.MOTIVO = mb.CLAVE
                 LEFT JOIN PROPIETARIOS p ON a.DNI_PROPIETARIO = p.DNI
+                LEFT JOIN (
+                    SELECT `{chip_col}` AS CHIP, OBSERVACIONES
+                    FROM HISTORICO_MASCOTAS
+                    WHERE ID_ESTADO = 2
+                ) h ON h.CHIP = b.`{chip_col}`
                 ORDER BY b.FECHA DESC, b.`{chip_col}`"""
         )
         rows = [fila_a_dict(c, r) for r in c.fetchall()]
@@ -1855,7 +1996,7 @@ def baja_automatica_por_edad():
         c.execute(
             "SELECT COLUMN_NAME FROM information_schema.COLUMNS "
             "WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='ANIMALES' "
-            "AND COLUMN_NAME IN ('AÑO_DE_NACIMIENTO', 'FECHA_NACIMIENTO') LIMIT 1"
+            "AND COLUMN_NAME IN ('ANIO_NACIMIENTO', 'FECHA_NACIMIENTO') LIMIT 1"
         )
         row_col = c.fetchone()
         if not row_col:
@@ -1894,8 +2035,8 @@ def baja_automatica_por_edad():
 
         # Obtener el último número de baja del año para continuar la secuencia
         c.execute(
-            "SELECT `Nº_BAJA` FROM BAJA_ANIMAL "
-            "WHERE `Nº_BAJA` LIKE %s ORDER BY `Nº_BAJA` DESC LIMIT 1",
+            "SELECT N_BAJA FROM BAJA_ANIMAL "
+            "WHERE N_BAJA LIKE %s ORDER BY N_BAJA DESC LIMIT 1",
             (f"BAJA-{anio_hoy}-%",),
         )
         fila_seq = c.fetchone()
@@ -1990,7 +2131,7 @@ def estadisticas():
         c.execute(
             f"""SELECT a.ESPECIE, a.SEXO, a.PELIGROSO, a.ESTERILIZADO,
                        a.`{chip_col}` AS N_CHIP,
-                       a.AÑO_DE_NACIMIENTO
+                       a.ANIO_NACIMIENTO
                 FROM ANIMALES a{where_especie}""",
             params_main,
         )
@@ -2054,7 +2195,7 @@ def estadisticas():
                     else "No esterilizado"
                 )
             ] += 1
-            anio = r.get("AÑO_DE_NACIMIENTO")
+            anio = r.get("ANIO_NACIMIENTO")
             if anio:
                 try:
                     y = int(str(anio).strip()[:4])
@@ -2293,17 +2434,17 @@ def alertas():
         anio_limite = anio_actual - 90
         c.execute(
             f"""SELECT a.`{chip_col}` AS N_CHIP, a.NOMBRE, a.ESPECIE,
-                       a.AÑO_DE_NACIMIENTO,
+                       a.ANIO_NACIMIENTO,
                        a.DNI_PROPIETARIO,
                        p.NOMBRE AS NOMBRE_PROP,
                        p.PRIMER_APELLIDO, p.SEGUNDO_APELLIDO, p.TELEFONO1
                 FROM ANIMALES a
                 LEFT JOIN PROPIETARIOS p ON a.DNI_PROPIETARIO = p.DNI
                 WHERE {activos_where}
-                  AND a.AÑO_DE_NACIMIENTO IS NOT NULL
-                  AND CAST(a.AÑO_DE_NACIMIENTO AS UNSIGNED) <= %s
-                  AND CAST(a.AÑO_DE_NACIMIENTO AS UNSIGNED) > %s
-                ORDER BY a.AÑO_DE_NACIMIENTO
+                  AND a.ANIO_NACIMIENTO IS NOT NULL
+                  AND a.ANIO_NACIMIENTO <= %s
+                  AND a.ANIO_NACIMIENTO > %s
+                ORDER BY a.ANIO_NACIMIENTO
                 LIMIT 100""",
             (anio_limite, anio_actual - 100),
         )
@@ -2352,11 +2493,16 @@ def ficha_animal(chip):
 
         # Historial de baja (si existe)
         c.execute(
-            f"""SELECT b.`Nº_BAJA` AS N_BAJA, b.FECHA AS FECHA_BAJA,
-                       b.MOTIVO, b.BAJA AS OBSERVACIONES,
+            f"""SELECT b.N_BAJA AS N_BAJA, b.FECHA AS FECHA_BAJA,
+                       b.MOTIVO, h.OBSERVACIONES AS OBSERVACIONES,
                        mb.MOTIVO_BAJA AS MOTIVO_DESC
                 FROM BAJA_ANIMAL b
                 LEFT JOIN MOTIVO_BAJA mb ON b.MOTIVO = mb.CLAVE
+                LEFT JOIN (
+                    SELECT `{chip_col}` AS CHIP, OBSERVACIONES
+                    FROM HISTORICO_MASCOTAS
+                    WHERE ID_ESTADO = 2
+                ) h ON h.CHIP = b.`{chip_col}`
                 WHERE b.`{chip_col}` = %s""",
             (chip,),
         )
@@ -2426,9 +2572,11 @@ def vencimientos():
                        a.DNI_PROPIETARIO,
                        p.NOMBRE       AS NOMBRE_PROP,
                        p.PRIMER_APELLIDO, p.SEGUNDO_APELLIDO,
-                       p.TELEFONO1, p.DOMICILIO, p.CP, p.MINICIPIO
+                       p.TELEFONO1, pd.DOMICILIO AS DOMICILIO, pd.CP AS CP, pd.MUNICIPIO AS MUNICIPIO
                 FROM ANIMALES a
                 LEFT JOIN PROPIETARIOS p ON a.DNI_PROPIETARIO = p.DNI
+                LEFT JOIN (SELECT DNI, MIN(CODIGO) AS codmin FROM PROPIETARIO_DIRECCION GROUP BY DNI) pdk ON pdk.DNI = p.DNI
+                LEFT JOIN PROPIETARIO_DIRECCION pd ON pd.CODIGO = pdk.codmin
                 WHERE a.`{chip_col}` NOT IN (
                     SELECT b.`{chip_col}` FROM BAJA_ANIMAL b
                     WHERE b.`{chip_col}` IS NOT NULL
@@ -2477,7 +2625,7 @@ def ficha_propietario(dni):
         # Todos sus animales (activos e inactivos)
         c.execute(
             f"""SELECT a.`{chip_col}` AS N_CHIP, a.NOMBRE, a.ESPECIE, a.RAZA,
-                       a.SEXO, a.COLOR, a.AÑO_DE_NACIMIENTO, a.PELIGROSO, a.ESTERILIZADO,
+                       a.SEXO, a.COLOR, a.ANIO_NACIMIENTO, a.PELIGROSO, a.ESTERILIZADO,
                        CASE WHEN b.`{chip_col}` IS NOT NULL THEN 1 ELSE 0 END AS DADO_DE_BAJA
                 FROM ANIMALES a
                 LEFT JOIN BAJA_ANIMAL b ON a.`{chip_col}` = b.`{chip_col}`

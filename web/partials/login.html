@@ -391,7 +391,15 @@
  /></svg
  ></span><h1>Censo Municipal de Animales</h1><p>Ayuntamiento de Navalcarnero · Acceso restringido</p></div><div class="login-body"><div class="login-error" id="login-error">Contraseña incorrecta.</div><div id="login-rol-badge" style="display:none;text-align:center;margin-bottom:1rem;padding:0.45rem 0.8rem;font-size:0.78rem;font-family:'IBM Plex Mono',monospace;letter-spacing:0.04em;border:1px solid var(--borde);color:var(--gris4);">Detectando acceso…</div>
 <div id="empleado-login-form">
-<label class="login-label" for="login-pass" id="login-pass-label">Contraseña</label><input
+<label class="login-label" for="login-user" id="login-user-label" style="display:none;">Usuario</label><input
+ class="login-input"
+ type="text"
+ id="login-user"
+ placeholder="Usuario"
+ autocomplete="username"
+ style="display:none;margin-bottom:0.6rem;"
+ onkeydown="if (event.key === 'Enter') document.getElementById('login-pass').focus();"
+ /><label class="login-label" for="login-pass" id="login-pass-label">Contraseña</label><input
  class="login-input"
  type="password"
  id="login-pass"

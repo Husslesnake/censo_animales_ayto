@@ -63,27 +63,31 @@
           var res = await fetch("/api/auth/estado", { headers: { "X-Device-Id": _getDeviceId() } });
           var data = await res.json();
           _loginEstado = data;
+          var userInput = document.getElementById("login-user");
+          var userLabel = document.getElementById("login-user-label");
           if (data.es_admin_ip) {
             badge.textContent = "Puerto de administración — Administrador";
             badge.style.borderColor = "var(--rojo)";
             badge.style.color = "var(--rojo)";
             if (label) label.textContent = "Contraseña de administrador";
+            if (userInput) userInput.style.display = "none";
+            if (userLabel) userLabel.style.display = "none";
           } else {
             badge.textContent = "Acceso de empleado";
             badge.style.borderColor = "var(--azul)";
             badge.style.color = "var(--azul)";
-            if (label) label.textContent = "Tu contraseña";
+            if (label) label.textContent = "Contraseña";
+            if (userInput) userInput.style.display = "";
+            if (userLabel) userLabel.style.display = "";
           }
-          if (!data.configurado) {
+          if (!data.configurado && data.es_admin_ip) {
             var desc = document.getElementById("setup-desc");
             if (desc) {
-              desc.textContent = data.es_admin_ip
-                ? "Este es el equipo servidor. Crea la contraseña de administrador para proteger el acceso."
-                : "Primera conexión desde este equipo. Crea tu contraseña de empleado para acceder.";
+              desc.textContent = "Este es el equipo servidor. Crea la contraseña de administrador para proteger el acceso.";
             }
             var passLbl = document.getElementById("setup-pass-label");
             if (passLbl) {
-              passLbl.textContent = "Nueva contraseña (mín. " + (data.es_admin_ip ? "6" : "4") + " caracteres)";
+              passLbl.textContent = "Nueva contraseña (mín. 6 caracteres)";
             }
             document.getElementById("modal-setup-admin").style.display = "flex";
           }
@@ -94,6 +98,8 @@
       }
 
       async function doLogin() {
+        var userEl = document.getElementById("login-user");
+        var user = userEl && userEl.style.display !== "none" ? userEl.value.trim() : "";
         var pass = document.getElementById("login-pass").value;
         var recordar = document.getElementById("login-recordar") && document.getElementById("login-recordar").checked;
         var err = document.getElementById("login-error");
@@ -103,11 +109,18 @@
           err.classList.add("show");
           return;
         }
+        if (!_loginEstado.es_admin_ip && !user) {
+          err.textContent = "Introduzca su usuario.";
+          err.classList.add("show");
+          return;
+        }
         try {
+          var body = { password: pass, recordar: !!recordar };
+          if (user) body.username = user;
           var res = await fetch("/api/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json", "X-Device-Id": _getDeviceId() },
-            body: JSON.stringify({ password: pass, recordar: !!recordar })
+            body: JSON.stringify(body)
           });
           var data = await res.json();
           if (data.ok) {
@@ -117,6 +130,7 @@
             aplicarRol(data.rol);
             document.getElementById("login-screen").classList.add("oculto");
             document.getElementById("login-pass").value = "";
+            if (userEl) userEl.value = "";
             var btnInicio = document.getElementById("tab-inicio");
             mostrarPagina("inicio", btnInicio);
             setTimeout(cargarAlertas, 200);
