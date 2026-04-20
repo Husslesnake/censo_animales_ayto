@@ -532,6 +532,9 @@
                 var btnInicio = document.getElementById("tab-inicio");
                 if (btnInicio) mostrarPagina("inicio", btnInicio);
               }
+              if (data.must_change) {
+                abrirModalCambiarPass(true, data.motivo_cambio || "primer_acceso");
+              }
               return;
             }
           } catch(e) {

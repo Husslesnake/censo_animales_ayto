@@ -775,7 +775,14 @@ def auth_verificar():
     payload = _validar_token(token)
     if not payload:
         return jsonify({"ok": False, "error": "Sesión expirada o inválida."})
-    return jsonify({"ok": True, "rol": payload["rol"]})
+    resp = {"ok": True, "rol": payload["rol"]}
+    if payload["rol"] == "empleado" and payload.get("username"):
+        emp = _cargar_auth().get("empleado_usuarios", {}).get(payload["username"], {})
+        must = bool(emp.get("must_change")) or _password_caducada(emp)
+        if must:
+            resp["must_change"] = True
+            resp["motivo_cambio"] = "caducada" if _password_caducada(emp) and not emp.get("must_change") else "primer_acceso"
+    return jsonify(resp)
 
 
 def _req_admin():
