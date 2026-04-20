@@ -134,6 +134,9 @@
             var btnInicio = document.getElementById("tab-inicio");
             mostrarPagina("inicio", btnInicio);
             setTimeout(cargarAlertas, 200);
+            if (data.must_change) {
+              abrirModalCambiarPass(true, data.motivo_cambio || "primer_acceso");
+            }
           } else if (data.error === "configure_primero") {
             document.getElementById("modal-setup-admin").style.display = "flex";
           } else {
@@ -205,16 +208,39 @@
         if (wrapper && !wrapper.contains(e.target)) cerrarUserMenu();
       });
 
-      function abrirModalCambiarPass() {
+      var _cambioObligatorio = false;
+
+      function abrirModalCambiarPass(obligatorio, motivo) {
         var rol = sesion && sesion.rol;
         var esAdmin = rol === "admin";
-        var minLen = (esAdmin || rol === "policia") ? 6 : 4;
+        var esEmpleadoNominal = rol === "empleado";
+        _cambioObligatorio = !!obligatorio;
         document.getElementById("cambiar-pass-title").textContent =
           esAdmin ? "Cambiar contraseña de administrador"
           : rol === "policia" ? "Cambiar contraseña de agente"
           : "Cambiar contraseña de empleado";
-        document.getElementById("cambiar-nueva-label").textContent =
-          "Nueva contraseña (mín. " + minLen + " caracteres)";
+        var avisoEl = document.getElementById("cambiar-aviso");
+        if (avisoEl) {
+          if (obligatorio) {
+            avisoEl.textContent = motivo === "caducada"
+              ? "Tu contraseña ha caducado (más de 1 año). Debes cambiarla para continuar."
+              : "Es tu primer acceso. Debes establecer una contraseña nueva para continuar.";
+            avisoEl.style.display = "block";
+          } else {
+            avisoEl.style.display = "none";
+          }
+        }
+        var requisitosEl = document.getElementById("cambiar-requisitos");
+        if (requisitosEl) {
+          requisitosEl.style.display = esEmpleadoNominal ? "block" : "none";
+        }
+        var labelEl = document.getElementById("cambiar-nueva-label");
+        if (labelEl) {
+          labelEl.textContent = esEmpleadoNominal
+            ? "Nueva contraseña"
+            : "Nueva contraseña (mín. " + (esAdmin || rol === "policia" ? 6 : 4) + " caracteres)";
+        }
+        actualizarRequisitosPass("");
         document.getElementById("modal-cambiar-pass").style.display = "flex";
         document.getElementById("cambiar-error").style.display = "none";
         document.getElementById("cambiar-ok").style.display = "none";
@@ -224,7 +250,29 @@
       }
 
       function cerrarModalCambiarPass() {
+        if (_cambioObligatorio) return; // No se puede cerrar mientras sea obligatorio
         document.getElementById("modal-cambiar-pass").style.display = "none";
+      }
+
+      function _testRequisitos(pass) {
+        return {
+          len: pass.length >= 8,
+          min: /[a-z]/.test(pass),
+          may: /[A-Z]/.test(pass),
+          num: /[0-9]/.test(pass),
+          esp: /[^A-Za-z0-9]/.test(pass),
+        };
+      }
+
+      function actualizarRequisitosPass(pass) {
+        var r = _testRequisitos(pass || "");
+        ["len","min","may","num","esp"].forEach(function(k) {
+          var el = document.getElementById("req-" + k);
+          if (!el) return;
+          var ok = r[k];
+          el.textContent = (ok ? "✓ " : "○ ") + el.textContent.replace(/^[✓○]\s*/, "");
+          el.style.color = ok ? "var(--verde)" : "var(--gris3)";
+        });
       }
 
       async function doCambiarPass() {
@@ -234,10 +282,30 @@
         var errEl = document.getElementById("cambiar-error");
         var okEl = document.getElementById("cambiar-ok");
         errEl.style.display = "none"; okEl.style.display = "none";
-        var esAdmin = sesion && sesion.rol === "admin";
-        var minLen = esAdmin ? 6 : 4;
-        if (nueva1.length < minLen) {
-          errEl.textContent = "La nueva contraseña debe tener al menos " + minLen + " caracteres.";
+        var rol = sesion && sesion.rol;
+        var esAdmin = rol === "admin";
+        var esEmpleadoNominal = rol === "empleado";
+        if (esEmpleadoNominal) {
+          var r = _testRequisitos(nueva1);
+          var faltan = [];
+          if (!r.len) faltan.push("8 caracteres");
+          if (!r.min) faltan.push("minúscula");
+          if (!r.may) faltan.push("mayúscula");
+          if (!r.num) faltan.push("número");
+          if (!r.esp) faltan.push("carácter especial");
+          if (faltan.length) {
+            errEl.textContent = "La contraseña no cumple los requisitos: " + faltan.join(", ") + ".";
+            errEl.style.display = "block"; return;
+          }
+        } else {
+          var minLen = esAdmin ? 6 : 4;
+          if (nueva1.length < minLen) {
+            errEl.textContent = "La nueva contraseña debe tener al menos " + minLen + " caracteres.";
+            errEl.style.display = "block"; return;
+          }
+        }
+        if (nueva1 === actual) {
+          errEl.textContent = "La nueva contraseña debe ser distinta de la actual.";
           errEl.style.display = "block"; return;
         }
         if (nueva1 !== nueva2) {
@@ -257,6 +325,7 @@
             _setToken(sesion);
             okEl.textContent = "Contraseña cambiada correctamente.";
             okEl.style.display = "block";
+            _cambioObligatorio = false;
             setTimeout(cerrarModalCambiarPass, 1500);
           } else {
             errEl.textContent = data.error || "Error al cambiar contraseña.";

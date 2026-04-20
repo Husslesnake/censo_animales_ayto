@@ -305,6 +305,36 @@ def _hash_password(password: str, salt: str) -> str:
     return hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
 
 
+# Caducidad de contraseña: empleados deben renovar tras este número de días
+_PASSWORD_MAX_DIAS = 365
+
+
+def _validar_fortaleza_password(password: str) -> str | None:
+    """Comprueba requisitos de seguridad. Devuelve None si es válida o un mensaje de error."""
+    if len(password) < 8:
+        return "La contraseña debe tener al menos 8 caracteres."
+    if not any(c.islower() for c in password):
+        return "Debe incluir al menos una letra minúscula."
+    if not any(c.isupper() for c in password):
+        return "Debe incluir al menos una letra mayúscula."
+    if not any(c.isdigit() for c in password):
+        return "Debe incluir al menos un número."
+    if not any(not c.isalnum() for c in password):
+        return "Debe incluir al menos un carácter especial (!@#$%…)."
+    return None
+
+
+def _password_caducada(entrada: dict) -> bool:
+    """True si la contraseña fue cambiada hace más de _PASSWORD_MAX_DIAS días."""
+    ref = entrada.get("password_changed") or entrada.get("modificado") or entrada.get("creado")
+    if not ref:
+        return False
+    try:
+        return (datetime.now() - datetime.fromisoformat(ref)).days > _PASSWORD_MAX_DIAS
+    except Exception:
+        return False
+
+
 def _cargar_auth() -> dict:
     """Carga el fichero auth.json. Devuelve {} si no existe.
     Migra automáticamente el formato antiguo (hash/salt plano) al nuevo (ips dict).
@@ -546,13 +576,24 @@ def auth_cambiar():
     if _hash_password(actual, entrada["salt"]) != entrada["hash"]:
         return jsonify({"ok": False, "error": "La contraseña actual no es correcta."})
 
-    min_len = 6 if rol in ("admin", "policia") else 4
-    if len(nueva) < min_len:
-        return jsonify({"ok": False, "error": f"La nueva contraseña debe tener al menos {min_len} caracteres."})
+    if nueva == actual:
+        return jsonify({"ok": False, "error": "La nueva contraseña debe ser distinta de la actual."})
+
+    if rol == "empleado" and bucket == "empleado_usuarios":
+        err = _validar_fortaleza_password(nueva)
+        if err:
+            return jsonify({"ok": False, "error": err})
+    else:
+        min_len = 6 if rol in ("admin", "policia") else 4
+        if len(nueva) < min_len:
+            return jsonify({"ok": False, "error": f"La nueva contraseña debe tener al menos {min_len} caracteres."})
 
     sal = secrets.token_hex(16)
     hashed = _hash_password(nueva, sal)
-    nuevos = {"hash": hashed, "salt": sal, "modificado": datetime.now().isoformat()}
+    ahora_iso = datetime.now().isoformat()
+    nuevos = {"hash": hashed, "salt": sal, "modificado": ahora_iso, "password_changed": ahora_iso}
+    if bucket == "empleado_usuarios":
+        nuevos["must_change"] = False
 
     if bucket == "admin":
         auth["admin"].update(nuevos)
@@ -610,8 +651,13 @@ def auth_login():
             token = _crear_token("empleado", recordar=recordar, username=username)
             logger.info("AUTH: Login empleado exitoso — %s desde %s", username, ip)
             _log_ip(ip, "empleado", "login", True)
+            must_change = bool(emp.get("must_change")) or _password_caducada(emp)
+            motivo_cambio = None
+            if must_change:
+                motivo_cambio = "caducada" if _password_caducada(emp) and not emp.get("must_change") else "primer_acceso"
             return jsonify({"ok": True, "token": token, "rol": "empleado",
-                            "nombre": emp.get("nombre", username), "recordar": recordar})
+                            "nombre": emp.get("nombre", username), "recordar": recordar,
+                            "must_change": must_change, "motivo_cambio": motivo_cambio})
 
         user = auth.get("policia_usuarios", {}).get(username)
         if not user or not user.get("hash"):
@@ -888,9 +934,11 @@ def empleado_usuarios_crear():
         return jsonify({"ok": False, "error": f"El nombre de usuario '{username}' ya está en uso."})
     sal    = secrets.token_hex(16)
     hashed = _hash_password(password, sal)
+    ahora = datetime.now().isoformat()
     auth.setdefault("empleado_usuarios", {})[username] = {
         "hash": hashed, "salt": sal, "nombre": nombre,
-        "activo": True, "creado": datetime.now().isoformat()
+        "activo": True, "creado": ahora,
+        "must_change": True, "password_changed": ahora,
     }
     _guardar_auth(auth)
     logger.info("AUTH: Cuenta empleado creada — %s (%s)", username, nombre)
@@ -922,9 +970,12 @@ def empleado_usuarios_actualizar(username):
         if len(nueva) < 4:
             return jsonify({"ok": False, "error": "La contraseña debe tener al menos 4 caracteres."})
         sal = secrets.token_hex(16)
-        usuarios[username]["hash"]       = _hash_password(nueva, sal)
-        usuarios[username]["salt"]       = sal
-        usuarios[username]["modificado"] = datetime.now().isoformat()
+        ahora = datetime.now().isoformat()
+        usuarios[username]["hash"]             = _hash_password(nueva, sal)
+        usuarios[username]["salt"]             = sal
+        usuarios[username]["modificado"]       = ahora
+        usuarios[username]["password_changed"] = ahora
+        usuarios[username]["must_change"]      = True
     if "nombre" in data:
         usuarios[username]["nombre"] = data["nombre"].strip()
     auth["empleado_usuarios"] = usuarios

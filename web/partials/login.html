@@ -440,12 +440,20 @@
 <div id="modal-cambiar-pass" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
   <div style="background:var(--blanco);padding:2rem 2.2rem;max-width:420px;width:92%;border-top:4px solid var(--rojo);">
     <h2 id="cambiar-pass-title" style="font-family:'Libre Baskerville',serif;font-size:1.05rem;margin-bottom:1rem;color:var(--tinta);">Cambiar contraseña</h2>
+    <div id="cambiar-aviso" style="display:none;background:rgba(123,45,64,0.08);color:var(--rojo);font-size:0.78rem;padding:0.5rem 0.7rem;margin-bottom:0.8rem;border-left:3px solid var(--rojo);"></div>
     <div id="cambiar-error" style="display:none;color:var(--rojo);font-size:0.8rem;margin-bottom:0.8rem;"></div>
     <div id="cambiar-ok" style="display:none;color:var(--verde);font-size:0.8rem;margin-bottom:0.8rem;"></div>
     <label style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Contraseña actual</label>
     <input type="password" id="cambiar-actual" class="login-input" placeholder="••••••••" style="margin-bottom:0.8rem;" />
-    <label id="cambiar-nueva-label" style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Nueva contraseña (mín. 6 caracteres)</label>
-    <input type="password" id="cambiar-nueva1" class="login-input" placeholder="••••••••" style="margin-bottom:0.8rem;" />
+    <label id="cambiar-nueva-label" style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Nueva contraseña</label>
+    <input type="password" id="cambiar-nueva1" class="login-input" placeholder="••••••••" style="margin-bottom:0.4rem;" oninput="actualizarRequisitosPass(this.value)" />
+    <ul id="cambiar-requisitos" style="display:none;list-style:none;padding:0.5rem 0.7rem;margin:0 0 0.8rem;background:var(--gris0);font-size:0.74rem;font-family:'IBM Plex Mono',monospace;line-height:1.5;">
+      <li id="req-len" data-test="len">○ Mínimo 8 caracteres</li>
+      <li id="req-min" data-test="min">○ Una letra minúscula</li>
+      <li id="req-may" data-test="may">○ Una letra mayúscula</li>
+      <li id="req-num" data-test="num">○ Un número</li>
+      <li id="req-esp" data-test="esp">○ Un carácter especial (!@#$%…)</li>
+    </ul>
     <label style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Confirmar nueva contraseña</label>
     <input type="password" id="cambiar-nueva2" class="login-input" placeholder="••••••••" style="margin-bottom:1.2rem;" />
     <div style="display:flex;gap:0.8rem;">

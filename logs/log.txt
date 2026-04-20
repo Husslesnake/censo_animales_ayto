@@ -114,3 +114,86 @@
 [2026-04-20 07:05:31] INFO     >>> GET /api/sexos
 [2026-04-20 07:05:33] INFO     >>> GET /api/sexos
 [2026-04-20 07:05:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:06:32] INFO     >>> GET /api/sexos
+[2026-04-20 07:06:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:07:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:07:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:08:13] INFO     ================================================================================
+[2026-04-20 07:08:13] INFO     APPLICATION STARTUP - Timestamp: 2026-04-20T07:08:13.135544
+[2026-04-20 07:08:13] INFO     ================================================================================
+[2026-04-20 07:08:13] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T12:30:13.222277
+[2026-04-20 07:08:13] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T12:25:48.085175
+[2026-04-20 07:08:13] DEBUG    Log file log_2026-04-13.txt is within 30-day retention: 2026-04-13T12:26:32.968979
+[2026-04-20 07:08:13] DEBUG    Log file log_2026-04-14.txt is within 30-day retention: 2026-04-14T12:28:43.556528
+[2026-04-20 07:08:13] DEBUG    Log file log_2026-04-15.txt is within 30-day retention: 2026-04-15T22:06:49.956053
+[2026-04-20 07:08:13] DEBUG    Log file log_2026-04-16.txt is within 30-day retention: 2026-04-16T12:30:58.524053
+[2026-04-20 07:08:13] DEBUG    Log file log_2026-04-17.txt is within 30-day retention: 2026-04-17T12:28:01.800428
+[2026-04-20 07:08:13] INFO     AUTH: 5 token(s) de larga duración restaurados desde auth.json
+[2026-04-20 07:08:13] INFO     DB: tabla INCIDENCIAS lista
+[2026-04-20 07:08:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:08:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:09:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:09:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:10:19] INFO     >>> GET /api/sexos
+[2026-04-20 07:10:21] INFO     >>> GET /api/sexos
+[2026-04-20 07:10:21] INFO     >>> GET /api/auth/verificar
+[2026-04-20 07:10:21] INFO     >>> GET /api/motivos_baja
+[2026-04-20 07:10:21] INFO     >>> GET /api/auth/estado
+[2026-04-20 07:10:31] INFO     >>> GET /api/auditoria
+[2026-04-20 07:10:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:10:36] INFO     >>> GET /api/auth/policia_usuarios
+[2026-04-20 07:10:52] INFO     >>> GET /api/sexos
+[2026-04-20 07:10:55] INFO     >>> GET /api/sexos
+[2026-04-20 07:11:05] INFO     >>> GET /api/sexos
+[2026-04-20 07:11:05] INFO     >>> GET /api/auth/verificar
+[2026-04-20 07:11:05] INFO     >>> GET /api/motivos_baja
+[2026-04-20 07:11:05] INFO     >>> GET /api/alertas
+[2026-04-20 07:11:14] INFO     >>> GET /api/auth/empleado_usuarios
+[2026-04-20 07:11:22] INFO     >>> GET /api/sexos
+[2026-04-20 07:11:29] INFO     >>> POST /api/auth/empleado_usuarios
+[2026-04-20 07:11:29] INFO     AUTH: Cuenta empleado creada — usuario (Usuario)
+[2026-04-20 07:11:29] INFO     >>> GET /api/auth/empleado_usuarios
+[2026-04-20 07:11:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:11:35] INFO     >>> GET /api/sexos
+[2026-04-20 07:11:52] INFO     >>> GET /api/sexos
+[2026-04-20 07:12:05] INFO     >>> GET /api/sexos
+[2026-04-20 07:12:22] INFO     >>> GET /api/sexos
+[2026-04-20 07:12:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:12:35] INFO     >>> GET /api/sexos
+[2026-04-20 07:12:52] INFO     >>> GET /api/sexos
+[2026-04-20 07:13:05] INFO     >>> GET /api/sexos
+[2026-04-20 07:13:23] INFO     >>> GET /api/sexos
+[2026-04-20 07:13:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:13:35] INFO     >>> GET /api/sexos
+[2026-04-20 07:14:05] INFO     >>> GET /api/sexos
+[2026-04-20 07:14:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:14:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:14:35] INFO     >>> GET /api/sexos
+[2026-04-20 07:15:05] INFO     >>> GET /api/sexos
+[2026-04-20 07:15:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:15:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:15:35] INFO     >>> GET /api/sexos
+[2026-04-20 07:16:06] INFO     >>> GET /api/sexos
+[2026-04-20 07:16:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:16:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:16:36] INFO     >>> GET /api/sexos
+[2026-04-20 07:17:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:17:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:17:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:18:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:18:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:18:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:19:24] INFO     >>> GET /api/sexos
+[2026-04-20 07:19:24] INFO     >>> GET /api/auth/verificar
+[2026-04-20 07:19:24] INFO     >>> GET /api/motivos_baja
+[2026-04-20 07:19:24] INFO     >>> GET /api/auth/estado
+[2026-04-20 07:19:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:19:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:19:54] INFO     >>> GET /api/sexos
+[2026-04-20 07:20:24] INFO     >>> GET /api/sexos
+[2026-04-20 07:20:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:20:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:20:54] INFO     >>> GET /api/sexos
+[2026-04-20 07:21:24] INFO     >>> GET /api/sexos
+[2026-04-20 07:21:33] INFO     >>> GET /api/sexos
+[2026-04-20 07:21:33] INFO     >>> GET /api/sexos
