@@ -1,0 +1,35 @@
+{
+  "name": "Censo Municipal de Animales",
+  "short_name": "Censo Animales",
+  "description": "Gestión del Censo Municipal de Animales de Navalcarnero",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f7f1e3",
+  "theme_color": "#7B2D40",
+  "lang": "es-ES",
+  "icons": [
+    {
+      "src": "/icons/Escudo_de_Navalcarnero.svg-removebg-preview.ico",
+      "sizes": "16x16 32x32 48x48 64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["government", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Policía — Consulta rápida",
+      "short_name": "Policía",
+      "description": "Consulta de chips e incidencias",
+      "url": "/?view=policia",
+      "icons": [{ "src": "/icons/Escudo_de_Navalcarnero.svg-removebg-preview.ico", "sizes": "64x64" }]
+    }
+  ]
+}

@@ -438,7 +438,10 @@
           fetch("/api/auth/logout", {
             method: "POST",
             headers: { "X-Token": t.token }
-          }).catch(function(){});
+          }).catch(function(e){
+            // Logout local procede aunque falle la notificación al servidor
+            if (typeof logError === "function") logError(e && e.message, "doLogout/fetch", e && e.stack);
+          });
         }
         sesion = null;
         _clearToken();
@@ -523,6 +526,57 @@
           );
         }
       }
+      function abrirRecuperar() {
+        var m = document.getElementById("modal-recuperar");
+        if (!m) return;
+        var u = document.getElementById("recuperar-user");
+        var mot = document.getElementById("recuperar-motivo");
+        var err = document.getElementById("recuperar-error");
+        var ok = document.getElementById("recuperar-ok");
+        if (u) u.value = document.getElementById("login-user") && document.getElementById("login-user").value || "";
+        if (mot) mot.value = "";
+        if (err) err.style.display = "none";
+        if (ok) ok.style.display = "none";
+        m.style.display = "flex";
+      }
+
+      function cerrarRecuperar() {
+        var m = document.getElementById("modal-recuperar");
+        if (m) m.style.display = "none";
+      }
+
+      async function enviarRecuperar() {
+        var u = document.getElementById("recuperar-user");
+        var mot = document.getElementById("recuperar-motivo");
+        var err = document.getElementById("recuperar-error");
+        var ok = document.getElementById("recuperar-ok");
+        err.style.display = "none"; ok.style.display = "none";
+        var usuario = (u && u.value || "").trim();
+        if (!usuario) {
+          err.textContent = "Introduzca su usuario."; err.style.display = "block"; return;
+        }
+        try {
+          var res = await fetch("/api/auth/recuperar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Device-Id": _getDeviceId() },
+            body: JSON.stringify({ username: usuario, motivo: (mot && mot.value || "").trim() })
+          });
+          var data = await res.json();
+          if (data.ok) {
+            ok.textContent = data.mensaje || "Solicitud registrada. El administrador se pondrá en contacto.";
+            ok.style.display = "block";
+            setTimeout(cerrarRecuperar, 2500);
+          } else {
+            err.textContent = data.error || "No se pudo registrar la solicitud.";
+            err.style.display = "block";
+          }
+        } catch(e) {
+          err.textContent = "Error de conexión.";
+          err.style.display = "block";
+          logError(e.message, "enviarRecuperar", e.stack);
+        }
+      }
+
       // Inicializar sesión al cargar: verifica token guardado con el backend
       (async function _initSession() {
         var saved = _getToken();

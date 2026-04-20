@@ -1,0 +1,33 @@
+<div class="page" id="page-backups">
+  <div class="section-header">
+    <span class="section-num">BCK-01</span>
+    <h2>Backups de base de datos</h2>
+    <p>Copias de seguridad automáticas diarias · Solo administrador</p>
+  </div>
+  <div id="alert-backups" class="alert"><span class="alert-icon"></span><span class="alert-msg"></span></div>
+  <div class="bloque">
+    <div class="bloque-titulo" style="display:flex;align-items:center;justify-content:space-between;">
+      <h3>Copias disponibles</h3>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn-secondary" onclick="cargarBackups()" style="padding:0.3rem 0.7rem;font-size:0.8rem;">Actualizar</button>
+        <button class="btn btn-primary" onclick="crearBackupManual()" style="padding:0.3rem 0.7rem;font-size:0.8rem;">Crear backup ahora</button>
+      </div>
+    </div>
+    <div class="bloque-body">
+      <div id="backups-info" style="font-size:0.8rem;color:var(--gris3);margin-bottom:0.75rem;"></div>
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Archivo</th>
+            <th style="width:140px;">Fecha</th>
+            <th style="width:100px;text-align:right;">Tamaño</th>
+            <th style="width:180px;text-align:right;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-backups">
+          <tr class="empty-row"><td colspan="4">Cargando…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -18,6 +18,12 @@
         crear_cuenta_policia:      "Crear agente",
         actualizar_cuenta_policia: "Modificar agente",
         eliminar_cuenta_policia:   "Eliminar agente",
+        backup_automatico:         "Backup automático",
+        backup_manual:             "Backup manual",
+        backup_eliminar:           "Eliminar backup",
+        solicitud_recuperacion:    "Solicitud de recuperación",
+        bloqueo_inactividad:       "Bloqueo por inactividad",
+        bloqueo_intentos:          "Bloqueo por intentos",
       };
 
       var ROL_LABELS = {
@@ -48,10 +54,23 @@
       function _resumenDetalle(detalle) {
         if (!detalle || typeof detalle !== "object") return "—";
         var campos = [];
+        // Si hay diff, resumirlo de forma legible
+        if (detalle.diff && typeof detalle.diff === "object") {
+          var keys = Object.keys(detalle.diff);
+          if (keys.length) {
+            var resumen = keys.slice(0, 2).map(function (k) {
+              var v = detalle.diff[k] || {};
+              var a = v.antes == null ? "∅" : String(v.antes);
+              var d = v.despues == null ? "∅" : String(v.despues);
+              return _escapeHTML(k) + ": " + _escapeHTML(a.slice(0, 20)) + " → " + _escapeHTML(d.slice(0, 20));
+            }).join(" · ");
+            if (keys.length > 2) resumen += " · +" + (keys.length - 2) + " más";
+            campos.push(resumen);
+          }
+        }
         var prioridad = ["DNI", "N_CHIP", "nombre", "DNI_propietario",
                          "motivo", "n_baja", "N_CENSO", "id", "username",
-                         "compania", "poliza", "tipo", "campos_modificados",
-                         "cambios", "error"];
+                         "compania", "poliza", "tipo", "archivo", "error"];
         for (var i = 0; i < prioridad.length && campos.length < 3; i++) {
           var k = prioridad[i];
           if (detalle[k] !== undefined && detalle[k] !== null && detalle[k] !== "") {

@@ -422,7 +422,27 @@
     Acceso de Policía Municipal
   </button>
 </div>
+<div style="margin-top:0.6rem;text-align:center;">
+  <a href="#" onclick="event.preventDefault();abrirRecuperar();" style="font-size:0.78rem;color:var(--gris4);text-decoration:underline;">¿Olvidaste tu contraseña?</a>
+</div>
 <p class="login-footer">Acceso exclusivo para personal municipal autorizado</p></div></div></div>
+<!-- Modal recuperar contraseña -->
+<div id="modal-recuperar" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
+  <div style="background:var(--blanco);padding:1.8rem 2rem;max-width:420px;width:92%;border-top:4px solid var(--rojo);">
+    <h2 style="font-family:'Libre Baskerville',serif;font-size:1rem;margin-bottom:0.4rem;color:var(--tinta);">Recuperar contraseña</h2>
+    <p style="font-size:0.78rem;color:var(--gris4);margin-bottom:1rem;line-height:1.5;">El administrador recibirá tu solicitud y podrá resetear tu contraseña desde el panel de gestión.</p>
+    <div id="recuperar-error" style="display:none;color:var(--rojo);font-size:0.8rem;margin-bottom:0.6rem;"></div>
+    <div id="recuperar-ok" style="display:none;color:var(--verde);font-size:0.8rem;margin-bottom:0.6rem;"></div>
+    <label style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Tu nombre de usuario</label>
+    <input type="text" id="recuperar-user" class="login-input" placeholder="usuario" style="margin-bottom:0.8rem;" />
+    <label style="display:block;font-size:0.78rem;color:var(--gris4);margin-bottom:0.3rem;">Motivo (opcional)</label>
+    <input type="text" id="recuperar-motivo" class="login-input" placeholder="Olvidé mi contraseña" style="margin-bottom:1.2rem;" />
+    <div style="display:flex;gap:0.8rem;">
+      <button class="btn btn-secondary" onclick="cerrarRecuperar()" style="flex:1;">Cancelar</button>
+      <button class="btn btn-enviar" onclick="enviarRecuperar()" style="flex:1;">Enviar</button>
+    </div>
+  </div>
+</div>
 <!-- Modal setup contraseña (primera vez, cualquier IP) -->
 <div id="modal-setup-admin" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
   <div style="background:var(--blanco);padding:2rem 2.2rem;max-width:420px;width:92%;border-top:4px solid var(--rojo);">

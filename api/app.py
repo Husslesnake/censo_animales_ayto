@@ -1,4 +1,5 @@
 import atexit
+import gzip
 import hashlib
 import hmac
 import json
@@ -10,6 +11,7 @@ from datetime import date, datetime, timedelta
 from logging.handlers import TimedRotatingFileHandler
 from pathlib import Path
 
+import bcrypt
 import mysql.connector
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, jsonify, request, send_file
@@ -213,6 +215,56 @@ def _log_auditoria(accion: str, detalle: dict | None = None, exito: bool = True)
         logger.warning("No se pudo escribir en auditoria.jsonl: %s", e)
 
 
+def _diff_dict(antes: dict | None, despues: dict | None) -> dict:
+    """Compara dos snapshots y devuelve sólo los campos cuyo valor ha cambiado.
+    Formato: {campo: {"antes": x, "despues": y}}.
+    """
+    antes = antes or {}
+    despues = despues or {}
+    claves = set(antes.keys()) | set(despues.keys())
+    cambios = {}
+    for k in claves:
+        va, vd = antes.get(k), despues.get(k)
+        # Normalizar datetime/date a iso para comparación estable
+        if isinstance(va, (datetime, date)):
+            va = va.isoformat()
+        if isinstance(vd, (datetime, date)):
+            vd = vd.isoformat()
+        if va != vd:
+            cambios[k] = {"antes": va, "despues": vd}
+    return cambios
+
+
+def _snapshot_animal(conn, chip: str) -> dict | None:
+    """Captura el estado actual de un animal (+ póliza de seguro) para diff."""
+    try:
+        c = conn.cursor(buffered=True)
+        c.execute(
+            "SELECT COLUMN_NAME FROM information_schema.COLUMNS "
+            "WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='ANIMALES' "
+            "ORDER BY ORDINAL_POSITION"
+        )
+        cols = [r[0] for r in c.fetchall()]
+        chip_col = "N_CHIP" if "N_CHIP" in cols else ("NUMERO_CHIP" if "NUMERO_CHIP" in cols else cols[0])
+        c.execute(f"SELECT * FROM ANIMALES WHERE `{chip_col}` = %s", (chip,))
+        row = c.fetchone()
+        if not row:
+            return None
+        snap = {cols[i]: row[i] for i in range(len(cols))}
+        # Añadir póliza vigente
+        try:
+            c2 = conn.cursor(buffered=True)
+            c2.execute(f"SELECT SEGURO_POLIZA FROM SEGUROS WHERE `{chip_col}` = %s", (chip,))
+            r2 = c2.fetchone()
+            snap["SEGURO_POLIZA"] = r2[0] if r2 else None
+        except Exception as e:
+            logger.debug("snapshot_animal: póliza no disponible para chip=%s: %s", chip, e)
+        return snap
+    except Exception as e:
+        logger.warning("snapshot_animal fallo para chip=%s: %s", chip, e)
+        return None
+
+
 # Tokens de sesión en memoria: {token: {"rol": "admin"|"empleado", "exp": datetime}}
 _TOKENS: dict = {}
 _TOKEN_TTL_HOURS = 12
@@ -247,8 +299,8 @@ def _cargar_tokens_persistidos():
                     payload["username"] = datos["username"]
                 _TOKENS[token] = payload
                 cargados += 1
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("Token persistido inválido ignorado (%s…): %s", token[:8], e)
     if cargados:
         logger.info("AUTH: %d token(s) de larga duración restaurados desde auth.json", cargados)
 
@@ -301,8 +353,70 @@ def _get_device_id() -> str:
 
 
 def _hash_password(password: str, salt: str) -> str:
-    """SHA-256 con sal."""
+    """SHA-256 con sal — solo para verificar credenciales legacy. Usar _hash_bcrypt para nuevas."""
     return hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
+
+
+def _hash_bcrypt(password: str) -> str:
+    """Hash bcrypt con coste 12. Devuelve la cadena lista para almacenar."""
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds=12)).decode("utf-8")
+
+
+def _verificar_password(password: str, entrada: dict) -> bool:
+    """Verifica una contraseña contra una entrada que puede usar bcrypt o SHA-256 legacy."""
+    bhash = entrada.get("bcrypt")
+    if bhash:
+        try:
+            return bcrypt.checkpw(password.encode("utf-8"), bhash.encode("utf-8"))
+        except Exception:
+            return False
+    # Legacy SHA-256
+    salt = entrada.get("salt")
+    h    = entrada.get("hash")
+    if not salt or not h:
+        return False
+    return _hash_password(password, salt) == h
+
+
+def _migrar_a_bcrypt(entrada: dict, password: str) -> bool:
+    """Si la entrada usa SHA-256, la actualiza in-place a bcrypt. Devuelve True si migró."""
+    if entrada.get("bcrypt"):
+        return False
+    entrada["bcrypt"] = _hash_bcrypt(password)
+    entrada.pop("hash", None)
+    entrada.pop("salt", None)
+    return True
+
+
+# ── Rate-limit y bloqueo de cuenta por intentos fallidos ─────────────────────
+# {clave: [timestamps]} — limpiamos al pasar la ventana
+_LOGIN_INTENTOS: dict[str, list[datetime]] = {}
+_LOGIN_VENTANA_SEG       = 300   # 5 min
+_LOGIN_MAX_INTENTOS_IP   = 20    # por IP en la ventana
+_LOGIN_MAX_INTENTOS_USER = 5     # por usuario antes de bloquear cuenta
+
+
+def _registrar_intento_fallido(clave: str) -> int:
+    """Registra un intento y devuelve el nº de intentos en la ventana."""
+    ahora = datetime.now()
+    lista = _LOGIN_INTENTOS.setdefault(clave, [])
+    lista.append(ahora)
+    # Purgar antiguos
+    limite = ahora - timedelta(seconds=_LOGIN_VENTANA_SEG)
+    _LOGIN_INTENTOS[clave] = [t for t in lista if t > limite]
+    return len(_LOGIN_INTENTOS[clave])
+
+
+def _intentos_en_ventana(clave: str) -> int:
+    ahora = datetime.now()
+    limite = ahora - timedelta(seconds=_LOGIN_VENTANA_SEG)
+    lista = [t for t in _LOGIN_INTENTOS.get(clave, []) if t > limite]
+    _LOGIN_INTENTOS[clave] = lista
+    return len(lista)
+
+
+def _limpiar_intentos(clave: str):
+    _LOGIN_INTENTOS.pop(clave, None)
 
 
 # Caducidad de contraseña: empleados deben renovar tras este número de días
@@ -518,9 +632,9 @@ def auth_setup():
     if len(password) < min_len:
         return jsonify({"ok": False, "error": f"La contraseña debe tener al menos {min_len} caracteres."})
 
-    sal = secrets.token_hex(16)
-    hashed = _hash_password(password, sal)
-    entrada = {"hash": hashed, "salt": sal, "rol": rol, "creado": datetime.now().isoformat()}
+    entrada = {"bcrypt": _hash_bcrypt(password), "rol": rol,
+               "creado": datetime.now().isoformat(),
+               "password_changed": datetime.now().isoformat()}
 
     if es_admin:
         auth["admin"] = entrada
@@ -566,32 +680,32 @@ def auth_cambiar():
         entrada = auth.get("devices", {}).get(device_id, {}) if device_id else {}
         bucket, key = "devices", device_id
 
-    if not entrada.get("hash"):
+    if not (entrada.get("bcrypt") or entrada.get("hash")):
         return jsonify({"ok": False, "error": "No hay contraseña configurada."})
 
     data = request.get_json(silent=True) or {}
     actual = data.get("actual", "").strip()
     nueva  = data.get("nueva",  "").strip()
 
-    if _hash_password(actual, entrada["salt"]) != entrada["hash"]:
+    if not _verificar_password(actual, entrada):
         return jsonify({"ok": False, "error": "La contraseña actual no es correcta."})
 
     if nueva == actual:
         return jsonify({"ok": False, "error": "La nueva contraseña debe ser distinta de la actual."})
 
-    if rol == "empleado" and bucket == "empleado_usuarios":
+    if bucket in ("empleado_usuarios", "policia_usuarios", "admin"):
         err = _validar_fortaleza_password(nueva)
         if err:
             return jsonify({"ok": False, "error": err})
     else:
-        min_len = 6 if rol in ("admin", "policia") else 4
-        if len(nueva) < min_len:
-            return jsonify({"ok": False, "error": f"La nueva contraseña debe tener al menos {min_len} caracteres."})
+        if len(nueva) < 4:
+            return jsonify({"ok": False, "error": "La nueva contraseña debe tener al menos 4 caracteres."})
 
-    sal = secrets.token_hex(16)
-    hashed = _hash_password(nueva, sal)
     ahora_iso = datetime.now().isoformat()
-    nuevos = {"hash": hashed, "salt": sal, "modificado": ahora_iso, "password_changed": ahora_iso}
+    nuevos = {"bcrypt": _hash_bcrypt(nueva), "modificado": ahora_iso, "password_changed": ahora_iso}
+    # Limpiar legacy si existían
+    nuevos["hash"] = None
+    nuevos["salt"] = None
     if bucket == "empleado_usuarios":
         nuevos["must_change"] = False
 
@@ -621,17 +735,23 @@ def auth_login():
     data = request.get_json(silent=True) or {}
     recordar = bool(data.get("recordar", False))
 
+    # ── Rate-limit por IP ─────────────────────────────────────────────────────
+    if _intentos_en_ventana("ip:" + ip) >= _LOGIN_MAX_INTENTOS_IP:
+        return jsonify({"ok": False, "error": "Demasiados intentos desde tu red. Espera unos minutos."}), 429
+
     # ── Rama usuario nominal (policía o empleado) ──────────────────────────────
     username = data.get("username", "").strip().lower()
     if username:
         password = data.get("password", "").strip()
         if not password:
             return jsonify({"ok": False, "error": "Introduzca la contraseña."})
+        if _intentos_en_ventana("user:" + username) >= _LOGIN_MAX_INTENTOS_USER:
+            return jsonify({"ok": False, "error": "Cuenta bloqueada temporalmente por intentos fallidos. Espera 5 minutos o contacte con el administrador."}), 429
         auth = _cargar_auth()
 
         # Empleado por username (creado por admin)
         emp = auth.get("empleado_usuarios", {}).get(username)
-        if emp and emp.get("hash"):
+        if emp and (emp.get("bcrypt") or emp.get("hash")):
             if not emp.get("activo", False):
                 _log_ip(ip, "empleado", "login", False)
                 return jsonify({"ok": False, "error": "Cuenta desactivada. Contacte con el administrador."})
@@ -642,10 +762,21 @@ def auth_login():
                 logger.warning("AUTH: Cuenta empleado bloqueada por inactividad — %s", username)
                 _log_auditoria("bloqueo_inactividad", {"username": username, "motivo": "sin_acceso_6_meses"})
                 return jsonify({"ok": False, "error": "Cuenta bloqueada por inactividad. Contacte con el administrador."})
-            if _hash_password(password, emp["salt"]) != emp["hash"]:
-                logger.warning("AUTH: Login empleado fallido — %s desde %s", username, ip)
+            if not _verificar_password(password, emp):
+                _registrar_intento_fallido("ip:" + ip)
+                fallos = _registrar_intento_fallido("user:" + username)
+                logger.warning("AUTH: Login empleado fallido — %s desde %s (intento %d)", username, ip, fallos)
                 _log_ip(ip, "empleado", "login", False)
+                if fallos >= _LOGIN_MAX_INTENTOS_USER:
+                    auth["empleado_usuarios"][username]["activo"] = False
+                    _guardar_auth(auth)
+                    _log_auditoria("bloqueo_intentos", {"username": username, "intentos": fallos})
+                    return jsonify({"ok": False, "error": "Cuenta bloqueada por intentos fallidos. Contacte con el administrador."})
                 return jsonify({"ok": False, "error": "Usuario o contraseña incorrectos."})
+            _limpiar_intentos("user:" + username)
+            if _migrar_a_bcrypt(emp, password):
+                logger.info("AUTH: Migrada a bcrypt — empleado %s", username)
+            auth["empleado_usuarios"][username] = emp
             auth["empleado_usuarios"][username]["ultimo_acceso"] = datetime.now().isoformat()
             _guardar_auth(auth)
             token = _crear_token("empleado", recordar=recordar, username=username)
@@ -660,7 +791,7 @@ def auth_login():
                             "must_change": must_change, "motivo_cambio": motivo_cambio})
 
         user = auth.get("policia_usuarios", {}).get(username)
-        if not user or not user.get("hash"):
+        if not user or not (user.get("bcrypt") or user.get("hash")):
             _log_ip(ip, "policia", "login", False)
             return jsonify({"ok": False, "error": "Usuario o contraseña incorrectos."})
         if not user.get("activo", False):
@@ -674,11 +805,21 @@ def auth_login():
             logger.warning("AUTH: Cuenta policía bloqueada por inactividad — %s", username)
             _log_auditoria("bloqueo_inactividad", {"username": username, "motivo": "sin_acceso_6_meses"})
             return jsonify({"ok": False, "error": "Cuenta bloqueada por inactividad. Contacte con el administrador."})
-        if _hash_password(password, user["salt"]) != user["hash"]:
-            logger.warning("AUTH: Login policía fallido — %s desde %s", username, ip)
+        if not _verificar_password(password, user):
+            _registrar_intento_fallido("ip:" + ip)
+            fallos = _registrar_intento_fallido("user:" + username)
+            logger.warning("AUTH: Login policía fallido — %s desde %s (intento %d)", username, ip, fallos)
             _log_ip(ip, "policia", "login", False)
+            if fallos >= _LOGIN_MAX_INTENTOS_USER:
+                auth["policia_usuarios"][username]["activo"] = False
+                _guardar_auth(auth)
+                _log_auditoria("bloqueo_intentos", {"username": username, "intentos": fallos})
+                return jsonify({"ok": False, "error": "Cuenta bloqueada por intentos fallidos. Contacte con el administrador."})
             return jsonify({"ok": False, "error": "Usuario o contraseña incorrectos."})
-        # Login correcto → actualizar último acceso
+        _limpiar_intentos("user:" + username)
+        if _migrar_a_bcrypt(user, password):
+            logger.info("AUTH: Migrada a bcrypt — policía %s", username)
+        auth["policia_usuarios"][username] = user
         auth["policia_usuarios"][username]["ultimo_acceso"] = datetime.now().isoformat()
         _guardar_auth(auth)
         token = _crear_token("policia", recordar=recordar, username=username)
@@ -704,13 +845,27 @@ def auth_login():
         device_id = _get_device_id()
         entrada = auth.get("devices", {}).get(device_id, {}) if device_id else {}
 
-    if not entrada.get("hash"):
+    if not (entrada.get("bcrypt") or entrada.get("hash")):
         return jsonify({"ok": False, "error": "configure_primero"})
 
-    if _hash_password(password, entrada["salt"]) != entrada["hash"]:
+    clave_intentos = "admin:" + ip if es_admin else "device:" + (_get_device_id() or ip)
+    if _intentos_en_ventana(clave_intentos) >= _LOGIN_MAX_INTENTOS_USER:
+        return jsonify({"ok": False, "error": "Demasiados intentos. Espera 5 minutos."}), 429
+
+    if not _verificar_password(password, entrada):
+        _registrar_intento_fallido("ip:" + ip)
+        _registrar_intento_fallido(clave_intentos)
         logger.warning("AUTH: Login fallido desde %s (rol=%s)", ip, rol)
         _log_ip(ip, rol, "login", False)
         return jsonify({"ok": False, "error": "Contraseña incorrecta."})
+    _limpiar_intentos(clave_intentos)
+    if _migrar_a_bcrypt(entrada, password):
+        logger.info("AUTH: Migrada a bcrypt — %s", "admin" if es_admin else "device " + _get_device_id()[:12])
+        if es_admin:
+            auth["admin"] = entrada
+        else:
+            auth["devices"][_get_device_id()] = entrada
+        _guardar_auth(auth)
 
     # ── Comprobaciones post-contraseña para empleados (admin no caduca ni se bloquea) ──
     if rol == "empleado":
@@ -758,9 +913,7 @@ def auth_setup_empleado():
         return jsonify({"ok": False, "error": "La contraseña de empleado debe tener al menos 4 caracteres."})
 
     auth = _cargar_auth()
-    sal = secrets.token_hex(16)
-    hashed = _hash_password(nueva, sal)
-    auth["empleado"] = {"hash": hashed, "salt": sal, "modificado": datetime.now().isoformat()}
+    auth["empleado"] = {"bcrypt": _hash_bcrypt(nueva), "modificado": datetime.now().isoformat()}
     _guardar_auth(auth)
     logger.info("AUTH: Contraseña de empleado configurada por admin desde %s", ip)
     _log_ip(ip, "admin", "setup_password_empleado", True)
@@ -826,11 +979,10 @@ def policia_usuarios_crear():
     auth = _cargar_auth()
     if username in auth.get("policia_usuarios", {}):
         return jsonify({"ok": False, "error": f"El usuario '{username}' ya existe."})
-    sal    = secrets.token_hex(16)
-    hashed = _hash_password(password, sal)
     auth.setdefault("policia_usuarios", {})[username] = {
-        "hash": hashed, "salt": sal, "nombre": nombre,
-        "activo": True, "creado": datetime.now().isoformat()
+        "bcrypt": _hash_bcrypt(password), "nombre": nombre,
+        "activo": True, "creado": datetime.now().isoformat(),
+        "password_changed": datetime.now().isoformat(),
     }
     _guardar_auth(auth)
     logger.info("AUTH: Cuenta policía creada — %s (%s)", username, nombre)
@@ -862,10 +1014,12 @@ def policia_usuarios_actualizar(username):
         nueva = data["password"].strip()
         if len(nueva) < 6:
             return jsonify({"ok": False, "error": "La contraseña debe tener al menos 6 caracteres."})
-        sal = secrets.token_hex(16)
-        usuarios[username]["hash"]       = _hash_password(nueva, sal)
-        usuarios[username]["salt"]       = sal
-        usuarios[username]["modificado"] = datetime.now().isoformat()
+        ahora = datetime.now().isoformat()
+        usuarios[username]["bcrypt"]           = _hash_bcrypt(nueva)
+        usuarios[username]["modificado"]       = ahora
+        usuarios[username]["password_changed"] = ahora
+        usuarios[username].pop("hash", None)
+        usuarios[username].pop("salt", None)
     if "nombre" in data:
         usuarios[username]["nombre"] = data["nombre"].strip()
     auth["policia_usuarios"] = usuarios
@@ -905,6 +1059,25 @@ def policia_usuarios_eliminar(username):
 
 # ── Gestión de usuarios empleado (solo admin) ─────────────────────────────────
 
+@app.route("/api/auth/recuperar", methods=["POST"])
+def auth_recuperar():
+    """Empleado u oficial solicita ayuda al admin para recuperar contraseña.
+    Solo registra la solicitud — el admin debe resetear manualmente desde el panel.
+    Respuesta genérica para no revelar si el usuario existe."""
+    data = request.get_json(silent=True) or {}
+    username = data.get("username", "").strip().lower()
+    motivo   = data.get("motivo", "").strip()[:200]
+    ip = _get_client_ip()
+    if username:
+        auth = _cargar_auth()
+        existe = (username in auth.get("empleado_usuarios", {})
+                  or username in auth.get("policia_usuarios", {}))
+        _log_auditoria("solicitud_recuperacion",
+                       {"username": username, "existe": existe, "motivo": motivo, "ip": ip})
+        logger.info("AUTH: Solicitud de recuperación — %s desde %s", username, ip)
+    return jsonify({"ok": True, "mensaje": "Si el usuario existe, el administrador recibirá tu solicitud."})
+
+
 @app.route("/api/auth/empleado_usuarios", methods=["GET"])
 def empleado_usuarios_listar():
     """Lista todas las cuentas de empleado. Requiere sesión de administrador."""
@@ -939,11 +1112,9 @@ def empleado_usuarios_crear():
         return jsonify({"ok": False, "error": f"El usuario '{username}' ya existe."})
     if username in auth.get("policia_usuarios", {}):
         return jsonify({"ok": False, "error": f"El nombre de usuario '{username}' ya está en uso."})
-    sal    = secrets.token_hex(16)
-    hashed = _hash_password(password, sal)
     ahora = datetime.now().isoformat()
     auth.setdefault("empleado_usuarios", {})[username] = {
-        "hash": hashed, "salt": sal, "nombre": nombre,
+        "bcrypt": _hash_bcrypt(password), "nombre": nombre,
         "activo": True, "creado": ahora,
         "must_change": True, "password_changed": ahora,
     }
@@ -976,13 +1147,13 @@ def empleado_usuarios_actualizar(username):
         nueva = data["password"].strip()
         if len(nueva) < 4:
             return jsonify({"ok": False, "error": "La contraseña debe tener al menos 4 caracteres."})
-        sal = secrets.token_hex(16)
         ahora = datetime.now().isoformat()
-        usuarios[username]["hash"]             = _hash_password(nueva, sal)
-        usuarios[username]["salt"]             = sal
+        usuarios[username]["bcrypt"]           = _hash_bcrypt(nueva)
         usuarios[username]["modificado"]       = ahora
         usuarios[username]["password_changed"] = ahora
         usuarios[username]["must_change"]      = True
+        usuarios[username].pop("hash", None)
+        usuarios[username].pop("salt", None)
     if "nombre" in data:
         usuarios[username]["nombre"] = data["nombre"].strip()
     auth["empleado_usuarios"] = usuarios
@@ -1361,6 +1532,9 @@ def actualizar_animal(chip):
         c = cur(conn)
         chip_col = detectar_chip(c)
 
+        # Snapshot ANTES para auditoría con diff
+        estado_antes = _snapshot_animal(conn, chip)
+
         # Verificar que el animal existe
         c.execute(f"SELECT COUNT(*) FROM ANIMALES WHERE `{chip_col}` = %s", (chip,))
         if c.fetchone()[0] == 0:
@@ -1456,13 +1630,16 @@ def actualizar_animal(chip):
             )
 
         conn.commit()
+        # Snapshot DESPUÉS para calcular diff antes de cerrar conexión
+        estado_despues = _snapshot_animal(conn, chip)
         conn.close()
         campos_mod = [k for k in ("DNI_PROPIETARIO", "FECHA_ULTIMA_VACUNA_ANTIRRABICA",
                                     "ESTERILIZADO", "SEGURO_POLIZA") if k in d]
+        diff = _diff_dict(estado_antes, estado_despues)
         _log_auditoria("actualizar_animal", {
             "N_CHIP": chip,
             "campos_modificados": campos_mod,
-            "valores": {k: d.get(k) for k in campos_mod},
+            "diff": diff,
         })
         return jsonify({"ok": True, "mensaje": "Animal actualizado correctamente."})
 
@@ -1645,8 +1822,9 @@ def insertar_animal():
                 "VALUES (%s, %s, CURDATE())",
                 (chip_val, n_censo_auto),
             )
-        except Exception:
-            pass  # No bloquear el alta si falla el insert en CENSO
+        except Exception as e:
+            # No bloquear el alta si falla el insert en CENSO
+            logger.warning("INSERT en CENSO falló (chip=%s, n_censo=%s): %s", chip_val, n_censo_auto, e)
 
         conn.commit()
 
@@ -2116,8 +2294,9 @@ def baja_automatica_por_edad():
                     "n_baja": n_baja,
                     "observaciones": obs,
                 })
-            except Exception:
-                pass  # Un fallo individual no detiene el resto
+            except Exception as e:
+                logger.warning("baja_automatica: fallo con chip=%s dni=%s: %s", chip, dni_prop, e)
+                # Un fallo individual no detiene el resto
 
         conn.commit()
         conn.close()
@@ -2262,8 +2441,8 @@ def estadisticas():
                             anio_hasta is None or y <= anio_hasta
                         ):
                             nacimientos[y] += 1
-                except Exception:
-                    pass
+                except (ValueError, TypeError) as e:
+                    logger.debug("Año nacimiento inválido ignorado: %r (%s)", anio, e)
 
         # -- Bajas por año y por motivo (con filtro de especie si se indica) --
         if especie_filtro:
@@ -2897,8 +3076,10 @@ def _init_incidencias():
         try:
             c.execute("ALTER TABLE INCIDENCIAS ADD COLUMN AGENTE VARCHAR(100) DEFAULT NULL")
             conn.commit()
-        except Exception:
-            pass  # columna ya existe
+        except mysql.connector.Error as e:
+            # Error 1060 = duplicate column (la columna ya existía); lo demás sí avisar.
+            if getattr(e, "errno", None) != 1060:
+                logger.warning("ALTER TABLE INCIDENCIAS AGENTE falló: %s", e)
         conn.commit()
         conn.close()
         logger.info("DB: tabla INCIDENCIAS lista")
@@ -3053,6 +3234,284 @@ def _bloquear_usuarios_inactivos():
         logger.error("SCHEDULER: error en _bloquear_usuarios_inactivos: %s", e)
 
 
+# ── Backups automáticos ──────────────────────────────────────────────────────
+
+BACKUP_DIR = Path(os.environ.get("BACKUP_DIR", "db/backups"))
+BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+BACKUP_RETENTION_DAYS = int(os.environ.get("BACKUP_RETENTION_DAYS", "30"))
+
+
+def _sql_escape(valor) -> str:
+    if valor is None:
+        return "NULL"
+    if isinstance(valor, bool):
+        return "1" if valor else "0"
+    if isinstance(valor, (int, float)):
+        return str(valor)
+    if isinstance(valor, (bytes, bytearray)):
+        return "0x" + bytes(valor).hex()
+    if isinstance(valor, (datetime, date)):
+        return "'" + valor.isoformat(sep=" ") + "'"
+    s = str(valor).replace("\\", "\\\\").replace("'", "''").replace("\x00", "")
+    return "'" + s + "'"
+
+
+def _dump_database_a_sql(fh) -> dict:
+    """Escribe un volcado SQL completo a `fh`. Devuelve estadísticas."""
+    stats = {"tablas": 0, "filas": 0}
+    conn = get_conn()
+    cur = conn.cursor()
+    try:
+        cur.execute("SHOW TABLES")
+        tablas = [r[0] for r in cur.fetchall()]
+        fh.write(f"-- Backup censo_animales {datetime.now().isoformat()}\n")
+        fh.write("SET FOREIGN_KEY_CHECKS=0;\n")
+        fh.write("SET NAMES utf8mb4;\n\n")
+        for tabla in tablas:
+            cur.execute(f"SHOW CREATE TABLE `{tabla}`")
+            create_sql = cur.fetchone()[1]
+            fh.write(f"DROP TABLE IF EXISTS `{tabla}`;\n")
+            fh.write(create_sql + ";\n\n")
+            cur.execute(f"SELECT * FROM `{tabla}`")
+            cols = [d[0] for d in cur.description]
+            col_list = ", ".join(f"`{c}`" for c in cols)
+            filas_tabla = 0
+            for row in cur.fetchall():
+                vals = ", ".join(_sql_escape(v) for v in row)
+                fh.write(f"INSERT INTO `{tabla}` ({col_list}) VALUES ({vals});\n")
+                filas_tabla += 1
+            fh.write("\n")
+            stats["tablas"] += 1
+            stats["filas"] += filas_tabla
+        fh.write("SET FOREIGN_KEY_CHECKS=1;\n")
+    finally:
+        cur.close()
+        conn.close()
+    return stats
+
+
+def _ejecutar_backup() -> dict:
+    """Crea un backup comprimido y verifica integridad. Devuelve metadatos."""
+    ts = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+    filename = f"backup_{ts}.sql.gz"
+    ruta = BACKUP_DIR / filename
+    try:
+        with gzip.open(ruta, "wt", encoding="utf-8") as fh:
+            stats = _dump_database_a_sql(fh)
+        # Verificación: abrir y leer cabecera
+        with gzip.open(ruta, "rt", encoding="utf-8") as fh:
+            cabecera = fh.read(200)
+        if "SET NAMES utf8mb4" not in cabecera:
+            raise RuntimeError("Verificación del backup fallida: cabecera inválida")
+        tamano = ruta.stat().st_size
+        logger.info("BACKUP: creado %s (%d tablas, %d filas, %d bytes)",
+                    filename, stats["tablas"], stats["filas"], tamano)
+        return {
+            "ok": True,
+            "archivo": filename,
+            "tamano": tamano,
+            "tablas": stats["tablas"],
+            "filas": stats["filas"],
+            "fecha": datetime.now().isoformat(),
+        }
+    except Exception as e:
+        logger.error("BACKUP: fallo creando %s: %s", filename, e)
+        try:
+            if ruta.exists():
+                ruta.unlink()
+        except OSError as unlink_err:
+            logger.warning("BACKUP: no se pudo eliminar archivo parcial %s: %s", ruta, unlink_err)
+        return {"ok": False, "error": str(e)}
+
+
+def _limpiar_backups_antiguos() -> int:
+    """Elimina backups con antigüedad superior a BACKUP_RETENTION_DAYS."""
+    limite = datetime.now() - timedelta(days=BACKUP_RETENTION_DAYS)
+    eliminados = 0
+    try:
+        for archivo in BACKUP_DIR.glob("backup_*.sql.gz"):
+            try:
+                mtime = datetime.fromtimestamp(archivo.stat().st_mtime)
+                if mtime < limite:
+                    archivo.unlink()
+                    eliminados += 1
+            except Exception as e:
+                logger.warning("BACKUP: no se pudo borrar %s: %s", archivo.name, e)
+        if eliminados:
+            logger.info("BACKUP: %d archivo(s) antiguos eliminados", eliminados)
+    except Exception as e:
+        logger.error("BACKUP: error en limpieza: %s", e)
+    return eliminados
+
+
+def _backup_diario():
+    """Tarea programada: crea backup y limpia antiguos."""
+    resultado = _ejecutar_backup()
+    if resultado.get("ok"):
+        _limpiar_backups_antiguos()
+        try:
+            _log_auditoria("backup_automatico", {
+                "archivo": resultado["archivo"],
+                "tamano": resultado["tamano"],
+                "tablas": resultado["tablas"],
+                "filas": resultado["filas"],
+            })
+        except Exception as e:
+            logger.warning("BACKUP: no se pudo auditar backup_automatico: %s", e)
+
+
+@app.route("/api/admin/backups", methods=["GET"])
+def admin_backups_listar():
+    if not _req_admin():
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    archivos = []
+    for archivo in sorted(BACKUP_DIR.glob("backup_*.sql.gz"), reverse=True):
+        try:
+            st = archivo.stat()
+            archivos.append({
+                "nombre": archivo.name,
+                "tamano": st.st_size,
+                "fecha": datetime.fromtimestamp(st.st_mtime).isoformat(),
+            })
+        except OSError as e:
+            logger.warning("BACKUP: no se pudo leer metadatos de %s: %s", archivo.name, e)
+            continue
+    return jsonify({"ok": True, "backups": archivos, "retencion_dias": BACKUP_RETENTION_DAYS})
+
+
+@app.route("/api/admin/backups/crear", methods=["POST"])
+def admin_backups_crear():
+    payload = _req_admin()
+    if not payload:
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    resultado = _ejecutar_backup()
+    if resultado.get("ok"):
+        try:
+            _log_auditoria("backup_manual", {
+                "archivo": resultado["archivo"],
+                "tamano": resultado["tamano"],
+                "tablas": resultado["tablas"],
+                "filas": resultado["filas"],
+            })
+        except Exception as e:
+            logger.warning("BACKUP: no se pudo auditar backup_manual: %s", e)
+        _limpiar_backups_antiguos()
+        return jsonify(resultado)
+    return jsonify(resultado), 500
+
+
+@app.route("/api/admin/backups/<nombre>", methods=["GET"])
+def admin_backups_descargar(nombre):
+    if not _req_admin():
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    # Evitar path traversal: el nombre debe coincidir con el patrón esperado
+    if not nombre.startswith("backup_") or not nombre.endswith(".sql.gz") or "/" in nombre or "\\" in nombre or ".." in nombre:
+        return jsonify({"ok": False, "error": "Nombre de archivo inválido."}), 400
+    ruta = BACKUP_DIR / nombre
+    if not ruta.exists() or not ruta.is_file():
+        return jsonify({"ok": False, "error": "Archivo no encontrado."}), 404
+    return send_file(str(ruta), as_attachment=True, download_name=nombre, mimetype="application/gzip")
+
+
+def _ejecutar_restore(ruta) -> dict:
+    """Restaura un backup .sql.gz en la base de datos actual.
+    Antes de restaurar, crea un backup de seguridad pre-restore.
+    """
+    # 1) Backup de seguridad pre-restore
+    pre = _ejecutar_backup()
+    if not pre.get("ok"):
+        return {"ok": False, "error": "No se pudo crear backup de seguridad previo: " + str(pre.get("error"))}
+    sentencias_ejecutadas = 0
+    errores = []
+    try:
+        with gzip.open(ruta, "rt", encoding="utf-8") as fh:
+            contenido = fh.read()
+    except Exception as e:
+        return {"ok": False, "error": f"No se pudo leer el backup: {e}"}
+
+    # División ingenua por ';\n' — nuestros dumps son lo bastante simples
+    sentencias = [s.strip() for s in contenido.split(";\n") if s.strip() and not s.strip().startswith("--")]
+    conn = None
+    try:
+        conn = get_conn()
+        c = conn.cursor()
+        for sql in sentencias:
+            try:
+                c.execute(sql)
+                sentencias_ejecutadas += 1
+            except Exception as e:
+                errores.append(f"{sql[:80]}… → {e}")
+        conn.commit()
+    except Exception as e:
+        return {"ok": False, "error": str(e), "pre_restore": pre.get("archivo")}
+    finally:
+        if conn:
+            try:
+                conn.close()
+            except Exception as e:
+                logger.debug("RESTORE: error cerrando conexión: %s", e)
+
+    return {
+        "ok": True,
+        "sentencias": sentencias_ejecutadas,
+        "errores": errores[:10],
+        "pre_restore": pre.get("archivo"),
+    }
+
+
+@app.route("/api/admin/backups/<nombre>/restaurar", methods=["POST"])
+def admin_backups_restaurar(nombre):
+    payload = _req_admin()
+    if not payload:
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    if not nombre.startswith("backup_") or not nombre.endswith(".sql.gz") or "/" in nombre or "\\" in nombre or ".." in nombre:
+        return jsonify({"ok": False, "error": "Nombre de archivo inválido."}), 400
+    ruta = BACKUP_DIR / nombre
+    if not ruta.exists() or not ruta.is_file():
+        return jsonify({"ok": False, "error": "Archivo no encontrado."}), 404
+
+    # Requerir confirmación explícita en el cuerpo
+    data = request.get_json(silent=True) or {}
+    if data.get("confirmacion") != "RESTAURAR":
+        return jsonify({"ok": False, "error": "Se requiere confirmación explícita (confirmacion=RESTAURAR)."}), 400
+
+    resultado = _ejecutar_restore(ruta)
+    try:
+        _log_auditoria("backup_restaurar", {
+            "archivo": nombre,
+            "ok": resultado.get("ok"),
+            "sentencias": resultado.get("sentencias"),
+            "errores_muestra": resultado.get("errores"),
+            "pre_restore": resultado.get("pre_restore"),
+        }, exito=bool(resultado.get("ok")))
+    except Exception as e:
+        logger.warning("BACKUP: no se pudo auditar backup_restaurar: %s", e)
+    if resultado.get("ok"):
+        return jsonify(resultado)
+    return jsonify(resultado), 500
+
+
+@app.route("/api/admin/backups/<nombre>", methods=["DELETE"])
+def admin_backups_eliminar(nombre):
+    payload = _req_admin()
+    if not payload:
+        return jsonify({"ok": False, "error": "Se requiere sesión de administrador."}), 403
+    if not nombre.startswith("backup_") or not nombre.endswith(".sql.gz") or "/" in nombre or "\\" in nombre or ".." in nombre:
+        return jsonify({"ok": False, "error": "Nombre de archivo inválido."}), 400
+    ruta = BACKUP_DIR / nombre
+    if not ruta.exists():
+        return jsonify({"ok": False, "error": "Archivo no encontrado."}), 404
+    try:
+        ruta.unlink()
+        try:
+            _log_auditoria("backup_eliminar", {"archivo": nombre})
+        except Exception as e:
+            logger.warning("BACKUP: no se pudo auditar backup_eliminar: %s", e)
+        return jsonify({"ok": True})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 # ── Arranque ──────────────────────────────────────────────────────────────────
 
 # Inicializar scheduler (tanto para `python app.py` como para Docker)
@@ -3081,6 +3540,14 @@ try:
             hour=3,
             minute=0,
             id="bloqueo_inactividad",
+            replace_existing=True,
+        )
+        scheduler.add_job(
+            _backup_diario,
+            trigger="cron",
+            hour=4,
+            minute=0,
+            id="backup_diario",
             replace_existing=True,
         )
         scheduler.start()

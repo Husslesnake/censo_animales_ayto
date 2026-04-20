@@ -46,6 +46,7 @@
 <!--#include file="pages/policia.html" -->
 <!--#include file="pages/policia_admin.html" -->
 <!--#include file="pages/empleados_admin.html" -->
+<!--#include file="pages/backups.html" -->
 
 <footer style="text-align:center;padding:1.5rem 1rem;font-size:.75rem;color:var(--gris3);border-top:1px solid var(--borde);margin-top:2rem;">
   Censo Municipal de Animales · Ayuntamiento de Navalcarnero
@@ -65,6 +66,36 @@
 <script src="/js/policia.js"></script>
 <script src="/js/logs.js"></script>
 <script src="/js/auditoria.js"></script>
+<script src="/js/backups.js"></script>
+<script>
+  // Registro del Service Worker (PWA)
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("/sw.js").catch(function (e) {
+        if (typeof logError === "function") logError(e.message, "sw.register", e.stack);
+      });
+    });
+  }
+  // Atajo PWA: ?view=policia abre el acceso de policía tras cargar
+  (function () {
+    try {
+      var q = new URLSearchParams(window.location.search);
+      if (q.get("view") === "policia") {
+        window.addEventListener("load", function () {
+          setTimeout(function () {
+            var btn = document.getElementById("btn-toggle-policia");
+            var form = document.getElementById("policia-login-form");
+            if (btn && form && form.style.display === "none" && typeof togglePoliciaLogin === "function") {
+              togglePoliciaLogin();
+            }
+          }, 300);
+        });
+      }
+    } catch (e) {
+      console.warn("view=policia shortcut no aplicado:", e);
+    }
+  })();
+</script>
 
 </body>
 </html>
