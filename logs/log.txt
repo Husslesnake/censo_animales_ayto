@@ -565,3 +565,304 @@
 [2026-04-21 10:40:58] INFO     >>> GET /api/sexos
 [2026-04-21 10:40:58] INFO     >>> GET /api/sexos
 [2026-04-21 10:41:30] INFO     >>> GET /api/sexos
+[2026-04-21 12:42:28] INFO     ================================================================================
+[2026-04-21 12:42:28] INFO     APPLICATION STARTUP - Timestamp: 2026-04-21T12:42:28.670292
+[2026-04-21 12:42:28] INFO     ================================================================================
+[2026-04-21 12:42:28] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T14:30:13.222277
+[2026-04-21 12:42:28] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T14:25:48.085175
+[2026-04-21 12:42:28] DEBUG    Log file log_2026-04-13.txt is within 30-day retention: 2026-04-13T14:26:32.968979
+[2026-04-21 12:42:28] DEBUG    Log file log_2026-04-14.txt is within 30-day retention: 2026-04-14T14:28:43.556528
+[2026-04-21 12:42:28] DEBUG    Log file log_2026-04-15.txt is within 30-day retention: 2026-04-16T00:06:49.956053
+[2026-04-21 12:42:28] DEBUG    Log file log_2026-04-16.txt is within 30-day retention: 2026-04-16T14:30:58.524053
+[2026-04-21 12:42:28] DEBUG    Log file log_2026-04-17.txt is within 30-day retention: 2026-04-17T14:28:01.800428
+[2026-04-21 12:42:28] DEBUG    Log file log_2026-04-20.txt is within 30-day retention: 2026-04-20T14:27:52.286223
+[2026-04-21 12:42:28] INFO     AUTH: 5 token(s) de larga duración restaurados desde auth.json
+[2026-04-21 12:42:28] INFO     DB: tabla INCIDENCIAS lista
+[2026-04-21 12:42:28] INFO     >>> GET /api/sexos
+[2026-04-21 12:42:38] INFO     >>> GET /api/sexos
+[2026-04-21 12:42:38] INFO     >>> GET /api/auth/verificar
+[2026-04-21 12:42:38] INFO     >>> GET /api/motivos_baja
+[2026-04-21 12:42:38] INFO     >>> GET /api/alertas
+[2026-04-21 12:42:44] INFO     >>> GET /api/propietarios
+[2026-04-21 12:42:48] INFO     >>> GET /api/ficha_propietario/55555555A
+[2026-04-21 12:42:52] INFO     >>> GET /api/admin/backups
+[2026-04-21 12:42:55] INFO     >>> GET /api/admin/backups
+[2026-04-21 12:42:56] INFO     >>> POST /api/admin/backups/crear
+[2026-04-21 12:42:56] ERROR    BACKUP: fallo creando backup_2026-04-21_124256.sql.gz: date.isoformat() takes no keyword arguments
+[2026-04-21 12:42:56] WARNING  <<< POST /api/admin/backups/crear -> 500
+[2026-04-21 12:42:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:43:09] INFO     >>> GET /api/sexos
+[2026-04-21 12:43:39] INFO     >>> GET /api/sexos
+[2026-04-21 12:43:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:44:09] INFO     >>> GET /api/sexos
+[2026-04-21 12:44:39] INFO     >>> GET /api/sexos
+[2026-04-21 12:44:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:45:09] INFO     >>> GET /api/sexos
+[2026-04-21 12:45:39] INFO     >>> GET /api/sexos
+[2026-04-21 12:45:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:46:08] INFO     >>> GET /api/sexos
+[2026-04-21 12:46:38] INFO     >>> GET /api/sexos
+[2026-04-21 12:46:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:47:08] INFO     >>> GET /api/sexos
+[2026-04-21 12:47:38] INFO     >>> GET /api/sexos
+[2026-04-21 12:47:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:48:08] INFO     >>> GET /api/sexos
+[2026-04-21 12:48:38] INFO     >>> GET /api/sexos
+[2026-04-21 12:48:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:49:08] INFO     >>> GET /api/sexos
+[2026-04-21 12:49:38] INFO     >>> GET /api/sexos
+[2026-04-21 12:49:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:50:08] INFO     >>> GET /api/sexos
+[2026-04-21 12:50:38] INFO     >>> GET /api/sexos
+[2026-04-21 12:50:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:51:09] INFO     >>> GET /api/sexos
+[2026-04-21 12:51:39] INFO     >>> GET /api/sexos
+[2026-04-21 12:51:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:52:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:52:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:53:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:53:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:54:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:54:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:55:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:55:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:56:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:56:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:57:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:57:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:58:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:58:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:59:58] INFO     >>> GET /api/sexos
+[2026-04-21 12:59:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:00:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:00:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:01:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:01:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:02:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:02:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:03:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:03:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:05:05] INFO     ================================================================================
+[2026-04-21 13:05:05] INFO     APPLICATION STARTUP - Timestamp: 2026-04-21T13:05:05.515773
+[2026-04-21 13:05:05] INFO     ================================================================================
+[2026-04-21 13:05:05] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T14:30:13.222277
+[2026-04-21 13:05:05] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T14:25:48.085175
+[2026-04-21 13:05:05] DEBUG    Log file log_2026-04-13.txt is within 30-day retention: 2026-04-13T14:26:32.968979
+[2026-04-21 13:05:05] DEBUG    Log file log_2026-04-14.txt is within 30-day retention: 2026-04-14T14:28:43.556528
+[2026-04-21 13:05:05] DEBUG    Log file log_2026-04-15.txt is within 30-day retention: 2026-04-16T00:06:49.956053
+[2026-04-21 13:05:05] DEBUG    Log file log_2026-04-16.txt is within 30-day retention: 2026-04-16T14:30:58.524053
+[2026-04-21 13:05:05] DEBUG    Log file log_2026-04-17.txt is within 30-day retention: 2026-04-17T14:28:01.800428
+[2026-04-21 13:05:05] DEBUG    Log file log_2026-04-20.txt is within 30-day retention: 2026-04-20T14:27:52.286223
+[2026-04-21 13:05:05] INFO     AUTH: 5 token(s) de larga duración restaurados desde auth.json
+[2026-04-21 13:05:05] INFO     DB: tabla INCIDENCIAS lista
+[2026-04-21 13:05:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:05:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:06:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:06:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:07:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:07:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:08:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:08:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:09:38] INFO     >>> GET /api/sexos
+[2026-04-21 13:09:40] INFO     >>> GET /api/sexos
+[2026-04-21 13:09:40] INFO     >>> GET /api/auth/verificar
+[2026-04-21 13:09:40] INFO     >>> GET /api/motivos_baja
+[2026-04-21 13:09:40] INFO     >>> GET /api/alertas
+[2026-04-21 13:09:44] INFO     >>> GET /api/admin/backups
+[2026-04-21 13:09:45] INFO     >>> POST /api/admin/backups/crear
+[2026-04-21 13:09:45] INFO     BACKUP: creado backup_2026-04-21_130945.sql.gz (15 tablas, 3728 filas, 63747 bytes)
+[2026-04-21 13:09:45] INFO     >>> GET /api/admin/backups
+[2026-04-21 13:09:55] INFO     >>> DELETE /api/admin/backups/backup_2026-04-21_130945.sql.gz
+[2026-04-21 13:09:55] INFO     >>> GET /api/admin/backups
+[2026-04-21 13:09:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:10:11] INFO     >>> GET /api/sexos
+[2026-04-21 13:10:41] INFO     >>> GET /api/sexos
+[2026-04-21 13:10:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:11:11] INFO     >>> GET /api/sexos
+[2026-04-21 13:11:41] INFO     >>> GET /api/sexos
+[2026-04-21 13:11:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:12:11] INFO     >>> GET /api/sexos
+[2026-04-21 13:12:41] INFO     >>> GET /api/sexos
+[2026-04-21 13:12:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:13:11] INFO     >>> GET /api/sexos
+[2026-04-21 13:13:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:13:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:14:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:14:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:15:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:15:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:16:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:16:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:17:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:17:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:18:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:18:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:19:30] INFO     >>> GET /api/sexos
+[2026-04-21 13:19:33] INFO     >>> GET /api/sexos
+[2026-04-21 13:19:41] INFO     >>> GET /api/sexos
+[2026-04-21 13:19:41] INFO     >>> GET /api/sexos
+[2026-04-21 13:20:11] INFO     >>> GET /api/sexos
+[2026-04-21 13:20:11] INFO     >>> GET /api/sexos
+[2026-04-21 13:20:41] INFO     >>> GET /api/sexos
+[2026-04-21 13:20:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:21:11] INFO     >>> GET /api/sexos
+[2026-04-21 13:21:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:21:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:22:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:22:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:23:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:23:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:24:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:24:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:25:46] INFO     >>> GET /api/sexos
+[2026-04-21 13:25:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:26:10] INFO     >>> GET /api/sexos
+[2026-04-21 13:26:40] INFO     >>> GET /api/sexos
+[2026-04-21 13:26:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:27:10] INFO     >>> GET /api/sexos
+[2026-04-21 13:27:40] INFO     >>> GET /api/sexos
+[2026-04-21 13:27:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:28:11] INFO     >>> GET /api/sexos
+[2026-04-21 13:28:41] INFO     >>> GET /api/sexos
+[2026-04-21 13:28:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:29:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:29:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:30:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:30:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:31:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:31:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:32:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:32:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:33:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:33:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:34:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:34:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:35:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:35:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:36:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:36:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:37:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:37:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:38:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:38:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:39:48] INFO     >>> GET /api/sexos
+[2026-04-21 13:39:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:40:11] INFO     >>> GET /api/sexos
+[2026-04-21 13:40:41] INFO     >>> GET /api/sexos
+[2026-04-21 13:40:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:41:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:41:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:42:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:42:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:43:14] INFO     >>> GET /api/sexos
+[2026-04-21 13:43:41] INFO     >>> GET /api/sexos
+[2026-04-21 13:43:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:44:11] INFO     >>> GET /api/sexos
+[2026-04-21 13:44:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:44:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:45:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:45:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:46:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:46:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:47:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:47:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:48:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:48:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:49:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:49:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:50:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:50:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:51:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:51:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:52:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:52:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:53:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:53:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:54:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:54:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:55:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:55:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:56:45] INFO     ================================================================================
+[2026-04-21 13:56:45] INFO     APPLICATION STARTUP - Timestamp: 2026-04-21T13:56:45.896038
+[2026-04-21 13:56:45] INFO     ================================================================================
+[2026-04-21 13:56:45] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T14:30:13.222277
+[2026-04-21 13:56:45] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T14:25:48.085175
+[2026-04-21 13:56:45] DEBUG    Log file log_2026-04-13.txt is within 30-day retention: 2026-04-13T14:26:32.968979
+[2026-04-21 13:56:45] DEBUG    Log file log_2026-04-14.txt is within 30-day retention: 2026-04-14T14:28:43.556528
+[2026-04-21 13:56:45] DEBUG    Log file log_2026-04-15.txt is within 30-day retention: 2026-04-16T00:06:49.956053
+[2026-04-21 13:56:45] DEBUG    Log file log_2026-04-16.txt is within 30-day retention: 2026-04-16T14:30:58.524053
+[2026-04-21 13:56:45] DEBUG    Log file log_2026-04-17.txt is within 30-day retention: 2026-04-17T14:28:01.800428
+[2026-04-21 13:56:45] DEBUG    Log file log_2026-04-20.txt is within 30-day retention: 2026-04-20T14:27:52.286223
+[2026-04-21 13:56:45] INFO     AUTH: 5 token(s) de larga duración restaurados desde auth.json
+[2026-04-21 13:56:45] INFO     DB: tabla INCIDENCIAS lista
+[2026-04-21 13:56:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:56:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:57:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:57:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:58:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:58:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:59:58] INFO     >>> GET /api/sexos
+[2026-04-21 13:59:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:00:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:00:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:01:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:01:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:02:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:02:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:03:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:03:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:04:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:04:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:05:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:05:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:06:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:06:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:07:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:07:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:08:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:08:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:09:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:09:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:10:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:10:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:11:24] INFO     ================================================================================
+[2026-04-21 14:11:24] INFO     APPLICATION STARTUP - Timestamp: 2026-04-21T14:11:24.308592
+[2026-04-21 14:11:24] INFO     ================================================================================
+[2026-04-21 14:11:24] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T14:30:13.222277
+[2026-04-21 14:11:24] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T14:25:48.085175
+[2026-04-21 14:11:24] DEBUG    Log file log_2026-04-13.txt is within 30-day retention: 2026-04-13T14:26:32.968979
+[2026-04-21 14:11:24] DEBUG    Log file log_2026-04-14.txt is within 30-day retention: 2026-04-14T14:28:43.556528
+[2026-04-21 14:11:24] DEBUG    Log file log_2026-04-15.txt is within 30-day retention: 2026-04-16T00:06:49.956053
+[2026-04-21 14:11:24] DEBUG    Log file log_2026-04-16.txt is within 30-day retention: 2026-04-16T14:30:58.524053
+[2026-04-21 14:11:24] DEBUG    Log file log_2026-04-17.txt is within 30-day retention: 2026-04-17T14:28:01.800428
+[2026-04-21 14:11:24] DEBUG    Log file log_2026-04-20.txt is within 30-day retention: 2026-04-20T14:27:52.286223
+[2026-04-21 14:11:24] INFO     AUTH: 5 token(s) de larga duración restaurados desde auth.json
+[2026-04-21 14:11:24] INFO     DB: tabla INCIDENCIAS lista
+[2026-04-21 14:11:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:11:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:12:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:12:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:13:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:13:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:14:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:14:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:15:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:15:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:16:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:16:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:17:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:17:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:18:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:18:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:19:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:19:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:20:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:20:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:21:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:21:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:22:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:22:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:23:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:23:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:24:58] INFO     >>> GET /api/sexos
+[2026-04-21 14:24:58] INFO     >>> GET /api/sexos

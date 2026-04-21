@@ -13,7 +13,7 @@ from pathlib import Path
 import bcrypt
 import mysql.connector
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask import Flask, jsonify, request, send_file
+from flask import Flask, Response, jsonify, request, send_file
 from flask_cors import CORS
 
 # Configuración
@@ -450,6 +450,54 @@ def _password_caducada(entrada: dict) -> bool:
     except Exception as e:
         logger.debug("PASSWORD_CADUCADA: no se pudo parsear %r: %s", ref, e)
         return False
+
+
+_NIF_LETRAS = "TRWAGMYFPDXBNJZSQVHLCKE"
+
+
+def _validar_nif(dni: str) -> str | None:
+    """Valida NIF (8 dígitos + letra) o NIE ([XYZ] + 7 dígitos + letra).
+
+    Devuelve None si es válido, o un mensaje de error.
+    Referencia: Orden JUS/1625/2016.
+    """
+    if not dni:
+        return "DNI vacío."
+    dni = dni.strip().upper().replace("-", "").replace(" ", "")
+    if len(dni) != 9:
+        return "El DNI/NIE debe tener 9 caracteres."
+    letra = dni[-1]
+    num_str = dni[:-1]
+    if num_str[0] in "XYZ":
+        num_str = str("XYZ".index(num_str[0])) + num_str[1:]
+    if not num_str.isdigit():
+        return "Formato inválido (esperado 8 dígitos + letra, o [X/Y/Z]+7 dígitos+letra)."
+    esperada = _NIF_LETRAS[int(num_str) % 23]
+    if letra != esperada:
+        return f"Letra de control incorrecta (esperada «{esperada}»)."
+    return None
+
+
+def _validar_chip(chip: str, *, iso_estricto: bool = False) -> str | None:
+    """Valida el número de chip.
+
+    - `iso_estricto=True` exige ISO 11784/11785: exactamente 15 dígitos.
+    - Por defecto (laxo) acepta alfanumérico + [-_], longitud 5-50
+      (compatibilidad con datos legacy tipo 'CHIP0001').
+    Devuelve None si es válido, o un mensaje de error.
+    """
+    if not chip:
+        return "Chip vacío."
+    chip = chip.strip().upper()
+    if iso_estricto:
+        if not (chip.isdigit() and len(chip) == 15):
+            return "El chip debe tener exactamente 15 dígitos numéricos (ISO 11784)."
+        return None
+    if len(chip) < 5 or len(chip) > 50:
+        return "El chip debe tener entre 5 y 50 caracteres."
+    if not all(c.isalnum() or c in "-_" for c in chip):
+        return "El chip solo puede contener letras, dígitos, guiones y guiones bajos."
+    return None
 
 
 def _cargar_auth() -> dict:
@@ -1346,6 +1394,10 @@ def insertar_propietario():
     d = request.get_json()
     if not d.get("DNI"):
         return jsonify({"ok": False, "error": "Campo requerido: DNI"}), 400
+    err_dni = _validar_nif(d["DNI"])
+    if err_dni:
+        _log_auditoria("crear_propietario", {"DNI": d.get("DNI"), "error": err_dni}, exito=False)
+        return jsonify({"ok": False, "error": f"DNI inválido: {err_dni}"}), 400
     try:
         conn = get_conn()
         c = cur(conn)
@@ -1657,6 +1709,21 @@ def actualizar_animal(chip):
 @app.route("/api/animales", methods=["POST"])
 def insertar_animal():
     d = request.get_json()
+
+    # Validar DNI propietario y chip antes de tocar la BD
+    dni_in = (d.get("DNI_PROPIETARIO") or "").strip()
+    chip_in = (d.get("N_CHIP") or "").strip()
+    if dni_in:
+        err = _validar_nif(dni_in)
+        if err:
+            _log_auditoria("crear_animal", {"DNI": dni_in, "error": err}, exito=False)
+            return jsonify({"ok": False, "error": f"DNI propietario inválido: {err}"}), 400
+    if chip_in:
+        err = _validar_chip(chip_in)
+        if err:
+            _log_auditoria("crear_animal", {"N_CHIP": chip_in, "error": err}, exito=False)
+            return jsonify({"ok": False, "error": f"Chip inválido: {err}"}), 400
+
     try:
         conn = get_conn()
         c = cur(conn)
@@ -1939,6 +2006,7 @@ def listar_seguros():
                        s.`{chip_col}`        AS N_CHIP,
                        s.SEGURO_COMPANIA,
                        s.SEGURO_POLIZA,
+                       s.FECHA_VENCIMIENTO_RC,
                        a.NOMBRE              AS NOMBRE_ANIMAL,
                        a.ESPECIE,
                        a.DNI_PROPIETARIO
@@ -1981,14 +2049,19 @@ def insertar_seguro():
     for campo, label in requeridos.items():
         if not d.get(campo):
             return jsonify({"ok": False, "error": f"Campo requerido: {label}"}), 400
+    err_chip = _validar_chip(d["N_CHIP"])
+    if err_chip:
+        _log_auditoria("crear_seguro", {"N_CHIP": d.get("N_CHIP"), "error": err_chip}, exito=False)
+        return jsonify({"ok": False, "error": f"Chip inválido: {err_chip}"}), 400
     try:
         conn = get_conn()
         c = cur(conn)
         chip_col = detectar_chip(c)
+        fecha_venc = (d.get("FECHA_VENCIMIENTO_RC") or "").strip() or None
         c.execute(
-            f"INSERT INTO SEGUROS (`{chip_col}`, SEGURO_COMPANIA, SEGURO_POLIZA) "
-            "VALUES (%s, %s, %s)",
-            (d["N_CHIP"], d["SEGURO_COMPANIA"], d["SEGURO_POLIZA"]),
+            f"INSERT INTO SEGUROS (`{chip_col}`, SEGURO_COMPANIA, SEGURO_POLIZA, FECHA_VENCIMIENTO_RC) "
+            "VALUES (%s, %s, %s, %s)",
+            (d["N_CHIP"], d["SEGURO_COMPANIA"], d["SEGURO_POLIZA"], fecha_venc),
         )
         conn.commit()
         nuevo_id = c.lastrowid
@@ -1998,6 +2071,7 @@ def insertar_seguro():
             "N_CHIP": d.get("N_CHIP"),
             "compania": d.get("SEGURO_COMPANIA"),
             "poliza": d.get("SEGURO_POLIZA"),
+            "vencimiento": fecha_venc,
         })
         return jsonify(
             {"ok": True, "mensaje": "Seguro registrado correctamente.", "id": nuevo_id}
@@ -2855,6 +2929,423 @@ def vencimientos():
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
+@app.route("/api/vencimientos_seguros", methods=["GET"])
+def vencimientos_seguros():
+    """Pólizas de RC que vencen en los próximos N días (Ley 7/2023 art. 30)."""
+    try:
+        import datetime
+
+        dias = int(request.args.get("dias", 30))
+        dias = max(1, min(dias, 365))
+
+        conn = get_conn()
+        c = cur(conn)
+        chip_col = detectar_chip(c)
+
+        c.execute(
+            "SELECT COUNT(*) FROM information_schema.COLUMNS "
+            "WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='SEGUROS' "
+            "AND COLUMN_NAME='FECHA_VENCIMIENTO_RC'"
+        )
+        if not c.fetchone()[0]:
+            conn.close()
+            return jsonify({"ok": True, "datos": [], "aviso": "Migración 05 no aplicada."})
+
+        hoy = datetime.date.today()
+        vence_en = hoy + datetime.timedelta(days=dias)
+
+        c.execute(
+            f"""SELECT s.ID_SEGUROS,
+                       s.`{chip_col}`          AS N_CHIP,
+                       s.SEGURO_COMPANIA,
+                       s.SEGURO_POLIZA,
+                       s.FECHA_VENCIMIENTO_RC,
+                       a.NOMBRE                AS NOMBRE_ANIMAL,
+                       a.ESPECIE, a.RAZA,
+                       a.DNI_PROPIETARIO,
+                       p.NOMBRE                AS NOMBRE_PROP,
+                       p.PRIMER_APELLIDO, p.SEGUNDO_APELLIDO,
+                       p.TELEFONO1
+                FROM SEGUROS s
+                LEFT JOIN ANIMALES a      ON s.`{chip_col}` = a.`{chip_col}`
+                LEFT JOIN PROPIETARIOS p  ON a.DNI_PROPIETARIO = p.DNI
+                WHERE s.FECHA_VENCIMIENTO_RC IS NOT NULL
+                  AND s.FECHA_VENCIMIENTO_RC BETWEEN %s AND %s
+                  AND a.`{chip_col}` NOT IN (
+                      SELECT b.`{chip_col}` FROM BAJA_ANIMAL b
+                      WHERE b.`{chip_col}` IS NOT NULL
+                  )
+                ORDER BY s.FECHA_VENCIMIENTO_RC""",
+            (hoy, vence_en),
+        )
+        rows = [fila_a_dict(c, r) for r in c.fetchall()]
+        conn.close()
+
+        for r in rows:
+            fv = r.get("FECHA_VENCIMIENTO_RC")
+            if fv:
+                try:
+                    fv_date = datetime.date.fromisoformat(str(fv)[:10])
+                    r["DIAS_RESTANTES"] = (fv_date - hoy).days
+                except Exception as e:
+                    logger.debug("VENCIMIENTOS_SEG: fecha inválida %r: %s", fv, e)
+                    r["DIAS_RESTANTES"] = None
+
+        return jsonify({"ok": True, "datos": rows, "dias": dias})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/vencimientos_licencias_ppp", methods=["GET"])
+def vencimientos_licencias_ppp():
+    """Licencias PPP que caducan (5 años desde expedición, RD 287/2002 art. 3.4).
+
+    Query params:
+      dias: ventana de aviso (1-365, default 30).
+      incluir_caducadas: si "1", devuelve también licencias ya caducadas.
+    """
+    try:
+        import datetime
+
+        dias = int(request.args.get("dias", 30))
+        dias = max(1, min(dias, 365))
+        incluir_caducadas = request.args.get("incluir_caducadas") == "1"
+
+        conn = get_conn()
+        c = cur(conn)
+
+        hoy = datetime.date.today()
+        vence_en = hoy + datetime.timedelta(days=dias)
+
+        # VENCE = FECHA_EXPEDICION + 5 años
+        # Rango: si incluir_caducadas → (-inf, hoy+dias]; si no → [hoy, hoy+dias]
+        if incluir_caducadas:
+            where_rango = "DATE_ADD(l.FECHA_EXPEDICION_LICENCIA, INTERVAL 5 YEAR) <= %s"
+            params = (vence_en,)
+        else:
+            where_rango = (
+                "DATE_ADD(l.FECHA_EXPEDICION_LICENCIA, INTERVAL 5 YEAR) BETWEEN %s AND %s"
+            )
+            params = (hoy, vence_en)
+
+        c.execute(
+            f"""SELECT l.N_LICENCIA_ANIMALES_PELIGROSOS AS N_LICENCIA,
+                       l.LUGAR_EXPEDICION_LICENCIA,
+                       l.FECHA_EXPEDICION_LICENCIA,
+                       DATE_ADD(l.FECHA_EXPEDICION_LICENCIA, INTERVAL 5 YEAR) AS VENCE,
+                       l.DNI_PROPIETARIO,
+                       p.NOMBRE           AS NOMBRE_PROP,
+                       p.PRIMER_APELLIDO, p.SEGUNDO_APELLIDO,
+                       p.TELEFONO1
+                FROM LICENCIAS l
+                LEFT JOIN PROPIETARIOS p ON l.DNI_PROPIETARIO = p.DNI
+                WHERE l.FECHA_EXPEDICION_LICENCIA IS NOT NULL
+                  AND {where_rango}
+                ORDER BY VENCE""",
+            params,
+        )
+        rows = [fila_a_dict(c, r) for r in c.fetchall()]
+        conn.close()
+
+        for r in rows:
+            v = r.get("VENCE")
+            if v:
+                try:
+                    v_date = datetime.date.fromisoformat(str(v)[:10])
+                    r["DIAS_RESTANTES"] = (v_date - hoy).days
+                    r["CADUCADA"] = r["DIAS_RESTANTES"] < 0
+                except Exception as e:
+                    logger.debug("VENCIMIENTOS_PPP: fecha inválida %r: %s", v, e)
+                    r["DIAS_RESTANTES"] = None
+                    r["CADUCADA"] = None
+
+        return jsonify({"ok": True, "datos": rows, "dias": dias})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+# ════════════════════════════════════════════════════════════════════════════
+# INCIDENCIAS (Ley 7/2023 art. 31: registro y comunicación a Sanidad)
+# ════════════════════════════════════════════════════════════════════════════
+
+_INC_GRAVEDAD = ("leve", "moderada", "grave", "muy_grave")
+
+
+def _validar_incidencia(d: dict) -> str | None:
+    """Comprueba payload para POST/PUT. Devuelve None o mensaje."""
+    if not d.get("FECHA"):
+        return "Campo requerido: FECHA (ISO 8601)."
+    try:
+        datetime.fromisoformat(str(d["FECHA"]).replace("Z", ""))
+    except (ValueError, TypeError) as e:
+        logger.debug("INCIDENCIA: fecha inválida %r: %s", d.get("FECHA"), e)
+        return "FECHA inválida (formato esperado: YYYY-MM-DD[THH:MM[:SS]])."
+    if not (d.get("TIPO") or "").strip():
+        return "Campo requerido: TIPO."
+    grav = (d.get("GRAVEDAD") or "leve").lower()
+    if grav not in _INC_GRAVEDAD:
+        return f"GRAVEDAD inválida. Valores: {', '.join(_INC_GRAVEDAD)}."
+    if d.get("N_CHIP"):
+        err = _validar_chip(str(d["N_CHIP"]))
+        if err:
+            return f"N_CHIP: {err}"
+    if d.get("DNI_PROPIETARIO"):
+        err = _validar_nif(str(d["DNI_PROPIETARIO"]))
+        if err:
+            return f"DNI_PROPIETARIO: {err}"
+    return None
+
+
+@app.route("/api/incidencias", methods=["GET"], strict_slashes=False)
+def listar_incidencias():
+    """Lista de incidencias. Filtros: chip, dni, desde, hasta, tipo, pendientes_sanidad.
+
+    Requiere rol admin o policía (Ley 7/2023 art. 31).
+    """
+    if not _req_policia_o_admin():
+        return jsonify({"ok": False, "error": "Acceso no autorizado."}), 403
+    try:
+        filtros = []
+        params: list = []
+        if chip := request.args.get("chip"):
+            filtros.append("i.N_CHIP = %s")
+            params.append(chip.strip().upper())
+        if dni := request.args.get("dni"):
+            filtros.append("i.DNI_PROPIETARIO = %s")
+            params.append(dni.strip().upper())
+        if desde := request.args.get("desde"):
+            filtros.append("i.FECHA >= %s")
+            params.append(desde)
+        if hasta := request.args.get("hasta"):
+            filtros.append("i.FECHA <= %s")
+            params.append(hasta)
+        if tipo := request.args.get("tipo"):
+            filtros.append("i.TIPO = %s")
+            params.append(tipo)
+        if request.args.get("pendientes_sanidad") == "1":
+            filtros.append("i.COMUNICADO_SANIDAD = 0")
+        where = f"WHERE {' AND '.join(filtros)}" if filtros else ""
+
+        conn = get_conn()
+        c = cur(conn)
+        c.execute(
+            f"""SELECT i.*,
+                       a.NOMBRE AS NOMBRE_ANIMAL, a.ESPECIE, a.RAZA,
+                       p.NOMBRE AS NOMBRE_PROP, p.PRIMER_APELLIDO, p.SEGUNDO_APELLIDO
+                FROM INCIDENCIAS i
+                LEFT JOIN ANIMALES a     ON a.`{detectar_chip(c)}` = i.N_CHIP
+                LEFT JOIN PROPIETARIOS p ON p.DNI = i.DNI_PROPIETARIO
+                {where}
+                ORDER BY i.FECHA DESC, i.ID DESC""",
+            params,
+        )
+        rows = [fila_a_dict(c, r) for r in c.fetchall()]
+        conn.close()
+        return jsonify({"ok": True, "datos": rows, "total": len(rows)})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/incidencias/<int:id_inc>", methods=["GET"])
+def obtener_incidencia(id_inc):
+    try:
+        conn = get_conn()
+        c = cur(conn)
+        c.execute("SELECT * FROM INCIDENCIAS WHERE ID = %s", (id_inc,))
+        row = c.fetchone()
+        conn.close()
+        if not row:
+            return jsonify({"ok": False, "error": "No encontrada"}), 404
+        return jsonify({"ok": True, "datos": fila_a_dict(c, row)})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/incidencias", methods=["POST"], strict_slashes=False)
+def crear_incidencia():
+    if not _req_policia_o_admin():
+        return jsonify({"ok": False, "error": "Acceso no autorizado."}), 403
+    d = request.get_json() or {}
+    err = _validar_incidencia(d)
+    if err:
+        _log_auditoria("crear_incidencia", {"error": err, "payload": d}, exito=False)
+        return jsonify({"ok": False, "error": err}), 400
+    try:
+        rol, quien = _usuario_desde_token()
+        conn = get_conn()
+        c = cur(conn)
+        c.execute(
+            """INSERT INTO INCIDENCIAS
+                 (N_CHIP, DNI_PROPIETARIO, FECHA, TIPO, GRAVEDAD, LUGAR,
+                  DESCRIPCION, VICTIMA_NOMBRE, VICTIMA_CONTACTO,
+                  ATENDIDO_MEDICO, COMUNICADO_SANIDAD, FECHA_COMUNICACION,
+                  ROL_AGENTE, AGENTE)
+               VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+            (
+                (d.get("N_CHIP") or "").strip().upper() or None,
+                (d.get("DNI_PROPIETARIO") or "").strip().upper() or None,
+                d["FECHA"],
+                (d.get("TIPO") or "").strip(),
+                (d.get("GRAVEDAD") or "leve").lower(),
+                d.get("LUGAR"),
+                d.get("DESCRIPCION"),
+                d.get("VICTIMA_NOMBRE"),
+                d.get("VICTIMA_CONTACTO"),
+                1 if d.get("ATENDIDO_MEDICO") else 0,
+                1 if d.get("COMUNICADO_SANIDAD") else 0,
+                d.get("FECHA_COMUNICACION") or None,
+                rol,
+                quien,
+            ),
+        )
+        conn.commit()
+        nuevo_id = c.lastrowid
+        conn.close()
+        _log_auditoria("crear_incidencia", {
+            "id": nuevo_id,
+            "chip": d.get("N_CHIP"),
+            "tipo": d.get("TIPO"),
+            "gravedad": d.get("GRAVEDAD"),
+        })
+        return jsonify({"ok": True, "id": nuevo_id, "mensaje": "Incidencia registrada."})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        _log_auditoria("crear_incidencia", {"error": str(e)[:200]}, exito=False)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/incidencias/<int:id_inc>", methods=["PUT"])
+def actualizar_incidencia(id_inc):
+    if not _req_policia_o_admin():
+        return jsonify({"ok": False, "error": "Acceso no autorizado."}), 403
+    d = request.get_json() or {}
+    # Permitir actualizaciones parciales; validar sólo los campos presentes
+    if "FECHA" in d or "TIPO" in d or "GRAVEDAD" in d:
+        err = _validar_incidencia({
+            "FECHA": d.get("FECHA") or datetime.now().isoformat(),
+            "TIPO": d.get("TIPO"),
+            "GRAVEDAD": d.get("GRAVEDAD"),
+            "N_CHIP": d.get("N_CHIP"),
+            "DNI_PROPIETARIO": d.get("DNI_PROPIETARIO"),
+        })
+        if err:
+            return jsonify({"ok": False, "error": err}), 400
+
+    campos_permitidos = {
+        "N_CHIP", "DNI_PROPIETARIO", "FECHA", "TIPO", "GRAVEDAD", "LUGAR",
+        "DESCRIPCION", "VICTIMA_NOMBRE", "VICTIMA_CONTACTO",
+        "ATENDIDO_MEDICO", "COMUNICADO_SANIDAD", "FECHA_COMUNICACION",
+    }
+    sets = []
+    vals: list = []
+    for k, v in d.items():
+        if k not in campos_permitidos:
+            continue
+        if k in ("ATENDIDO_MEDICO", "COMUNICADO_SANIDAD"):
+            v = 1 if v else 0
+        sets.append(f"`{k}` = %s")
+        vals.append(v)
+    if not sets:
+        return jsonify({"ok": False, "error": "Nada que actualizar."}), 400
+    vals.append(id_inc)
+    try:
+        conn = get_conn()
+        c = cur(conn)
+        c.execute(
+            f"UPDATE INCIDENCIAS SET {', '.join(sets)} WHERE ID = %s",
+            vals,
+        )
+        conn.commit()
+        filas = c.rowcount
+        conn.close()
+        if filas == 0:
+            return jsonify({"ok": False, "error": "No encontrada"}), 404
+        _log_auditoria("actualizar_incidencia", {"id": id_inc, "campos": list(d.keys())})
+        return jsonify({"ok": True, "mensaje": "Incidencia actualizada."})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        _log_auditoria("actualizar_incidencia", {"id": id_inc, "error": str(e)[:200]}, exito=False)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/incidencias/<int:id_inc>", methods=["DELETE"])
+def eliminar_incidencia(id_inc):
+    if not _es_admin_request():
+        return jsonify({"ok": False, "error": "Sólo admin puede eliminar incidencias."}), 403
+    try:
+        conn = get_conn()
+        c = cur(conn)
+        c.execute("SELECT * FROM INCIDENCIAS WHERE ID = %s", (id_inc,))
+        prev = c.fetchone()
+        if not prev:
+            conn.close()
+            return jsonify({"ok": False, "error": "No encontrada"}), 404
+        c.execute("DELETE FROM INCIDENCIAS WHERE ID = %s", (id_inc,))
+        conn.commit()
+        conn.close()
+        _log_auditoria("eliminar_incidencia", {"id": id_inc, "datos": fila_a_dict(c, prev)})
+        return jsonify({"ok": True, "mensaje": "Incidencia eliminada."})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        _log_auditoria("eliminar_incidencia", {"id": id_inc, "error": str(e)[:200]}, exito=False)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+@app.route("/api/incidencias/exportar", methods=["GET"])
+def exportar_incidencias_csv():
+    """CSV para comunicación a Sanidad. Filtros iguales a listar_incidencias."""
+    import csv
+    import io
+
+    try:
+        filtros = []
+        params: list = []
+        if chip := request.args.get("chip"):
+            filtros.append("N_CHIP = %s"); params.append(chip.strip().upper())
+        if desde := request.args.get("desde"):
+            filtros.append("FECHA >= %s"); params.append(desde)
+        if hasta := request.args.get("hasta"):
+            filtros.append("FECHA <= %s"); params.append(hasta)
+        if request.args.get("pendientes_sanidad") == "1":
+            filtros.append("COMUNICADO_SANIDAD = 0")
+        where = f"WHERE {' AND '.join(filtros)}" if filtros else ""
+
+        conn = get_conn()
+        c = cur(conn)
+        c.execute(
+            f"SELECT ID, FECHA, TIPO, GRAVEDAD, N_CHIP, DNI_PROPIETARIO, "
+            f"LUGAR, DESCRIPCION, VICTIMA_NOMBRE, VICTIMA_CONTACTO, "
+            f"ATENDIDO_MEDICO, COMUNICADO_SANIDAD, FECHA_COMUNICACION "
+            f"FROM INCIDENCIAS {where} ORDER BY FECHA DESC",
+            params,
+        )
+        rows = c.fetchall()
+        cabeceras = [d[0] for d in c.description]
+        conn.close()
+
+        buf = io.StringIO()
+        buf.write("\ufeff")  # BOM para Excel
+        w = csv.writer(buf, delimiter=";", quoting=csv.QUOTE_MINIMAL)
+        w.writerow(cabeceras)
+        for r in rows:
+            w.writerow(["" if v is None else str(v) for v in r])
+
+        _log_auditoria("exportar_incidencias", {"total": len(rows), "filtros": dict(request.args)})
+        nombre = f"incidencias_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+        return Response(
+            buf.getvalue(),
+            mimetype="text/csv; charset=utf-8",
+            headers={"Content-Disposition": f'attachment; filename="{nombre}"'},
+        )
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 @app.route("/api/ficha_propietario/<dni>", methods=["GET"])
 def ficha_propietario(dni):
     try:
@@ -3140,72 +3631,6 @@ def policia_buscar_chip(chip):
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
-@app.route("/api/incidencias", methods=["POST"], strict_slashes=False)
-def registrar_incidencia():
-    """Registra una incidencia. Requiere rol admin o policia."""
-    payload = _req_policia_o_admin()
-    if not payload:
-        return jsonify({"ok": False, "error": "Acceso no autorizado."}), 403
-    data = request.get_json(silent=True) or {}
-    chip = data.get("chip", "").strip()
-    tipo = data.get("tipo", "").strip()
-    descripcion = data.get("descripcion", "").strip()
-    if not chip or not tipo:
-        return jsonify({"ok": False, "error": "Chip y tipo de incidencia son obligatorios."})
-    try:
-        conn = get_conn()
-        c = cur(conn)
-        chip_col = detectar_chip(c)
-        c.execute(f"SELECT COUNT(*) FROM ANIMALES WHERE `{chip_col}` = %s", (chip,))
-        if c.fetchone()[0] == 0:
-            conn.close()
-            return jsonify({"ok": False, "error": "No existe ningún animal con ese chip."})
-        # Determinar nombre del agente
-        agente_nombre = None
-        if payload["rol"] == "policia":
-            username = payload.get("username", "")
-            pol_user = _cargar_auth().get("policia_usuarios", {}).get(username, {})
-            agente_nombre = pol_user.get("nombre", username)
-        elif payload["rol"] == "admin":
-            agente_nombre = "Administrador"
-        c.execute(
-            "INSERT INTO INCIDENCIAS (N_CHIP, TIPO, DESCRIPCION, FECHA, ROL_AGENTE, AGENTE) VALUES (%s,%s,%s,%s,%s,%s)",
-            (chip, tipo, descripcion, datetime.now(), payload["rol"], agente_nombre)
-        )
-        conn.commit()
-        inc_id = c.lastrowid
-        conn.close()
-        logger.info("POL: incidencia #%d registrada — chip=%s tipo=%s", inc_id, chip, tipo)
-        _log_auditoria("crear_incidencia", {
-            "id": inc_id,
-            "N_CHIP": chip,
-            "tipo": tipo,
-            "descripcion": descripcion[:500] if descripcion else "",
-        })
-        return jsonify({"ok": True, "id": inc_id})
-    except Exception as e:
-        _log_request_error(request.endpoint or "unknown", e)
-        _log_auditoria("crear_incidencia", {"N_CHIP": chip, "error": str(e)[:200]}, exito=False)
-        return jsonify({"ok": False, "error": str(e)}), 500
-
-
-@app.route("/api/incidencias", methods=["GET"], strict_slashes=False)
-def listar_incidencias():
-    """Lista las incidencias. Requiere rol admin o policia."""
-    if not _req_policia_o_admin():
-        return jsonify({"ok": False, "error": "Acceso no autorizado."}), 403
-    try:
-        conn = get_conn()
-        c = cur(conn)
-        c.execute("SELECT * FROM INCIDENCIAS ORDER BY FECHA DESC LIMIT 200")
-        rows = c.fetchall()
-        conn.close()
-        return jsonify({"ok": True, "datos": [fila_a_dict(c, r) for r in rows]})
-    except Exception as e:
-        _log_request_error(request.endpoint or "unknown", e)
-        return jsonify({"ok": False, "error": str(e)}), 500
-
-
 def _bloquear_usuarios_inactivos():
     """Tarea programada: desactiva cuentas que lleven más de 6 meses sin acceder.
     Aplica a policía y empleados (dispositivos). No afecta al admin.
@@ -3262,8 +3687,10 @@ def _sql_escape(valor) -> str:
         return str(valor)
     if isinstance(valor, (bytes, bytearray)):
         return "0x" + bytes(valor).hex()
-    if isinstance(valor, (datetime, date)):
+    if isinstance(valor, datetime):
         return "'" + valor.isoformat(sep=" ") + "'"
+    if isinstance(valor, date):
+        return "'" + valor.isoformat() + "'"
     s = str(valor).replace("\\", "\\\\").replace("'", "''").replace("\x00", "")
     return "'" + s + "'"
 
@@ -3528,6 +3955,268 @@ def admin_backups_eliminar(nombre):
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
+# ════════════════════════════════════════════════════════════════════════════
+# RECORDATORIOS POR EMAIL (vencimientos vacuna, seguro RC, licencia PPP)
+# ════════════════════════════════════════════════════════════════════════════
+
+_EMAIL_RE = __import__("re").compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+
+SMTP_HOST     = os.environ.get("SMTP_HOST", "")
+SMTP_PORT     = int(os.environ.get("SMTP_PORT", "587"))
+SMTP_USER     = os.environ.get("SMTP_USER", "")
+SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "")
+SMTP_FROM     = os.environ.get("SMTP_FROM", SMTP_USER or "no-reply@censo.local")
+SMTP_STARTTLS = os.environ.get("SMTP_STARTTLS", "1") != "0"
+
+
+def _smtp_configurado() -> bool:
+    return bool(SMTP_HOST and SMTP_FROM)
+
+
+def _validar_email(v: str) -> bool:
+    return bool(v and _EMAIL_RE.match(v.strip()))
+
+
+def _enviar_email(to: str, subject: str, body: str) -> tuple[bool, str | None]:
+    """Envía un email. Devuelve (ok, error).
+
+    Si SMTP no está configurado, lo registra y devuelve (False, 'no-smtp').
+    Pensado para llamarse desde el scheduler; nunca lanza excepciones.
+    """
+    if not _smtp_configurado():
+        logger.info("EMAIL: SMTP no configurado, omitido (to=%s, subject=%r)", to, subject)
+        return False, "no-smtp"
+    if not _validar_email(to):
+        return False, "email_invalido"
+    try:
+        import smtplib
+        from email.message import EmailMessage
+
+        msg = EmailMessage()
+        msg["From"] = SMTP_FROM
+        msg["To"] = to
+        msg["Subject"] = subject
+        msg.set_content(body)
+
+        with smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=20) as s:
+            if SMTP_STARTTLS:
+                s.starttls()
+            if SMTP_USER and SMTP_PASSWORD:
+                s.login(SMTP_USER, SMTP_PASSWORD)
+            s.send_message(msg)
+        logger.info("EMAIL enviado a %s (subject=%r)", to, subject)
+        return True, None
+    except Exception as e:
+        logger.warning("EMAIL fallo a %s: %s", to, e)
+        return False, str(e)[:200]
+
+
+def _recopilar_recordatorios(dias: int = 30) -> list[dict]:
+    """Devuelve recordatorios pendientes agrupados por propietario.
+
+    Cada dict: {dni, email, nombre, items: [{tipo, referencia, vence, dias_restantes}]}
+    """
+    try:
+        conn = get_conn()
+        c = cur(conn)
+        chip_col = detectar_chip(c)
+    except Exception as e:
+        logger.warning("RECORDATORIOS: BD no disponible: %s", e)
+        return []
+
+    try:
+        import datetime as _dt
+        hoy = _dt.date.today()
+        tope = hoy + _dt.timedelta(days=dias)
+
+        pendientes: dict[str, dict] = {}
+
+        def _add(dni, email, nombre, tipo, ref, vence):
+            if not (dni and email and _validar_email(email)):
+                return
+            slot = pendientes.setdefault(dni, {
+                "dni": dni, "email": email, "nombre": nombre, "items": [],
+            })
+            dr = (vence - hoy).days if isinstance(vence, _dt.date) else None
+            slot["items"].append({
+                "tipo": tipo, "referencia": ref,
+                "vence": str(vence), "dias_restantes": dr,
+            })
+
+        # Vacunas antirrábica (vence = fecha_vacuna + 1 año)
+        vacuna_col = None
+        for n in ("FECHA_ULTIMA_VACUNA_ANTIRRABICA", "FECHA_ULTIMA_VACUNACION_ANTIRRABICA"):
+            c.execute(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                "WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='ANIMALES' AND COLUMN_NAME=%s",
+                (n,))
+            if c.fetchone()[0]:
+                vacuna_col = n
+                break
+        if vacuna_col:
+            c.execute(
+                f"""SELECT a.`{chip_col}`, a.NOMBRE,
+                           DATE_ADD(a.`{vacuna_col}`, INTERVAL 1 YEAR) AS VENCE,
+                           p.DNI, p.EMAIL,
+                           CONCAT_WS(' ', p.NOMBRE, p.PRIMER_APELLIDO, p.SEGUNDO_APELLIDO) AS NOM
+                    FROM ANIMALES a
+                    JOIN PROPIETARIOS p ON p.DNI = a.DNI_PROPIETARIO
+                    WHERE a.`{vacuna_col}` IS NOT NULL
+                      AND DATE_ADD(a.`{vacuna_col}`, INTERVAL 1 YEAR) BETWEEN %s AND %s
+                      AND a.`{chip_col}` NOT IN (SELECT b.`{chip_col}` FROM BAJA_ANIMAL b WHERE b.`{chip_col}` IS NOT NULL)""",
+                (hoy, tope))
+            for chip, nanim, vence, dni, email, nom in c.fetchall():
+                _add(dni, email, nom, "vacuna_antirrabica",
+                     f"{chip} ({nanim or ''})", vence)
+
+        # Seguro RC (si existe columna)
+        c.execute(
+            "SELECT COUNT(*) FROM information_schema.COLUMNS "
+            "WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='SEGUROS' AND COLUMN_NAME='FECHA_VENCIMIENTO_RC'")
+        if c.fetchone()[0]:
+            c.execute(
+                f"""SELECT s.`{chip_col}`, s.SEGURO_COMPANIA, s.SEGURO_POLIZA,
+                           s.FECHA_VENCIMIENTO_RC,
+                           p.DNI, p.EMAIL,
+                           CONCAT_WS(' ', p.NOMBRE, p.PRIMER_APELLIDO, p.SEGUNDO_APELLIDO) AS NOM
+                    FROM SEGUROS s
+                    JOIN ANIMALES a     ON a.`{chip_col}` = s.`{chip_col}`
+                    JOIN PROPIETARIOS p ON p.DNI = a.DNI_PROPIETARIO
+                    WHERE s.FECHA_VENCIMIENTO_RC BETWEEN %s AND %s""",
+                (hoy, tope))
+            for chip, comp, pol, vence, dni, email, nom in c.fetchall():
+                _add(dni, email, nom, "seguro_rc",
+                     f"{chip} — {comp or '?'}/{pol or '?'}", vence)
+
+        # Licencia PPP (vence = fecha_expedicion + 5 años)
+        c.execute(
+            f"""SELECT l.N_LICENCIA_ANIMALES_PELIGROSOS,
+                       DATE_ADD(l.FECHA_EXPEDICION_LICENCIA, INTERVAL 5 YEAR) AS VENCE,
+                       p.DNI, p.EMAIL,
+                       CONCAT_WS(' ', p.NOMBRE, p.PRIMER_APELLIDO, p.SEGUNDO_APELLIDO) AS NOM
+                FROM LICENCIAS l
+                JOIN PROPIETARIOS p ON p.DNI = l.DNI_PROPIETARIO
+                WHERE l.FECHA_EXPEDICION_LICENCIA IS NOT NULL
+                  AND DATE_ADD(l.FECHA_EXPEDICION_LICENCIA, INTERVAL 5 YEAR) BETWEEN %s AND %s""",
+            (hoy, tope))
+        for lic, vence, dni, email, nom in c.fetchall():
+            _add(dni, email, nom, "licencia_ppp", lic, vence)
+
+        conn.close()
+        return list(pendientes.values())
+    except Exception as e:
+        logger.warning("RECORDATORIOS: error recopilando: %s", e)
+        try:
+            conn.close()
+        except Exception as _e:
+            logger.debug("RECORDATORIOS: close falló: %s", _e)
+        return []
+
+
+def _formatear_email_recordatorio(slot: dict) -> tuple[str, str]:
+    """Devuelve (subject, body) para un propietario."""
+    items = slot["items"]
+    subject = f"[Censo Navalcarnero] {len(items)} vencimiento(s) próximo(s)"
+    lineas = [
+        f"Hola {slot.get('nombre') or slot['dni']},",
+        "",
+        "Le informamos que los siguientes trámites asociados a sus animales"
+        " están a punto de caducar:",
+        "",
+    ]
+    for it in items:
+        etiqueta = {
+            "vacuna_antirrabica": "Vacuna antirrábica",
+            "seguro_rc":          "Seguro de responsabilidad civil",
+            "licencia_ppp":       "Licencia PPP",
+        }.get(it["tipo"], it["tipo"])
+        dr = it.get("dias_restantes")
+        dr_txt = f"(en {dr} días)" if dr is not None and dr >= 0 else "(caducado)"
+        lineas.append(f"  • {etiqueta} — {it['referencia']} — vence {it['vence']} {dr_txt}")
+    lineas += [
+        "",
+        "Le recordamos que mantener estos trámites al día es una obligación"
+        " legal (Ley 7/2023 de protección y bienestar animal).",
+        "",
+        "Un saludo,",
+        "Censo Municipal de Animales — Ayuntamiento de Navalcarnero",
+    ]
+    return subject, "\n".join(lineas)
+
+
+def _enviar_recordatorios_job(dry_run: bool = False, dias: int = 30) -> dict:
+    """Job diario: recopila y envía. Devuelve resumen."""
+    slots = _recopilar_recordatorios(dias=dias)
+    enviados, fallidos, omitidos = 0, 0, 0
+    detalle = []
+    conn = None
+    try:
+        conn = get_conn() if not dry_run else None
+    except Exception as e:
+        logger.warning("RECORDATORIOS: sin BD para registrar envíos: %s", e)
+
+    for slot in slots:
+        subject, body = _formatear_email_recordatorio(slot)
+        if dry_run:
+            omitidos += 1
+            detalle.append({"dni": slot["dni"], "email": slot["email"],
+                            "items": len(slot["items"]), "dry_run": True})
+            continue
+        ok, err = _enviar_email(slot["email"], subject, body)
+        if ok:
+            enviados += 1
+        else:
+            fallidos += 1
+        detalle.append({"dni": slot["dni"], "email": slot["email"],
+                        "items": len(slot["items"]), "ok": ok, "error": err})
+        # Registrar en RECORDATORIOS_ENVIADOS (best-effort)
+        if conn is not None:
+            try:
+                c = cur(conn)
+                for it in slot["items"]:
+                    c.execute(
+                        "INSERT INTO RECORDATORIOS_ENVIADOS (DNI, EMAIL, TIPO, REFERENCIA, EXITO, ERROR) "
+                        "VALUES (%s,%s,%s,%s,%s,%s)",
+                        (slot["dni"], slot["email"], it["tipo"], it["referencia"],
+                         1 if ok else 0, err),
+                    )
+                conn.commit()
+            except Exception as e:
+                logger.debug("RECORDATORIOS: no se pudo persistir envío: %s", e)
+
+    if conn is not None:
+        try:
+            conn.close()
+        except Exception as _e:
+            logger.debug("RECORDATORIOS: close falló: %s", _e)
+
+    resumen = {
+        "total_destinatarios": len(slots),
+        "enviados": enviados,
+        "fallidos": fallidos,
+        "omitidos_dry_run": omitidos,
+        "smtp_configurado": _smtp_configurado(),
+    }
+    _log_auditoria("enviar_recordatorios", resumen)
+    return {**resumen, "detalle": detalle}
+
+
+@app.route("/api/admin/enviar_recordatorios", methods=["POST"])
+def endpoint_enviar_recordatorios():
+    """Dispara manualmente los recordatorios. Admin only.
+    Query: ?dry_run=1 para simular sin enviar, ?dias=N (1-90) para ventana."""
+    if not _es_admin_request():
+        return jsonify({"ok": False, "error": "Sólo admin."}), 403
+    try:
+        dry = request.args.get("dry_run") == "1"
+        dias = max(1, min(int(request.args.get("dias", 30)), 90))
+        res = _enviar_recordatorios_job(dry_run=dry, dias=dias)
+        return jsonify({"ok": True, **res})
+    except Exception as e:
+        _log_request_error(request.endpoint or "unknown", e)
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
 # ── Arranque ──────────────────────────────────────────────────────────────────
 
 # Inicializar scheduler (tanto para `python app.py` como para Docker)
@@ -3564,6 +4253,14 @@ try:
             hour=4,
             minute=0,
             id="backup_diario",
+            replace_existing=True,
+        )
+        scheduler.add_job(
+            _enviar_recordatorios_job,
+            trigger="cron",
+            hour=7,
+            minute=0,
+            id="recordatorios_vencimientos",
             replace_existing=True,
         )
         scheduler.start()

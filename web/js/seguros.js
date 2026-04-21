@@ -2,7 +2,7 @@
         return datos
           .map(
             (r) => `
- <tr style="cursor:pointer;" title="Ver ficha del animal" data-chip="${r.N_CHIP || ""}" onclick="abrirFicha(this.dataset.chip)"> <td data-label="ID"><span class="tag tag-id">${r.ID_SEGUROS || "—"}</span></td> <td data-label="Chip"><span class="tag tag-id">${r.N_CHIP || "—"}</span></td> <td data-label="Animal">${r.NOMBRE_ANIMAL || "—"}</td> <td data-label="Especie">${r.ESPECIE || "—"}</td> <td data-label="Compañía">${r.SEGURO_COMPANIA || "—"}</td> <td data-label="Póliza">${r.SEGURO_POLIZA || "—"}</td> <td data-label="DNI">${r.DNI_PROPIETARIO || "—"}</td> <td data-label="Acción"><button class="btn btn-secondary" style="padding:.25rem .6rem;font-size:.7rem;" onclick="event.stopPropagation();eliminarSeguro(${r.ID_SEGUROS})">Eliminar</button></td> </tr>`,
+ <tr style="cursor:pointer;" title="Ver ficha del animal" data-chip="${r.N_CHIP || ""}" onclick="abrirFicha(this.dataset.chip)"> <td data-label="ID"><span class="tag tag-id">${r.ID_SEGUROS || "—"}</span></td> <td data-label="Chip"><span class="tag tag-id">${r.N_CHIP || "—"}</span></td> <td data-label="Animal">${r.NOMBRE_ANIMAL || "—"}</td> <td data-label="Especie">${r.ESPECIE || "—"}</td> <td data-label="Compañía">${r.SEGURO_COMPANIA || "—"}</td> <td data-label="Póliza">${r.SEGURO_POLIZA || "—"}</td> <td data-label="Vence">${(r.FECHA_VENCIMIENTO_RC && String(r.FECHA_VENCIMIENTO_RC).slice(0,10)) || "—"}</td> <td data-label="DNI">${r.DNI_PROPIETARIO || "—"}</td> <td data-label="Acción"><button class="btn btn-secondary" style="padding:.25rem .6rem;font-size:.7rem;" onclick="event.stopPropagation();eliminarSeguro(${r.ID_SEGUROS})">Eliminar</button></td> </tr>`,
           )
           .join("");
       }
@@ -49,14 +49,14 @@
       async function cargarSeguros() {
         const tbody = document.getElementById("tbody-seg");
         tbody.innerHTML =
-          '<tr class="empty-row"><td colspan="8">Cargando…</td></tr>';
+          '<tr class="empty-row"><td colspan="9">Cargando…</td></tr>';
         setContador("seg-contador", null);
         try {
           const json = await (await fetch(API + "/seguros")).json();
           if (!json.ok) throw new Error(json.error);
           if (!json.datos.length) {
             tbody.innerHTML =
-              '<tr class="empty-row"><td colspan="8">Sin pólizas registradas.</td></tr>';
+              '<tr class="empty-row"><td colspan="9">Sin pólizas registradas.</td></tr>';
             return;
           }
           setDatos("seg", json.datos, "encontradas");
@@ -66,7 +66,7 @@
             "cargarSeguros",
             err?.stack,
           );
-          tbody.innerHTML = `<tr class="empty-row"><td colspan="8">Error: ${err.message}</td></tr>`;
+          tbody.innerHTML = `<tr class="empty-row"><td colspan="9">Error: ${err.message}</td></tr>`;
         }
       }
       async function buscarSegurosPorChip() {
@@ -84,7 +84,7 @@
           return;
         }
         tbody.innerHTML =
-          '<tr class="empty-row"><td colspan="8">Buscando…</td></tr>';
+          '<tr class="empty-row"><td colspan="9">Buscando…</td></tr>';
         setContador("seg-contador", null);
         try {
           const json = await (await fetch(API + "/seguros")).json();
@@ -94,7 +94,7 @@
           );
           if (!filtrados.length) {
             tbody.innerHTML =
-              '<tr class="empty-row"><td colspan="8">No se encontraron pólizas para ese chip.</td></tr>';
+              '<tr class="empty-row"><td colspan="9">No se encontraron pólizas para ese chip.</td></tr>';
             mostrarAlerta(
               "alert-seg",
               "error",
@@ -109,7 +109,7 @@
             "buscarSegurosPorChip",
             err?.stack,
           );
-          tbody.innerHTML = `<tr class="empty-row"><td colspan="8">Error: ${err.message}</td></tr>`;
+          tbody.innerHTML = `<tr class="empty-row"><td colspan="9">Error: ${err.message}</td></tr>`;
         }
       }
       async function eliminarSeguro(id) {

@@ -29,7 +29,11 @@
  placeholder="POL-2024-0001"
  required
  maxlength="50"
- /></div></div></div></div><div class="btn-row"><button type="submit" class="btn btn-primary" id="btn-seg"><div class="spinner" id="sp-seg"></div><span>Registrar póliza</span></button><button
+ /></div><div class="form-group"><label>Vencimiento RC <span class="req">*</span></label><input
+ type="date"
+ name="FECHA_VENCIMIENTO_RC"
+ required
+ /><span class="dni-hint">Obligatorio (Ley 7/2023 art. 30)</span></div></div></div></div><div class="btn-row"><button type="submit" class="btn btn-primary" id="btn-seg"><div class="spinner" id="sp-seg"></div><span>Registrar póliza</span></button><button
  type="button"
  class="btn btn-secondary"
  onclick="resetForm('form-seg', 'alert-seg')"
@@ -69,4 +73,4 @@
  id="tabla-wrap-seg"
  class="table-wrap"
  style="margin-top: 0.5rem"
- ><table><thead><tr><th>ID</th><th>Chip</th><th>Animal</th><th>Especie</th><th>Compañía</th><th>N.º Póliza</th><th>Propietario</th><th>Acción</th></tr></thead><tbody id="tbody-seg"><tr class="empty-row"><td colspan="8">Pulse «Ver todas» o busque por chip.</td></tr></tbody></table></div><div id="pag-seg" class="paginacion"></div></div></div></div>
+ ><table><thead><tr><th>ID</th><th>Chip</th><th>Animal</th><th>Especie</th><th>Compañía</th><th>N.º Póliza</th><th>Vence</th><th>Propietario</th><th>Acción</th></tr></thead><tbody id="tbody-seg"><tr class="empty-row"><td colspan="9">Pulse «Ver todas» o busque por chip.</td></tr></tbody></table></div><div id="pag-seg" class="paginacion"></div></div></div></div>
