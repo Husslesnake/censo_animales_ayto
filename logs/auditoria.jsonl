@@ -10,3 +10,4 @@
 {"fecha": "2026-04-20 07:11:29", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "crear_cuenta_empleado", "exito": true, "detalle": {"username": "usuario", "nombre": "Usuario"}}
 {"fecha": "2026-04-20 07:34:29", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "crear_cuenta_empleado", "exito": true, "detalle": {"username": "adrianbravo", "nombre": "Adrián Bravo"}}
 {"fecha": "2026-04-20 08:01:38", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "crear_cuenta_empleado", "exito": true, "detalle": {"username": "luciabautista", "nombre": "Lucía Bautista"}}
+{"fecha": "2026-04-21 06:57:33", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "actualizar_cuenta_empleado", "exito": true, "detalle": {"username": "adrianbravo", "cambios": ["contraseña"]}}

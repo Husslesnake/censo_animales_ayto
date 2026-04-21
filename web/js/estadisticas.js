@@ -580,7 +580,8 @@
                       const d = new Date(r.FECHA_VACUNA);
                       d.setFullYear(d.getFullYear() + 1);
                       return d.toISOString().substring(0, 10);
-                    } catch {
+                    } catch (e) {
+                      console.warn("VENCE: fecha vacuna inválida", r.FECHA_VACUNA, e);
                       return null;
                     }
                   })()
@@ -593,7 +594,8 @@
                       return Math.floor(
                         (d - new Date()) / (1000 * 60 * 60 * 24),
                       );
-                    } catch {
+                    } catch (e) {
+                      console.warn("DIAS_RESTANTES: fecha vacuna inválida", r.FECHA_VACUNA, e);
                       return null;
                     }
                   })()

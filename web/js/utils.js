@@ -265,7 +265,8 @@
             });
             const ok = r.ok;
             if (wrap) wrap.style.display = ok ? "none" : "flex";
-          } catch {
+          } catch (e) {
+            console.warn("api-status: comprobación fallida", e);
             if (wrap)
               wrap.style.display = "flex";
           }

@@ -11,7 +11,10 @@
         try {
           var v = localStorage.getItem("censo_token") || sessionStorage.getItem("censo_token");
           return v ? JSON.parse(v) : null;
-        } catch(e) { return null; }
+        } catch(e) {
+          console.warn("_getToken: token persistido ilegible:", e);
+          return null;
+        }
       }
       function _setToken(data, recordar) {
         var str = JSON.stringify(data);
@@ -36,6 +39,7 @@
           try {
             id = crypto.randomUUID();
           } catch(e) {
+            console.warn("_getDeviceId: crypto.randomUUID no disponible, usando fallback:", e);
             id = "dev-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2);
           }
           localStorage.setItem("censo_device_id", id);

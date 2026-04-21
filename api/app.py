@@ -1,7 +1,6 @@
 import atexit
 import gzip
 import hashlib
-import hmac
 import json
 import logging
 import os
@@ -131,7 +130,7 @@ try:
             encoding="utf-8"
         )
 except Exception as _e:
-    print(f"WARN: No se pudo crear log-ip.txt: {_e}")
+    logger.warning("No se pudo crear log-ip.txt: %s", _e)
 
 def _log_ip(ip: str, rol: str, evento: str, exito: bool):
     """Registra en log-ip.txt cada intento de acceso con su IP, rol y resultado."""
@@ -157,7 +156,7 @@ try:
     if not _AUDIT_LOG_FILE.exists():
         _AUDIT_LOG_FILE.touch()
 except Exception as _e:
-    print(f"WARN: No se pudo crear auditoria.jsonl: {_e}")
+    logger.warning("No se pudo crear auditoria.jsonl: %s", _e)
 
 
 def _usuario_desde_token() -> tuple[str, str]:
@@ -197,7 +196,8 @@ def _log_auditoria(accion: str, detalle: dict | None = None, exito: bool = True)
         try:
             rol, usuario = _usuario_desde_token()
             ip = _get_client_ip()
-        except Exception:
+        except Exception as _ctx_err:
+            logger.debug("AUDIT: sin contexto de petición (%s)", _ctx_err)
             rol, usuario, ip = "sistema", "scheduler", "—"
         entrada = {
             "fecha": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -281,7 +281,8 @@ def _check_inactividad(ultimo_acceso_iso: str | None) -> bool:
     try:
         ultimo = datetime.fromisoformat(ultimo_acceso_iso)
         return (datetime.now() - ultimo).days > _INACTIVIDAD_DIAS
-    except Exception:
+    except Exception as e:
+        logger.debug("INACTIVIDAD: no se pudo parsear %r: %s", ultimo_acceso_iso, e)
         return False
 
 
@@ -368,7 +369,8 @@ def _verificar_password(password: str, entrada: dict) -> bool:
     if bhash:
         try:
             return bcrypt.checkpw(password.encode("utf-8"), bhash.encode("utf-8"))
-        except Exception:
+        except Exception as e:
+            logger.warning("AUTH: bcrypt.checkpw falló: %s", e)
             return False
     # Legacy SHA-256
     salt = entrada.get("salt")
@@ -445,7 +447,8 @@ def _password_caducada(entrada: dict) -> bool:
         return False
     try:
         return (datetime.now() - datetime.fromisoformat(ref)).days > _PASSWORD_MAX_DIAS
-    except Exception:
+    except Exception as e:
+        logger.debug("PASSWORD_CADUCADA: no se pudo parsear %r: %s", ref, e)
         return False
 
 
@@ -456,7 +459,8 @@ def _cargar_auth() -> dict:
     if AUTH_FILE.exists():
         try:
             data = json.loads(AUTH_FILE.read_text(encoding="utf-8"))
-        except Exception:
+        except Exception as e:
+            logger.error("AUTH: no se pudo leer %s: %s", AUTH_FILE, e)
             return {}
     else:
         return {}
@@ -899,7 +903,7 @@ def auth_setup_empleado():
     Solo puede hacerlo el admin desde la IP local con su token.
     """
     ip = _get_client_ip()
-    if not _es_ip_local(ip):
+    if not _es_admin_request():
         return jsonify({"ok": False, "error": "Solo se puede configurar desde el servidor local."})
 
     token = request.headers.get("X-Token", "")
@@ -1280,7 +1284,8 @@ def _siguiente_n_baja(conn, anio: int) -> str:
     fila = c.fetchone()
     try:
         ultimo = int(fila[0].split("-")[-1]) if fila and fila[0] else 0
-    except (ValueError, IndexError):
+    except (ValueError, IndexError) as e:
+        logger.debug("N_BAJA: no se pudo parsear %r: %s", fila, e)
         ultimo = 0
     return f"BAJA-{anio}-{ultimo + 1:04d}"
 
@@ -1705,7 +1710,8 @@ def insertar_animal():
             ultimo_censo = (
                 int(fila_seq[0].split("-")[-1]) if fila_seq and fila_seq[0] else 0
             )
-        except (ValueError, IndexError):
+        except (ValueError, IndexError) as e:
+            logger.debug("N_CENSO: no se pudo parsear %r: %s", fila_seq, e)
             ultimo_censo = 0
         n_censo_auto = f"CEN-{ultimo_censo + 1:03d}"
 
@@ -1735,7 +1741,8 @@ def insertar_animal():
         if id_dom:
             try:
                 id_dom = int(id_dom)
-            except (ValueError, TypeError):
+            except (ValueError, TypeError) as e:
+                logger.debug("ID_DOMICILIO inválido %r: %s", id_dom, e)
                 id_dom = None
         if id_dom:
             c.execute(
@@ -1877,7 +1884,8 @@ def listar_sexos():
         try:
             c.execute("SELECT CLAVE, SEXO FROM SEXO")
             rows = [fila_a_dict(c, r) for r in c.fetchall()]
-        except Exception:
+        except Exception as e:
+            logger.warning("SEXOS: falló consulta, usando valores por defecto: %s", e)
             rows = [
                 {"CLAVE": "Macho", "SEXO": "Macho"},
                 {"CLAVE": "Hembra", "SEXO": "Hembra"},
@@ -2278,7 +2286,8 @@ def baja_automatica_por_edad():
         fila_seq = c.fetchone()
         try:
             ultimo = int(fila_seq[0].split("-")[-1]) if fila_seq and fila_seq[0] else 0
-        except (ValueError, IndexError):
+        except (ValueError, IndexError) as e:
+            logger.debug("N_BAJA auto: no se pudo parsear %r: %s", fila_seq, e)
             ultimo = 0
 
         for chip, dni_prop in candidatos:
@@ -2307,7 +2316,7 @@ def baja_automatica_por_edad():
             )
 
     except Exception as e:
-        print(f"[AUTO-BAJA] Error en el proceso automático: {e}")
+        logger.exception("AUTO-BAJA: error en el proceso automático: %s", e)
 
 
 # Mantenimiento de esquema
@@ -2336,7 +2345,7 @@ def aplicar_unique_chip():
             print(f"[SCHEMA] UNIQUE ya existe en ANIMALES.`{chip_col}`")
         conn.close()
     except Exception as e:
-        print(f"[SCHEMA] No se pudo aplicar UNIQUE en chip: {e}")
+        logger.warning("SCHEMA: no se pudo aplicar UNIQUE en chip: %s", e)
 
 
 @app.route("/api/estadisticas", methods=["GET"])
@@ -2350,11 +2359,13 @@ def estadisticas():
         especie_filtro = (request.args.get("especie") or "").strip()
         try:
             anio_desde = int(request.args.get("anio_desde") or 0) or None
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as e:
+            logger.debug("ESTADISTICAS: anio_desde inválido %r: %s", request.args.get("anio_desde"), e)
             anio_desde = None
         try:
             anio_hasta = int(request.args.get("anio_hasta") or 0) or None
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as e:
+            logger.debug("ESTADISTICAS: anio_hasta inválido %r: %s", request.args.get("anio_hasta"), e)
             anio_hasta = None
 
         def filas(q, params=()):
@@ -2505,7 +2516,8 @@ def estadisticas():
                 )
             altas_raw = c.fetchall()
             altas_por_anio = {int(a): int(t) for a, t in altas_raw if a}
-        except Exception:
+        except Exception as e:
+            logger.warning("ESTADISTICAS: no se pudieron calcular altas por año: %s", e)
             altas_por_anio = {}
 
         # -- Distribución: nº de animales por propietario (0-5, con LEFT JOIN) --
@@ -2796,10 +2808,7 @@ def vencimientos():
             )
 
         hoy = datetime.date.today()
-        hace_1_anio = hoy - datetime.timedelta(days=365)
-        vence_en = hoy - datetime.timedelta(
-            days=365 - dias
-        )  # vencerán dentro de `dias` días
+        vence_en = hoy + datetime.timedelta(days=dias)  # vencerán dentro de `dias` días
 
         # Animales activos cuya vacuna vence entre hoy-365 y hoy-365+dias
         c.execute(
@@ -2835,7 +2844,8 @@ def vencimientos():
                     vence = fv_date.replace(year=fv_date.year + 1)
                     r["VENCE"] = str(vence)
                     r["DIAS_RESTANTES"] = (vence - hoy).days
-                except Exception:
+                except Exception as e:
+                    logger.debug("VENCIMIENTOS: fecha vacuna inválida %r: %s", fv, e)
                     r["VENCE"] = None
                     r["DIAS_RESTANTES"] = None
 
@@ -2938,7 +2948,8 @@ def listar_auditoria():
         ip_f    = (request.args.get("ip")      or "").strip()
         try:
             limit = int(request.args.get("limit") or 500)
-        except ValueError:
+        except ValueError as e:
+            logger.debug("AUDITORIA: limit inválido %r: %s", request.args.get("limit"), e)
             limit = 500
         limit = max(1, min(limit, 5000))
 
@@ -2953,7 +2964,8 @@ def listar_auditoria():
                     continue
                 try:
                     e = json.loads(linea)
-                except Exception:
+                except Exception as _parse_err:
+                    logger.debug("AUDITORIA: línea JSON inválida descartada: %s", _parse_err)
                     continue
                 fecha = str(e.get("fecha", ""))[:10]  # YYYY-MM-DD
                 if desde and fecha < desde:
@@ -3427,6 +3439,7 @@ def _ejecutar_restore(ruta) -> dict:
         with gzip.open(ruta, "rt", encoding="utf-8") as fh:
             contenido = fh.read()
     except Exception as e:
+        logger.error("RESTORE: no se pudo leer el backup %s: %s", ruta, e)
         return {"ok": False, "error": f"No se pudo leer el backup: {e}"}
 
     # División ingenua por ';\n' — nuestros dumps son lo bastante simples
@@ -3440,9 +3453,11 @@ def _ejecutar_restore(ruta) -> dict:
                 c.execute(sql)
                 sentencias_ejecutadas += 1
             except Exception as e:
+                logger.warning("RESTORE: sentencia falló (%s...): %s", sql[:80], e)
                 errores.append(f"{sql[:80]}… → {e}")
         conn.commit()
     except Exception as e:
+        logger.exception("RESTORE: fallo al ejecutar: %s", e)
         return {"ok": False, "error": str(e), "pre_restore": pre.get("archivo")}
     finally:
         if conn:
@@ -3509,6 +3524,7 @@ def admin_backups_eliminar(nombre):
             logger.warning("BACKUP: no se pudo auditar backup_eliminar: %s", e)
         return jsonify({"ok": True})
     except Exception as e:
+        logger.error("BACKUP: no se pudo eliminar %s: %s", nombre, e)
         return jsonify({"ok": False, "error": str(e)}), 500
 
 

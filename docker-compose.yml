@@ -4,6 +4,7 @@ services:
     container_name: censo_mariadb
     restart: unless-stopped
     environment:
+      TZ: Europe/Madrid
       MYSQL_ROOT_PASSWORD: "123"
       MYSQL_DATABASE: censo_animales
     volumes:
@@ -22,6 +23,7 @@ services:
     container_name: censo_api
     restart: unless-stopped
     environment:
+      TZ: Europe/Madrid
       DB_HOST: mariadb
       DB_PORT: "3306"
       DB_USER: root
@@ -44,6 +46,7 @@ services:
     container_name: censo_phpmyadmin
     restart: unless-stopped
     environment:
+      TZ: Europe/Madrid
       PMA_HOST: mariadb
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: "123"
@@ -59,6 +62,8 @@ services:
     image: nginx:alpine
     container_name: censo_web
     restart: unless-stopped
+    environment:
+      TZ: Europe/Madrid
     ports:
       - "80:80"                  # Empleados — acceso público
       - "127.0.0.1:8181:8181"   # Admin — solo desde localhost (el servidor)
