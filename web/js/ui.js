@@ -173,18 +173,73 @@
  <option value="">— Seleccionar —</option> <option value="Macho">Macho</option> <option value="Hembra">Hembra</option>`;
         }
       }
+      const TEMA_ORDEN = ["light", "dark", "system"];
+      const TEMA_LABEL = {
+        light: "Modo claro",
+        dark: "Modo oscuro",
+        system: "Igual que el sistema",
+      };
+      const TEMA_ICONO = { light: "☀", dark: "☾", system: "◑" };
+      function _prefiereOscuroSistema() {
+        return (
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+        );
+      }
+      function _aplicarTema(tema) {
+        const oscuro =
+          tema === "dark" || (tema === "system" && _prefiereOscuroSistema());
+        document.body.classList.toggle("dark-mode", oscuro);
+        const btn = document.getElementById("btn-dark-mode");
+        if (btn) {
+          btn.title = TEMA_LABEL[tema];
+          btn.setAttribute("aria-label", TEMA_LABEL[tema]);
+          btn.textContent = TEMA_ICONO[tema];
+        }
+      }
+      function _mostrarAvisoTema(tema) {
+        let aviso = document.getElementById("aviso-tema");
+        if (!aviso) {
+          aviso = document.createElement("div");
+          aviso.id = "aviso-tema";
+          document.body.appendChild(aviso);
+        }
+        aviso.textContent = `${TEMA_ICONO[tema]} ${TEMA_LABEL[tema]}`;
+        aviso.classList.remove("visible");
+        void aviso.offsetWidth;
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => aviso.classList.add("visible")),
+        );
+        clearTimeout(_mostrarAvisoTema._t);
+        _mostrarAvisoTema._t = setTimeout(
+          () => aviso.classList.remove("visible"),
+          1800,
+        );
+      }
+      function _leerTema() {
+        const t = localStorage.getItem("censo_tema");
+        if (TEMA_ORDEN.includes(t)) return t;
+        if (localStorage.getItem("censo_dark") === "1") return "dark";
+        return "system";
+      }
       function toggleDarkMode() {
-        const dark = document.body.classList.toggle("dark-mode");
-        localStorage.setItem("censo_dark", dark ? "1" : "0");
-        document.getElementById("btn-dark-mode").title = dark
-          ? "Tema claro"
-          : "Tema oscuro";
+        const actual = _leerTema();
+        const siguiente =
+          TEMA_ORDEN[(TEMA_ORDEN.indexOf(actual) + 1) % TEMA_ORDEN.length];
+        localStorage.setItem("censo_tema", siguiente);
+        localStorage.removeItem("censo_dark");
+        _aplicarTema(siguiente);
+        _mostrarAvisoTema(siguiente);
       }
       (function _initDark() {
-        if (localStorage.getItem("censo_dark") === "1") {
-          document.body.classList.add("dark-mode");
-          const btn = document.getElementById("btn-dark-mode");
-          if (btn) btn.title = "Tema claro";
+        const tema = _leerTema();
+        _aplicarTema(tema);
+        if (window.matchMedia) {
+          window
+            .matchMedia("(prefers-color-scheme: dark)")
+            .addEventListener("change", () => {
+              if (_leerTema() === "system") _aplicarTema("system");
+            });
         }
       })();
       estado.seg = { datos: [], pagina: 1 };
