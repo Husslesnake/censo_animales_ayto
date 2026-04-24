@@ -7,6 +7,12 @@
       "runtimeArgs": [".claude/preview-proxy.py"],
       "port": 8889,
       "autoPort": true
+    },
+    {
+      "name": "phpmyadmin",
+      "runtimeExecutable": "docker",
+      "runtimeArgs": ["compose", "up", "phpmyadmin"],
+      "port": 8080
     }
   ]
 }

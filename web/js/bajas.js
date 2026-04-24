@@ -113,12 +113,8 @@
  </span></td> <td>${fecha}</td> <td>${r.N_BAJA || "—"}</td> <td style="max-width:180px;white-space:normal;">${r.OBSERVACIONES || "—"}</td> </tr>`;
           })
           .join("");
-        const totalPags = Math.ceil(total / POR_PAGINA);
+        const totalPags = Math.max(1, Math.ceil(total / POR_PAGINA));
         const pag = document.getElementById("pag-bajas");
-        if (totalPags <= 1) {
-          pag.innerHTML = "";
-          return;
-        }
         let html = "";
         if (estadoBajas.pagina > 1)
           html += `<button class="pag-btn" onclick="irPaginaBajas(${estadoBajas.pagina - 1})">‹ Anterior</button>`;
