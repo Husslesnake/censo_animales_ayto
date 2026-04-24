@@ -66,3 +66,6 @@
 [2026-04-21 06:57:55] OK   ip=172.19.0.1           rol=empleado   evento=cambio_password
 [2026-04-23 08:36:30] OK   ip=172.19.0.1           rol=empleado   evento=login
 [2026-04-23 08:36:45] OK   ip=172.19.0.1           rol=empleado   evento=cambio_password
+[2026-04-24 09:26:13] FAIL ip=172.19.0.1           rol=policia    evento=login
+[2026-04-24 09:26:18] FAIL ip=172.19.0.1           rol=policia    evento=login
+[2026-04-24 09:26:21] OK   ip=172.19.0.1           rol=policia    evento=login

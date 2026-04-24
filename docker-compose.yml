@@ -5,8 +5,8 @@ services:
     restart: unless-stopped
     environment:
       TZ: Europe/Madrid
-      MYSQL_ROOT_PASSWORD: "123"
-      MYSQL_DATABASE: censo_animales
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD no definido en .env}"
+      MYSQL_DATABASE: "${DB_NAME:-censo_animales}"
     volumes:
       - mariadb_data:/var/lib/mysql
       - ./db/censo_animales.sql:/docker-entrypoint-initdb.d/01-censo_animales.sql:ro
@@ -27,8 +27,8 @@ services:
       DB_HOST: mariadb
       DB_PORT: "3306"
       DB_USER: root
-      DB_PASSWORD: "123"
-      DB_NAME: censo_animales
+      DB_PASSWORD: "${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD no definido en .env}"
+      DB_NAME: "${DB_NAME:-censo_animales}"
       LOG_DIR: /app/logs
       AUTH_FILE: /app/auth.json
     depends_on:
@@ -49,7 +49,7 @@ services:
       TZ: Europe/Madrid
       PMA_HOST: mariadb
       PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: "123"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:?DB_ROOT_PASSWORD no definido en .env}"
     ports:
       - "127.0.0.1:8080:80"
     depends_on:

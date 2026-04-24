@@ -4,6 +4,7 @@ import hashlib
 import json
 import logging
 import os
+import re
 import secrets
 import traceback
 from datetime import date, datetime, timedelta
@@ -13,7 +14,9 @@ from pathlib import Path
 import bcrypt
 import mysql.connector
 from apscheduler.schedulers.background import BackgroundScheduler
-from flask import Flask, Response, jsonify, request, send_file
+from contextlib import contextmanager
+
+from flask import Flask, Response, g, jsonify, request, send_file
 from flask_cors import CORS
 
 # Configuración
@@ -1297,11 +1300,82 @@ def get_conn():
     cur = conn.cursor(buffered=True)
     cur.execute("SET NAMES utf8mb4")
     cur.close()
+    try:
+        conns = g._db_conns
+    except (RuntimeError, AttributeError) as e:
+        logger.debug("get_conn fuera de app-context (no se registra en g): %s", e)
+        conns = None
+    if conns is None:
+        try:
+            g._db_conns = []
+            conns = g._db_conns
+        except RuntimeError as e:
+            logger.debug("get_conn no pudo inicializar g._db_conns: %s", e)
+            conns = None
+    if conns is not None:
+        conns.append(conn)
     return conn
 
 
 def cur(conn):
     return conn.cursor(buffered=True)
+
+
+_IDENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]{0,63}$")
+
+
+def _ident(nombre: str) -> str:
+    """Valida que `nombre` sea un identificador SQL seguro antes de interpolarlo.
+    Lanza ValueError si contiene caracteres fuera de [A-Za-z0-9_] o excede 64 chars.
+    Defensa en profundidad para los pocos sitios donde se construyen consultas
+    con nombres de columna/tabla dinámicos (PATCH animales, UPDATE incidencias,
+    INSERT animales, ALTER TABLE de arranque). No sustituye a las whitelists
+    existentes, las complementa."""
+    if not isinstance(nombre, str) or not _IDENT_RE.match(nombre):
+        raise ValueError(f"Identificador SQL no válido: {nombre!r}")
+    return nombre
+
+
+@app.teardown_appcontext
+def _cerrar_conexiones_db(exc):
+    """Garantiza el cierre de todas las conexiones abiertas durante la request,
+    incluso si el handler lanzó una excepción o retornó por un camino sin close()."""
+    conns = g.pop("_db_conns", None) if g else None
+    if not conns:
+        return
+    for conn in conns:
+        try:
+            if conn.is_connected():
+                if exc is not None:
+                    try:
+                        conn.rollback()
+                    except Exception as rb_err:
+                        logger.warning("Rollback en teardown falló: %s", rb_err)
+                conn.close()
+        except Exception as close_err:
+            logger.warning("Error cerrando conexión DB: %s", close_err)
+
+
+@contextmanager
+def db_tx():
+    """Context manager para operaciones multi-statement transaccionales.
+    Commit en éxito, rollback en excepción, cierre garantizado."""
+    conn = get_conn()
+    try:
+        yield conn
+        conn.commit()
+    except Exception:
+        try:
+            conn.rollback()
+        except Exception as rb_err:
+            logger.warning("db_tx rollback falló: %s", rb_err)
+        raise
+    finally:
+        try:
+            if conn.is_connected():
+                conn.close()
+        except Exception as close_err:
+            logger.warning("db_tx close falló: %s", close_err)
 
 
 def serializar(val):
@@ -2412,7 +2486,7 @@ def aplicar_unique_chip():
             (chip_col,),
         )
         if c.fetchone()[0] == 0:
-            c.execute(f"ALTER TABLE ANIMALES ADD UNIQUE INDEX `uq_chip` (`{chip_col}`)")
+            c.execute(f"ALTER TABLE ANIMALES ADD UNIQUE INDEX `uq_chip` (`{_ident(chip_col)}`)")
             conn.commit()
             print(f"[SCHEMA] UNIQUE aplicado a ANIMALES.`{chip_col}`")
         else:
@@ -3247,7 +3321,7 @@ def actualizar_incidencia(id_inc):
             continue
         if k in ("ATENDIDO_MEDICO", "COMUNICADO_SANIDAD"):
             v = 1 if v else 0
-        sets.append(f"`{k}` = %s")
+        sets.append(f"`{_ident(k)}` = %s")
         vals.append(v)
     if not sets:
         return jsonify({"ok": False, "error": "Nada que actualizar."}), 400
