@@ -5,7 +5,7 @@
 //   - API POST/PUT/DELETE → network-only (nunca cacheado)
 //   - Otras peticiones → network-first
 
-const VERSION = "censo-v1";
+const VERSION = "censo-v2";
 const SHELL_CACHE = "shell-" + VERSION;
 const API_CACHE = "api-" + VERSION;
 
