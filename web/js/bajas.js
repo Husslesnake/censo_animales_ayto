@@ -113,14 +113,34 @@
  </span></td> <td>${fecha}</td> <td>${r.N_BAJA || "—"}</td> <td style="max-width:180px;white-space:normal;">${r.OBSERVACIONES || "—"}</td> </tr>`;
           })
           .join("");
-        const totalPags = Math.max(1, Math.ceil(total / POR_PAGINA));
+        const npags = Math.max(1, Math.ceil(total / POR_PAGINA));
+        const pagActual = estadoBajas.pagina;
         const pag = document.getElementById("pag-bajas");
-        let html = "";
-        if (estadoBajas.pagina > 1)
-          html += `<button class="pag-btn" onclick="irPaginaBajas(${estadoBajas.pagina - 1})">‹ Anterior</button>`;
-        html += `<span class="pag-info">Página ${estadoBajas.pagina} de ${totalPags}</span>`;
-        if (estadoBajas.pagina < totalPags)
-          html += `<button class="pag-btn" onclick="irPaginaBajas(${estadoBajas.pagina + 1})">Siguiente ›</button>`;
+        let html = `<button onclick="irPaginaBajas(${pagActual - 1})" ${pagActual === 1 ? "disabled" : ""}>‹</button>`;
+        const ventana = [];
+        if (npags <= 7) {
+          for (let i = 1; i <= npags; i++) ventana.push(i);
+        } else {
+          ventana.push(1);
+          if (pagActual > 3) ventana.push("…");
+          for (
+            let i = Math.max(2, pagActual - 1);
+            i <= Math.min(npags - 1, pagActual + 1);
+            i++
+          )
+            ventana.push(i);
+          if (pagActual < npags - 2) ventana.push("…");
+          ventana.push(npags);
+        }
+        ventana.forEach((p) => {
+          if (p === "…") {
+            html += `<button disabled>…</button>`;
+          } else {
+            html += `<button class="${p === pagActual ? "activa" : ""}" onclick="irPaginaBajas(${p})">${p}</button>`;
+          }
+        });
+        html += `<button onclick="irPaginaBajas(${pagActual + 1})" ${pagActual === npags ? "disabled" : ""}>›</button>`;
+        html += `<span class="pag-info">pág. ${pagActual} / ${npags} · ${total} registros</span>`;
         pag.innerHTML = html;
       }
       function irPaginaBajas(n) {
