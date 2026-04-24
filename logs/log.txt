@@ -2480,3 +2480,1477 @@ with app.app_context(). See the documentation for more information.
 [2026-04-24 10:24:35] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
 [2026-04-24 10:24:36] INFO     >>> GET /api/sexos
 [2026-04-24 10:24:36] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:24:44] INFO     >>> GET /api/bajas
+[2026-04-24 10:24:44] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:24:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:24:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:24:55] INFO     >>> GET /api/sexos
+[2026-04-24 10:24:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:24:55] INFO     >>> GET /api/auth/verificar
+[2026-04-24 10:24:55] INFO     >>> GET /api/motivos_baja
+[2026-04-24 10:24:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:24:55] INFO     >>> GET /api/alertas
+[2026-04-24 10:24:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:25:00] INFO     >>> GET /api/bajas
+[2026-04-24 10:25:00] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:25:05] INFO     >>> GET /api/sexos
+[2026-04-24 10:25:05] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:25:26] INFO     >>> GET /api/sexos
+[2026-04-24 10:25:26] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:25:50] INFO     ================================================================================
+[2026-04-24 10:25:50] INFO     APPLICATION STARTUP - Timestamp: 2026-04-24T10:25:50.973090
+[2026-04-24 10:25:50] INFO     ================================================================================
+[2026-04-24 10:25:50] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T14:30:13.222277
+[2026-04-24 10:25:50] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T14:25:48.085175
+[2026-04-24 10:25:50] DEBUG    Log file log_2026-04-13.txt is within 30-day retention: 2026-04-13T14:26:32.968979
+[2026-04-24 10:25:50] DEBUG    Log file log_2026-04-14.txt is within 30-day retention: 2026-04-14T14:28:43.556528
+[2026-04-24 10:25:50] DEBUG    Log file log_2026-04-15.txt is within 30-day retention: 2026-04-16T00:06:49.956053
+[2026-04-24 10:25:50] DEBUG    Log file log_2026-04-16.txt is within 30-day retention: 2026-04-16T14:30:58.524053
+[2026-04-24 10:25:50] DEBUG    Log file log_2026-04-17.txt is within 30-day retention: 2026-04-17T14:28:01.800428
+[2026-04-24 10:25:50] DEBUG    Log file log_2026-04-20.txt is within 30-day retention: 2026-04-20T14:27:52.286223
+[2026-04-24 10:25:50] DEBUG    Log file log_2026-04-21.txt is within 30-day retention: 2026-04-21T14:25:58.228100
+[2026-04-24 10:25:50] DEBUG    Log file log_2026-04-23.txt is within 30-day retention: 2026-04-23T23:59:59.725158
+[2026-04-24 10:25:51] DEBUG    get_conn fuera de app-context (no se registra en g): Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+[2026-04-24 10:25:51] DEBUG    get_conn no pudo inicializar g._db_conns: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+[2026-04-24 10:25:51] DEBUG    get_conn fuera de app-context (no se registra en g): Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+[2026-04-24 10:25:51] DEBUG    get_conn no pudo inicializar g._db_conns: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+[2026-04-24 10:25:51] INFO     AUTH: 5 token(s) de larga duración restaurados desde auth.json
+[2026-04-24 10:25:51] DEBUG    get_conn fuera de app-context (no se registra en g): Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+[2026-04-24 10:25:51] DEBUG    get_conn no pudo inicializar g._db_conns: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+[2026-04-24 10:25:51] INFO     DB: tabla INCIDENCIAS lista
+[2026-04-24 10:25:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:25:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:25:56] INFO     >>> GET /api/sexos
+[2026-04-24 10:25:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:26:05] INFO     >>> GET /api/sexos
+[2026-04-24 10:26:05] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:26:26] INFO     >>> GET /api/sexos
+[2026-04-24 10:26:26] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:26:35] INFO     >>> GET /api/sexos
+[2026-04-24 10:26:35] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:26:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:26:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:26:56] INFO     >>> GET /api/sexos
+[2026-04-24 10:26:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:27:05] INFO     >>> GET /api/sexos
+[2026-04-24 10:27:05] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:27:26] INFO     >>> GET /api/sexos
+[2026-04-24 10:27:26] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:27:35] INFO     >>> GET /api/sexos
+[2026-04-24 10:27:35] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:27:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:27:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:27:56] INFO     >>> GET /api/sexos
+[2026-04-24 10:27:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:28:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:28:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:28:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:28:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:28:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:28:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:29:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:29:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:29:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:29:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:29:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:29:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:29:58] INFO     >>> GET /api/sexos
+[2026-04-24 10:29:58] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:30:26] INFO     >>> GET /api/sexos
+[2026-04-24 10:30:26] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:30:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:30:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:30:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:30:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:30:56] INFO     >>> GET /api/sexos
+[2026-04-24 10:30:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:31:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:31:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:31:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:31:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:31:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:31:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:32:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:32:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:32:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:32:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:32:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:32:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:33:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:33:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:33:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:33:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:33:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:33:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:34:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:34:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:34:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:34:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:34:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:34:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:35:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:35:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:35:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:35:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:35:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:35:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:36:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:36:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:36:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:36:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:36:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:36:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:37:12] INFO     >>> GET /api/sexos
+[2026-04-24 10:37:12] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:37:23] INFO     >>> GET /api/sexos
+[2026-04-24 10:37:23] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:37:26] INFO     >>> GET /api/sexos
+[2026-04-24 10:37:26] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:37:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:37:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:37:53] INFO     >>> GET /api/sexos
+[2026-04-24 10:37:53] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:37:56] INFO     >>> GET /api/sexos
+[2026-04-24 10:37:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:38:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:38:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:38:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:38:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:38:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:38:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:39:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:39:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:39:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:39:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:39:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:39:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:40:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:40:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:40:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:40:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:40:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:40:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:41:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:41:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:41:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:41:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:41:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:41:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:42:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:42:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:42:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:42:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:42:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:42:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:43:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:43:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:43:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:43:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:43:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:43:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:44:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:44:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:44:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:44:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:44:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:44:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:45:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:45:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:45:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:45:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:45:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:45:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:46:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:46:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:46:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:46:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:46:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:46:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:47:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:47:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:47:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:47:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:47:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:47:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:48:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:48:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:48:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:48:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:48:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:48:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:49:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:49:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:49:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:49:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:49:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:49:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:50:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:50:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:50:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:50:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:50:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:50:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:51:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:51:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:51:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:51:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:51:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:51:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:52:05] INFO     >>> GET /api/sexos
+[2026-04-24 10:52:05] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:52:13] INFO     >>> GET /api/animales
+[2026-04-24 10:52:13] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:52:15] INFO     >>> GET /api/propietarios
+[2026-04-24 10:52:15] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:52:26] INFO     >>> GET /api/sexos
+[2026-04-24 10:52:26] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:52:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:52:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:52:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:52:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:52:56] INFO     >>> GET /api/sexos
+[2026-04-24 10:52:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:53:49] INFO     >>> GET /api/sexos
+[2026-04-24 10:53:49] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:53:50] INFO     >>> GET /api/ficha_propietario/10000005F
+[2026-04-24 10:53:50] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:53:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:53:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:53:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:53:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:53:56] INFO     >>> GET /api/sexos
+[2026-04-24 10:53:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:54:26] INFO     >>> GET /api/sexos
+[2026-04-24 10:54:26] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:54:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:54:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:54:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:54:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:55:10] INFO     >>> GET /api/sexos
+[2026-04-24 10:55:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:55:25] INFO     >>> GET /api/sexos
+[2026-04-24 10:55:25] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:55:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:55:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:55:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:55:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:55:56] INFO     >>> GET /api/sexos
+[2026-04-24 10:55:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:56:26] INFO     >>> GET /api/sexos
+[2026-04-24 10:56:26] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:56:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:56:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:56:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:56:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:57:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:57:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:57:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:57:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:57:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:57:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:58:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:58:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:58:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:58:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:58:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:58:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:59:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:59:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:59:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:59:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 10:59:51] INFO     >>> GET /api/sexos
+[2026-04-24 10:59:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:00:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:00:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:00:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:00:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:00:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:00:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:01:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:01:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:01:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:01:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:01:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:01:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:02:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:02:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:02:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:02:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:02:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:02:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:03:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:03:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:03:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:03:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:03:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:03:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:04:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:04:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:04:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:04:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:04:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:04:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:05:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:05:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:05:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:05:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:05:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:05:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:06:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:06:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:06:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:06:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:06:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:06:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:07:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:07:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:07:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:07:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:07:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:07:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:08:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:08:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:08:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:08:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:08:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:08:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:09:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:09:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:09:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:09:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:09:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:09:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:10:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:10:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:10:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:10:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:10:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:10:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:11:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:11:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:11:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:11:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:11:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:11:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:12:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:12:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:12:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:12:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:12:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:12:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:13:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:13:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:13:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:13:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:13:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:13:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:14:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:14:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:14:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:14:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:14:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:14:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:15:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:15:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:15:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:15:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:15:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:15:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:16:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:16:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:16:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:16:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:16:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:16:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:17:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:17:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:17:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:17:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:17:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:17:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:18:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:18:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:18:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:18:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:18:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:18:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:19:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:19:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:19:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:19:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:19:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:19:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:20:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:20:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:20:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:20:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:20:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:20:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:21:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:21:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:21:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:21:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:21:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:21:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:22:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:22:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:22:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:22:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:22:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:22:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:23:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:23:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:23:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:23:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:23:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:23:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:24:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:24:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:24:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:24:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:24:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:24:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:25:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:25:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:25:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:25:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:25:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:25:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:26:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:26:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:27:01] INFO     >>> GET /api/sexos
+[2026-04-24 11:27:01] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:27:02] INFO     >>> GET /api/sexos
+[2026-04-24 11:27:02] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:27:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:27:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:27:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:27:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:27:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:27:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:28:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:28:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:28:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:28:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:28:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:28:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:29:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:29:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:29:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:29:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:29:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:29:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:30:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:30:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:30:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:30:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:30:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:30:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:32:03] INFO     >>> GET /api/sexos
+[2026-04-24 11:32:03] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:32:03] INFO     >>> GET /api/sexos
+[2026-04-24 11:32:03] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:32:03] INFO     >>> GET /api/sexos
+[2026-04-24 11:32:03] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:33:01] INFO     >>> GET /api/sexos
+[2026-04-24 11:33:01] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:33:16] INFO     >>> GET /api/sexos
+[2026-04-24 11:33:16] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:33:56] INFO     >>> GET /api/sexos
+[2026-04-24 11:33:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:33:56] INFO     >>> GET /api/sexos
+[2026-04-24 11:33:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:34:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:34:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:35:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:35:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:35:59] INFO     >>> GET /api/sexos
+[2026-04-24 11:35:59] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:36:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:36:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:37:13] INFO     >>> GET /api/sexos
+[2026-04-24 11:37:13] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:37:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:37:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:37:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:37:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:38:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:38:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:38:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:38:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:39:17] INFO     >>> GET /api/sexos
+[2026-04-24 11:39:17] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:39:25] INFO     >>> GET /api/sexos
+[2026-04-24 11:39:25] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:39:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:39:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:39:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:39:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:39:55] INFO     >>> GET /api/sexos
+[2026-04-24 11:39:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:40:25] INFO     >>> GET /api/sexos
+[2026-04-24 11:40:25] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:40:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:40:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:40:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:40:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:40:55] INFO     >>> GET /api/sexos
+[2026-04-24 11:40:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:41:25] INFO     >>> GET /api/sexos
+[2026-04-24 11:41:25] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:41:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:41:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:41:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:41:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:41:55] INFO     >>> GET /api/sexos
+[2026-04-24 11:41:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:42:25] INFO     >>> GET /api/sexos
+[2026-04-24 11:42:25] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:42:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:42:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:42:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:42:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:42:55] INFO     >>> GET /api/sexos
+[2026-04-24 11:42:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:43:25] INFO     >>> GET /api/sexos
+[2026-04-24 11:43:25] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:43:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:43:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:43:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:43:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:43:55] INFO     >>> GET /api/sexos
+[2026-04-24 11:43:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:44:25] INFO     >>> GET /api/sexos
+[2026-04-24 11:44:25] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:44:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:44:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:44:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:44:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:44:55] INFO     >>> GET /api/sexos
+[2026-04-24 11:44:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:45:25] INFO     >>> GET /api/sexos
+[2026-04-24 11:45:25] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:45:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:45:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:45:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:45:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:46:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:46:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:46:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:46:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:47:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:47:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:47:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:47:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:48:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:48:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:48:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:48:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:49:05] INFO     >>> GET /api/sexos
+[2026-04-24 11:49:05] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:49:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:49:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:49:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:49:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:49:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:49:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:50:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:50:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:50:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:50:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:50:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:50:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:51:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:51:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:51:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:51:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:51:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:51:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:52:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:52:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:52:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:52:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:52:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:52:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:53:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:53:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:53:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:53:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:53:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:53:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:54:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:54:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:54:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:54:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:54:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:54:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:55:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:55:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:55:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:55:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:55:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:55:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:56:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:56:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:56:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:56:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:56:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:56:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:57:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:57:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:57:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:57:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:57:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:57:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:58:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:58:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:58:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:58:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:58:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:58:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:59:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:59:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:59:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:59:51] INFO     >>> GET /api/sexos
+[2026-04-24 11:59:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 11:59:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:00:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:00:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:00:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:00:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:00:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:00:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:01:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:01:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:01:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:01:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:01:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:01:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:02:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:02:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:02:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:02:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:02:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:02:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:03:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:03:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:03:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:03:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:03:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:03:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:04:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:04:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:04:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:04:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:04:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:04:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:05:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:05:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:05:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:05:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:05:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:05:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:06:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:06:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:06:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:06:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:06:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:06:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:07:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:07:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:07:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:07:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:07:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:07:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:08:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:08:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:08:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:08:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:08:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:08:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:09:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:09:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:09:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:09:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:09:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:09:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:10:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:10:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:10:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:10:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:10:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:10:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:11:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:11:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:11:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:11:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:11:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:11:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:12:01] INFO     >>> GET /api/sexos
+[2026-04-24 12:12:01] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:12:23] INFO     >>> GET /api/sexos
+[2026-04-24 12:12:23] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:12:25] INFO     >>> GET /api/sexos
+[2026-04-24 12:12:25] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:12:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:12:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:12:53] INFO     >>> GET /api/sexos
+[2026-04-24 12:12:53] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:12:55] INFO     >>> GET /api/sexos
+[2026-04-24 12:12:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:13:25] INFO     >>> GET /api/sexos
+[2026-04-24 12:13:25] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:13:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:13:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:13:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:13:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:13:55] INFO     >>> GET /api/sexos
+[2026-04-24 12:13:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:14:25] INFO     >>> GET /api/sexos
+[2026-04-24 12:14:25] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:14:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:14:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:14:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:14:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:14:55] INFO     >>> GET /api/sexos
+[2026-04-24 12:14:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:15:25] INFO     >>> GET /api/sexos
+[2026-04-24 12:15:25] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:15:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:15:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:15:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:15:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:15:56] INFO     >>> GET /api/sexos
+[2026-04-24 12:15:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:16:29] INFO     >>> GET /api/sexos
+[2026-04-24 12:16:29] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:16:46] INFO     >>> GET /api/sexos
+[2026-04-24 12:16:46] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:16:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:16:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:16:52] INFO     >>> GET /api/sexos
+[2026-04-24 12:16:52] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:16:53] INFO     >>> GET /api/sexos
+[2026-04-24 12:16:53] INFO     >>> GET /api/auth/verificar
+[2026-04-24 12:16:53] INFO     >>> GET /api/motivos_baja
+[2026-04-24 12:16:53] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:16:53] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:16:53] INFO     >>> GET /api/auth/estado
+[2026-04-24 12:16:56] INFO     >>> GET /api/sexos
+[2026-04-24 12:16:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:17:03] INFO     >>> POST /api/auth/login
+[2026-04-24 12:17:04] INFO     AUTH: Login policía exitoso — lucia_bautista desde 172.19.0.1
+[2026-04-24 12:17:04] INFO     >>> GET /api/incidencias
+[2026-04-24 12:17:04] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:17:24] INFO     >>> GET /api/sexos
+[2026-04-24 12:17:24] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:17:26] INFO     >>> GET /api/sexos
+[2026-04-24 12:17:26] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:17:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:17:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:17:54] INFO     >>> GET /api/sexos
+[2026-04-24 12:17:54] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:17:56] INFO     >>> GET /api/sexos
+[2026-04-24 12:17:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:18:24] INFO     >>> GET /api/sexos
+[2026-04-24 12:18:24] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:18:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:18:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:18:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:18:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:18:54] INFO     >>> GET /api/sexos
+[2026-04-24 12:18:54] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:19:24] INFO     >>> GET /api/sexos
+[2026-04-24 12:19:24] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:19:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:19:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:19:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:19:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:19:54] INFO     >>> GET /api/sexos
+[2026-04-24 12:19:54] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:20:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:20:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:20:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:20:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:20:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:20:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:21:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:21:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:21:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:21:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:21:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:21:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:22:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:22:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:22:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:22:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:22:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:22:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:23:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:23:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:23:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:23:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:23:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:23:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:24:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:24:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:24:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:24:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:24:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:24:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:25:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:25:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:25:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:25:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:25:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:25:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:26:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:26:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:26:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:26:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:26:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:26:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:27:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:27:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:27:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:27:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:27:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:27:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:28:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:28:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:28:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:28:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:28:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:28:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:29:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:29:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:29:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:29:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:29:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:29:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:30:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:30:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:30:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:30:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:30:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:30:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:31:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:31:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:31:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:31:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:31:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:31:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:32:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:32:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:32:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:32:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:32:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:32:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:33:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:33:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:33:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:33:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:33:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:33:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:34:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:34:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:34:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:34:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:34:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:34:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:35:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:35:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:35:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:35:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:35:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:35:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:36:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:36:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:36:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:36:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:36:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:36:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:37:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:37:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:37:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:37:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:37:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:37:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:38:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:38:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:38:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:38:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:38:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:38:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:39:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:39:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:39:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:39:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:39:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:39:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:40:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:40:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:40:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:40:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:40:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:40:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:41:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:41:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:41:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:41:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:41:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:41:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:42:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:42:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:42:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:42:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:42:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:42:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:43:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:43:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:43:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:43:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:43:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:43:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:44:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:44:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:44:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:44:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:44:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:44:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:45:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:45:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:45:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:45:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:45:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:45:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:46:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:46:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:46:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:46:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:46:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:46:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:47:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:47:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:47:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:47:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:47:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:47:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:48:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:48:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:48:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:48:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:48:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:48:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:49:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:49:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:49:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:49:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:49:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:49:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:50:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:50:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:50:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:50:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:50:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:50:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:51:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:51:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:51:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:51:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:51:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:51:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:52:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:52:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:52:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:52:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:52:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:52:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:53:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:53:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:53:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:53:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:53:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:53:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:54:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:54:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:54:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:54:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:54:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:54:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:55:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:55:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:55:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:55:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:55:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:55:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:56:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:56:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:56:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:56:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:56:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:56:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:57:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:57:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:57:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:57:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:57:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:57:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:58:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:58:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:58:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:58:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:58:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:58:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:59:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:59:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:59:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:59:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 12:59:51] INFO     >>> GET /api/sexos
+[2026-04-24 12:59:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:00:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:00:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:00:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:00:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:00:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:00:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:01:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:01:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:01:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:01:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:01:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:01:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:02:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:02:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:02:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:02:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:02:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:02:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:03:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:03:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:03:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:03:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:03:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:03:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:04:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:04:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:04:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:04:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:04:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:04:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:05:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:05:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:05:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:05:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:05:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:05:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:06:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:06:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:06:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:06:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:06:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:06:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:07:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:07:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:07:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:07:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:07:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:07:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:08:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:08:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:08:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:08:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:08:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:08:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:09:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:09:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:09:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:09:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:09:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:09:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:10:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:10:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:10:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:10:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:10:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:10:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:11:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:11:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:11:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:11:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:11:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:11:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:12:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:12:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:12:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:12:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:12:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:12:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:13:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:13:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:13:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:13:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:13:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:13:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:14:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:14:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:14:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:14:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:14:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:14:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:15:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:15:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:15:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:15:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:15:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:15:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:16:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:16:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:16:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:16:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:16:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:16:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:17:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:17:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:17:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:17:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:17:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:17:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:18:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:18:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:18:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:18:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:18:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:18:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:19:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:19:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:19:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:19:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:19:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:19:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:20:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:20:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:20:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:20:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:20:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:20:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:21:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:21:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:21:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:21:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:21:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:21:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:22:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:22:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:22:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:22:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:22:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:22:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:23:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:23:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:23:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:23:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:23:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:23:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:24:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:24:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:24:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:24:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:24:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:24:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:25:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:25:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:25:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:25:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:25:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:25:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:26:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:26:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:26:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:26:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:26:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:26:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:27:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:27:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:27:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:27:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:27:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:27:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:28:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:28:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:28:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:28:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:28:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:28:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:29:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:29:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:29:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:29:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:29:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:29:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:30:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:30:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:30:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:30:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:30:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:30:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:31:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:31:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:31:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:31:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:31:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:31:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:32:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:32:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:32:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:32:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:32:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:32:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:33:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:33:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:33:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:33:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:33:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:33:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:34:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:34:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:34:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:34:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:34:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:34:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:35:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:35:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:35:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:35:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:35:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:35:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:36:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:36:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:36:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:36:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:36:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:36:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:37:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:37:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:37:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:37:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:37:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:37:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:39:20] INFO     >>> GET /api/sexos
+[2026-04-24 13:39:20] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:39:32] INFO     >>> GET /api/sexos
+[2026-04-24 13:39:32] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:39:48] INFO     >>> GET /api/sexos
+[2026-04-24 13:39:48] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:39:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:39:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:39:54] INFO     >>> GET /api/sexos
+[2026-04-24 13:39:54] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:39:57] INFO     >>> GET /api/sexos
+[2026-04-24 13:39:57] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:40:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:40:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:40:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:40:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:41:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:41:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:41:59] INFO     >>> GET /api/sexos
+[2026-04-24 13:41:59] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:42:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:42:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:42:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:42:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:43:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:43:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:43:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:43:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:43:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:43:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:44:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:44:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:44:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:44:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:44:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:44:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:45:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:45:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:45:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:45:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:45:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:45:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:46:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:46:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:46:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:46:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:46:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:46:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:47:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:47:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:47:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:47:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:47:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:47:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:48:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:48:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:48:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:48:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:48:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:48:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:49:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:49:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:49:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:49:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:49:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:49:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:50:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:50:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:50:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:50:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:50:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:50:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:51:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:51:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:51:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:51:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:51:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:51:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:52:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:52:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:52:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:52:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:52:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:52:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:53:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:53:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:53:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:53:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:53:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:53:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:54:55] INFO     >>> GET /api/sexos
+[2026-04-24 13:54:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:54:55] INFO     >>> GET /api/sexos
+[2026-04-24 13:54:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:54:55] INFO     >>> GET /api/sexos
+[2026-04-24 13:54:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:55:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:55:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:55:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:55:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:55:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:55:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:56:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:56:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:56:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:56:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:56:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:56:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:57:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:57:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:57:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:57:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:57:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:57:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:59:16] INFO     >>> GET /api/sexos
+[2026-04-24 13:59:16] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 13:59:51] INFO     >>> GET /api/sexos
+[2026-04-24 13:59:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:00:11] INFO     >>> GET /api/sexos
+[2026-04-24 14:00:11] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:00:56] INFO     >>> GET /api/sexos
+[2026-04-24 14:00:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:01:02] INFO     >>> GET /api/sexos
+[2026-04-24 14:01:02] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:01:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:01:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:02:13] INFO     >>> GET /api/sexos
+[2026-04-24 14:02:13] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:03:03] INFO     >>> GET /api/sexos
+[2026-04-24 14:03:03] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:03:11] INFO     >>> GET /api/sexos
+[2026-04-24 14:03:11] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:03:56] INFO     >>> GET /api/sexos
+[2026-04-24 14:03:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:05:35] INFO     >>> GET /api/sexos
+[2026-04-24 14:05:35] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:05:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:05:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:07:44] INFO     >>> GET /api/sexos
+[2026-04-24 14:07:44] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:08:41] INFO     >>> GET /api/sexos
+[2026-04-24 14:08:41] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:08:55] INFO     >>> GET /api/sexos
+[2026-04-24 14:08:55] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:08:56] INFO     >>> GET /api/sexos
+[2026-04-24 14:08:56] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:09:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:09:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:09:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:09:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:10:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:10:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:10:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:10:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:10:53] INFO     >>> GET /api/sexos
+[2026-04-24 14:10:53] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:11:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:11:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:11:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:11:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:11:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:11:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:12:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:12:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:12:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:12:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:12:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:12:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:13:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:13:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:13:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:13:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:13:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:13:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:14:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:14:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:14:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:14:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:14:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:14:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:15:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:15:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:15:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:15:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:15:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:15:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:16:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:16:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:16:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:16:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:16:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:16:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-24 14:17:51] INFO     >>> GET /api/sexos
+[2026-04-24 14:17:51] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
