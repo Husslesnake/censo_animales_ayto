@@ -70,3 +70,9 @@
 [2026-04-24 09:26:18] FAIL ip=172.19.0.1           rol=policia    evento=login
 [2026-04-24 09:26:21] OK   ip=172.19.0.1           rol=policia    evento=login
 [2026-04-24 12:17:04] OK   ip=172.19.0.1           rol=policia    evento=login
+[2026-04-27 09:31:03] FAIL ip=172.19.0.1           rol=admin      evento=login
+[2026-04-27 09:31:09] OK   ip=172.19.0.1           rol=admin      evento=login
+[2026-04-27 09:33:02] OK   ip=172.19.0.1           rol=empleado   evento=login
+[2026-04-27 09:41:19] FAIL ip=172.19.0.1           rol=policia    evento=login
+[2026-04-27 09:41:23] FAIL ip=172.19.0.1           rol=policia    evento=login
+[2026-04-27 09:41:39] OK   ip=172.19.0.1           rol=policia    evento=login

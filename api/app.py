@@ -1780,9 +1780,65 @@ def actualizar_animal(chip):
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
+FOTOS_ANIMALES_DIR = Path(os.environ.get(
+    "FOTOS_ANIMALES_DIR",
+    str(Path(__file__).resolve().parent.parent / "web" / "fotos_animales"),
+))
+FOTOS_ANIMALES_URL_PREFIX = "/fotos_animales"
+FOTOS_INCIDENCIAS_DIR = Path(os.environ.get(
+    "FOTOS_INCIDENCIAS_DIR",
+    str(Path(__file__).resolve().parent.parent / "web" / "fotos_incidencias"),
+))
+FOTOS_INCIDENCIAS_URL_PREFIX = "/fotos_incidencias"
+_FOTO_EXT_PERMITIDAS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
+
+
+def _guardar_foto_incidencia(chip: str, file_storage) -> str | None:
+    """Guarda la foto de la incidencia en FOTOS_INCIDENCIAS_DIR/<chip>_<ts>.<ext>
+    y devuelve la ruta relativa servida por el frontend."""
+    if file_storage is None or not getattr(file_storage, "filename", ""):
+        return None
+    ext = Path(file_storage.filename).suffix.lower()
+    if ext not in _FOTO_EXT_PERMITIDAS:
+        raise ValueError(
+            f"Extensión de imagen no permitida ({ext}). "
+            f"Use: {', '.join(sorted(_FOTO_EXT_PERMITIDAS))}"
+        )
+    chip_safe = re.sub(r"[^A-Za-z0-9_-]", "_", chip or "sin_chip")
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    FOTOS_INCIDENCIAS_DIR.mkdir(parents=True, exist_ok=True)
+    destino = FOTOS_INCIDENCIAS_DIR / f"{chip_safe}_{ts}{ext}"
+    file_storage.save(str(destino))
+    return f"{FOTOS_INCIDENCIAS_URL_PREFIX}/{chip_safe}_{ts}{ext}"
+
+
+def _guardar_foto_animal(chip: str, file_storage) -> str | None:
+    """Guarda la foto del animal en FOTOS_ANIMALES_DIR/<chip>.<ext> y devuelve
+    la ruta relativa servida por el frontend. Devuelve None si no hay archivo."""
+    if file_storage is None or not getattr(file_storage, "filename", ""):
+        return None
+    nombre_orig = file_storage.filename
+    ext = Path(nombre_orig).suffix.lower()
+    if ext not in _FOTO_EXT_PERMITIDAS:
+        raise ValueError(
+            f"Extensión de imagen no permitida ({ext}). "
+            f"Use: {', '.join(sorted(_FOTO_EXT_PERMITIDAS))}"
+        )
+    chip_safe = re.sub(r"[^A-Za-z0-9_-]", "_", chip or "sin_chip")
+    FOTOS_ANIMALES_DIR.mkdir(parents=True, exist_ok=True)
+    destino = FOTOS_ANIMALES_DIR / f"{chip_safe}{ext}"
+    file_storage.save(str(destino))
+    return f"{FOTOS_ANIMALES_URL_PREFIX}/{chip_safe}{ext}"
+
+
 @app.route("/api/animales", methods=["POST"])
 def insertar_animal():
-    d = request.get_json()
+    foto_file = None
+    if request.content_type and request.content_type.startswith("multipart/form-data"):
+        d = {k: v for k, v in request.form.items()}
+        foto_file = request.files.get("FOTO")
+    else:
+        d = request.get_json() or {}
 
     # Validar DNI propietario y chip antes de tocar la BD
     dni_in = (d.get("DNI_PROPIETARIO") or "").strip()
@@ -1875,7 +1931,18 @@ def insertar_animal():
             "DNI_PROPIETARIO": "DNI_PROPIETARIO",
             "PELIGROSO": "PELIGROSO",
             "ID_DOMICILIO": "ID_DOMICILIO",
+            "FOTO": "FOTO",
         }
+
+        # Guardar la foto (si se ha subido) y añadirla al payload como ruta
+        if foto_file is not None and getattr(foto_file, "filename", ""):
+            try:
+                ruta_foto = _guardar_foto_animal(chip_in, foto_file)
+                if ruta_foto:
+                    d["FOTO"] = ruta_foto
+            except ValueError as e:
+                conn.close()
+                return jsonify({"ok": False, "error": str(e)}), 400
 
         # ── Verificar límite de 5 animales por domicilio ──
         id_dom = d.get("ID_DOMICILIO")
@@ -3243,13 +3310,24 @@ def obtener_incidencia(id_inc):
 def crear_incidencia():
     if not _req_policia_o_admin():
         return jsonify({"ok": False, "error": "Acceso no autorizado."}), 403
-    d = request.get_json() or {}
+    foto_file = None
+    if request.content_type and request.content_type.startswith("multipart/form-data"):
+        d = {k: v for k, v in request.form.items()}
+        foto_file = request.files.get("FOTO")
+    else:
+        d = request.get_json() or {}
     err = _validar_incidencia(d)
     if err:
         _log_auditoria("crear_incidencia", {"error": err, "payload": d}, exito=False)
         return jsonify({"ok": False, "error": err}), 400
     try:
         rol, quien = _usuario_desde_token()
+        ruta_foto = None
+        if foto_file is not None and getattr(foto_file, "filename", ""):
+            try:
+                ruta_foto = _guardar_foto_incidencia(d.get("N_CHIP") or "", foto_file)
+            except ValueError as e:
+                return jsonify({"ok": False, "error": str(e)}), 400
         conn = get_conn()
         c = cur(conn)
         c.execute(
@@ -3257,8 +3335,8 @@ def crear_incidencia():
                  (N_CHIP, DNI_PROPIETARIO, FECHA, TIPO, GRAVEDAD, LUGAR,
                   DESCRIPCION, VICTIMA_NOMBRE, VICTIMA_CONTACTO,
                   ATENDIDO_MEDICO, COMUNICADO_SANIDAD, FECHA_COMUNICACION,
-                  ROL_AGENTE, AGENTE)
-               VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+                  ROL_AGENTE, AGENTE, FOTO)
+               VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
             (
                 (d.get("N_CHIP") or "").strip().upper() or None,
                 (d.get("DNI_PROPIETARIO") or "").strip().upper() or None,
@@ -3274,6 +3352,7 @@ def crear_incidencia():
                 d.get("FECHA_COMUNICACION") or None,
                 rol,
                 quien,
+                ruta_foto,
             ),
         )
         conn.commit()
@@ -3646,7 +3725,8 @@ def _init_incidencias():
                 DESCRIPCION TEXT,
                 FECHA      DATETIME     NOT NULL,
                 ROL_AGENTE VARCHAR(20)  DEFAULT 'admin',
-                AGENTE     VARCHAR(100) DEFAULT NULL
+                AGENTE     VARCHAR(100) DEFAULT NULL,
+                FOTO       VARCHAR(255) DEFAULT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
         """)
         # Añadir columna AGENTE si la tabla ya existía sin ella
@@ -3657,6 +3737,13 @@ def _init_incidencias():
             # Error 1060 = duplicate column (la columna ya existía); lo demás sí avisar.
             if getattr(e, "errno", None) != 1060:
                 logger.warning("ALTER TABLE INCIDENCIAS AGENTE falló: %s", e)
+        # Añadir columna FOTO si la tabla ya existía sin ella
+        try:
+            c.execute("ALTER TABLE INCIDENCIAS ADD COLUMN FOTO VARCHAR(255) DEFAULT NULL")
+            conn.commit()
+        except mysql.connector.Error as e:
+            if getattr(e, "errno", None) != 1060:
+                logger.warning("ALTER TABLE INCIDENCIAS FOTO falló: %s", e)
         conn.commit()
         conn.close()
         logger.info("DB: tabla INCIDENCIAS lista")

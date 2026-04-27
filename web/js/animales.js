@@ -18,16 +18,24 @@
         const fd = new FormData(e.target);
         const data = {};
         for (const [k, v] of fd.entries()) {
+          if (v instanceof File) continue;
           if (v) data[k] = v;
         }
         ["ESTERILIZADO", "PELIGROSO"].forEach((k) => {
           if (!(k in data)) data[k] = 0;
+          fd.set(k, String(data[k]));
         });
+        const fotoInput = document.getElementById("inp-foto-anim");
+        const tieneFoto = fotoInput && fotoInput.files && fotoInput.files.length > 0;
         try {
           const res = await fetch(API + "/animales", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
+            ...(tieneFoto
+              ? { body: fd }
+              : {
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(data),
+                }),
           });
           const json = await res.json();
           if (json.ok) {

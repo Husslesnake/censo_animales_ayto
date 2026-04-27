@@ -59,12 +59,29 @@
           altEl.style.color = "var(--rojo)";
           altEl.style.display = "block"; return;
         }
+        var fotoInput = document.getElementById("inc-foto");
+        var tieneFoto = fotoInput && fotoInput.files && fotoInput.files.length > 0;
         try {
-          var res = await apiFetch("/api/incidencias", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ chip: chip, tipo: tipo, descripcion: desc })
-          });
+          var opciones;
+          if (tieneFoto) {
+            var fd = new FormData();
+            fd.append("chip", chip);
+            fd.append("tipo", tipo);
+            fd.append("descripcion", desc);
+            fd.append("N_CHIP", chip);
+            fd.append("TIPO", tipo);
+            fd.append("DESCRIPCION", desc);
+            fd.append("FECHA", new Date().toISOString());
+            fd.append("FOTO", fotoInput.files[0]);
+            opciones = { method: "POST", body: fd };
+          } else {
+            opciones = {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ chip: chip, tipo: tipo, descripcion: desc })
+            };
+          }
+          var res = await apiFetch("/api/incidencias", opciones);
           var data = await res.json();
           if (data.ok) {
             altEl.textContent = "Incidencia #" + data.id + " registrada correctamente.";
@@ -73,6 +90,7 @@
             altEl.style.display = "block";
             document.getElementById("inc-tipo").value = "";
             document.getElementById("inc-descripcion").value = "";
+            if (fotoInput) fotoInput.value = "";
             cargarIncidencias();
           } else {
             altEl.textContent = data.error || "Error al registrar.";
