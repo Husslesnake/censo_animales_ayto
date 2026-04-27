@@ -173,6 +173,11 @@
  <option value="">— Seleccionar —</option> <option value="Macho">Macho</option> <option value="Hembra">Hembra</option>`;
         }
       }
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", cargarSexos);
+      } else {
+        cargarSexos();
+      }
       const TEMA_ORDEN = ["light", "dark", "system"];
       const TEMA_LABEL = {
         light: "Modo claro",

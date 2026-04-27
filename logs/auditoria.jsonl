@@ -17,3 +17,4 @@
 {"fecha": "2026-04-27 09:31:39", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "backup_manual", "exito": true, "detalle": {"archivo": "backup_2026-04-27_093139.sql.gz", "tamano": 67860, "tablas": 16, "filas": 3877}}
 {"fecha": "2026-04-27 09:31:50", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "backup_eliminar", "exito": true, "detalle": {"archivo": "backup_2026-04-27_093139.sql.gz"}}
 {"fecha": "2026-04-27 09:41:35", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "actualizar_cuenta_policia", "exito": true, "detalle": {"username": "lucia_bautista", "cambios": ["contraseña"]}}
+{"fecha": "2026-04-27 09:52:16", "ip": "172.19.0.1", "rol": "empleado", "usuario": "anónimo", "accion": "crear_propietario", "exito": true, "detalle": {"DNI": "96876534M", "nombre": "Produ Cción Real", "direcciones": 5}}
