@@ -1991,6 +1991,13 @@ def insertar_animal():
                 continue
             if campo in ("ESTERILIZADO", "PELIGROSO"):
                 val = 1 if str(val).lower() in ("1", "true", "si", "sí", "yes") else 0
+            # Si la columna real es de año (ANIO_NACIMIENTO/AÑO_DE_NACIMIENTO),
+            # el form envía YYYY-MM-DD: extraemos sólo el año.
+            if campo == "FECHA_NACIMIENTO" and col_real != "FECHA_NACIMIENTO":
+                m = re.match(r"^\s*(\d{4})", str(val))
+                if not m:
+                    continue
+                val = int(m.group(1))
             insert_cols.append(f"`{col_real}`")
             insert_vals.append(val)
 

@@ -18,3 +18,5 @@
 {"fecha": "2026-04-27 09:31:50", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "backup_eliminar", "exito": true, "detalle": {"archivo": "backup_2026-04-27_093139.sql.gz"}}
 {"fecha": "2026-04-27 09:41:35", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "actualizar_cuenta_policia", "exito": true, "detalle": {"username": "lucia_bautista", "cambios": ["contraseña"]}}
 {"fecha": "2026-04-27 09:52:16", "ip": "172.19.0.1", "rol": "empleado", "usuario": "anónimo", "accion": "crear_propietario", "exito": true, "detalle": {"DNI": "96876534M", "nombre": "Produ Cción Real", "direcciones": 5}}
+{"fecha": "2026-04-27 10:11:05", "ip": "172.19.0.1", "rol": "empleado", "usuario": "anónimo", "accion": "crear_animal", "exito": false, "detalle": {"N_CHIP": "78923478", "error": "1265 (01000): Data truncated for column 'ANIO_NACIMIENTO' at row 1"}}
+{"fecha": "2026-04-27 10:11:13", "ip": "172.19.0.1", "rol": "empleado", "usuario": "anónimo", "accion": "crear_animal", "exito": false, "detalle": {"N_CHIP": "78923478", "error": "1265 (01000): Data truncated for column 'ANIO_NACIMIENTO' at row 1"}}

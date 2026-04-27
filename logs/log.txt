@@ -592,3 +592,204 @@ mysql.connector.errors.DatabaseError: 2003 (HY000): Can't connect to MySQL serve
 [2026-04-27 09:55:47] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
 [2026-04-27 09:56:10] INFO     >>> GET /api/sexos
 [2026-04-27 09:56:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 09:57:10] INFO     >>> GET /api/sexos
+[2026-04-27 09:57:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 09:57:10] INFO     >>> GET /api/sexos
+[2026-04-27 09:57:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 09:58:10] INFO     >>> GET /api/sexos
+[2026-04-27 09:58:10] INFO     >>> GET /api/sexos
+[2026-04-27 09:58:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 09:58:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 09:59:10] INFO     >>> GET /api/sexos
+[2026-04-27 09:59:10] INFO     >>> GET /api/sexos
+[2026-04-27 09:59:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 09:59:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:00:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:00:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:00:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:00:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:01:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:01:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:01:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:01:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:02:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:02:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:02:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:02:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:03:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:03:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:03:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:03:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:04:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:04:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:04:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:04:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:05:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:05:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:05:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:05:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:06:04] INFO     ================================================================================
+[2026-04-27 10:06:04] INFO     APPLICATION STARTUP - Timestamp: 2026-04-27T10:06:04.979833
+[2026-04-27 10:06:04] INFO     ================================================================================
+[2026-04-27 10:06:04] DEBUG    Log file log_2026-04-09.txt is within 30-day retention: 2026-04-09T14:30:13.222277
+[2026-04-27 10:06:04] DEBUG    Log file log_2026-04-10.txt is within 30-day retention: 2026-04-10T14:25:48.085175
+[2026-04-27 10:06:04] DEBUG    Log file log_2026-04-13.txt is within 30-day retention: 2026-04-13T14:26:32.968979
+[2026-04-27 10:06:04] DEBUG    Log file log_2026-04-14.txt is within 30-day retention: 2026-04-14T14:28:43.556528
+[2026-04-27 10:06:04] DEBUG    Log file log_2026-04-15.txt is within 30-day retention: 2026-04-16T00:06:49.956053
+[2026-04-27 10:06:04] DEBUG    Log file log_2026-04-16.txt is within 30-day retention: 2026-04-16T14:30:58.524053
+[2026-04-27 10:06:04] DEBUG    Log file log_2026-04-17.txt is within 30-day retention: 2026-04-17T14:28:01.800428
+[2026-04-27 10:06:04] DEBUG    Log file log_2026-04-20.txt is within 30-day retention: 2026-04-20T14:27:52.286223
+[2026-04-27 10:06:04] DEBUG    Log file log_2026-04-21.txt is within 30-day retention: 2026-04-21T14:25:58.228100
+[2026-04-27 10:06:04] DEBUG    Log file log_2026-04-23.txt is within 30-day retention: 2026-04-23T23:59:59.725158
+[2026-04-27 10:06:04] DEBUG    Log file log_2026-04-24.txt is within 30-day retention: 2026-04-24T14:17:51.417399
+[2026-04-27 10:06:05] DEBUG    get_conn fuera de app-context (no se registra en g): Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+[2026-04-27 10:06:05] DEBUG    get_conn no pudo inicializar g._db_conns: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+[2026-04-27 10:06:05] DEBUG    get_conn fuera de app-context (no se registra en g): Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+[2026-04-27 10:06:05] DEBUG    get_conn no pudo inicializar g._db_conns: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+[2026-04-27 10:06:05] INFO     AUTH: 5 token(s) de larga duración restaurados desde auth.json
+[2026-04-27 10:06:05] DEBUG    get_conn fuera de app-context (no se registra en g): Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+[2026-04-27 10:06:05] DEBUG    get_conn no pudo inicializar g._db_conns: Working outside of application context.
+
+This typically means that you attempted to use functionality that needed
+the current application. To solve this, set up an application context
+with app.app_context(). See the documentation for more information.
+[2026-04-27 10:06:05] INFO     DB: tabla INCIDENCIAS lista
+[2026-04-27 10:06:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:06:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:06:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:06:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:07:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:07:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:07:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:07:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:07:13] INFO     >>> GET /api/sexos
+[2026-04-27 10:07:13] INFO     >>> GET /api/auth/verificar
+[2026-04-27 10:07:13] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:07:13] INFO     >>> GET /api/motivos_baja
+[2026-04-27 10:07:13] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:07:13] INFO     >>> GET /api/auth/estado
+[2026-04-27 10:07:22] INFO     >>> POST /api/auth/login
+[2026-04-27 10:07:22] INFO     AUTH: Login empleado exitoso — adrianbravo desde 172.19.0.1
+[2026-04-27 10:07:22] INFO     >>> GET /api/alertas
+[2026-04-27 10:07:22] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:07:22] INFO     >>> GET /api/alertas
+[2026-04-27 10:07:22] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:07:43] INFO     >>> GET /api/propietarios/97865436M/direcciones
+[2026-04-27 10:07:43] INFO     >>> GET /api/propietarios/97865436M
+[2026-04-27 10:07:43] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:07:43] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:07:43] INFO     >>> GET /api/sexos
+[2026-04-27 10:07:43] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:07:47] INFO     >>> GET /api/sexos
+[2026-04-27 10:07:47] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:07:59] INFO     >>> GET /api/propietarios/96876534M/direcciones
+[2026-04-27 10:07:59] INFO     >>> GET /api/propietarios/96876534M
+[2026-04-27 10:07:59] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:07:59] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:08:01] INFO     >>> GET /api/sexos
+[2026-04-27 10:08:01] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:08:13] INFO     >>> GET /api/sexos
+[2026-04-27 10:08:13] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:08:31] INFO     >>> GET /api/sexos
+[2026-04-27 10:08:31] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:08:43] INFO     >>> GET /api/sexos
+[2026-04-27 10:08:43] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:09:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:09:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:09:13] INFO     >>> GET /api/sexos
+[2026-04-27 10:09:13] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:09:17] INFO     >>> GET /api/animales/8934834287
+[2026-04-27 10:09:17] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:09:40] INFO     >>> GET /api/sexos
+[2026-04-27 10:09:40] INFO     >>> GET /api/auth/verificar
+[2026-04-27 10:09:40] INFO     >>> GET /api/motivos_baja
+[2026-04-27 10:09:40] INFO     >>> GET /api/sexos
+[2026-04-27 10:09:40] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:09:40] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:09:40] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:09:40] INFO     >>> GET /api/alertas
+[2026-04-27 10:09:40] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:09:52] INFO     >>> GET /api/propietarios/96876534M
+[2026-04-27 10:09:52] INFO     >>> GET /api/propietarios/96876534M/direcciones
+[2026-04-27 10:09:52] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:09:52] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:10:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:10:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:10:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:10:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:10:13] INFO     >>> GET /api/animales/78923478
+[2026-04-27 10:10:13] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:10:40] INFO     >>> GET /api/sexos
+[2026-04-27 10:10:40] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:11:05] INFO     >>> POST /api/animales
+[2026-04-27 10:11:05] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:11:05] ERROR    ENDPOINT=insertar_animal METHOD=POST ARGS={} ERROR=1265 (01000): Data truncated for column 'ANIO_NACIMIENTO' at row 1
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/connection_cext.py", line 772, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Data truncated for column 'ANIO_NACIMIENTO' at row 1
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/app.py", line 2025, in insertar_animal
+    c.execute(
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/cursor_cext.py", line 353, in execute
+    self._connection.cmd_query(
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/opentelemetry/context_propagation.py", line 97, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/connection_cext.py", line 781, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.DatabaseError: 1265 (01000): Data truncated for column 'ANIO_NACIMIENTO' at row 1
+
+[2026-04-27 10:11:05] WARNING  <<< POST /api/animales -> 500
+[2026-04-27 10:11:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:11:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:11:10] INFO     >>> GET /api/sexos
+[2026-04-27 10:11:10] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:11:13] INFO     >>> POST /api/animales
+[2026-04-27 10:11:13] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
+[2026-04-27 10:11:13] ERROR    ENDPOINT=insertar_animal METHOD=POST ARGS={} ERROR=1265 (01000): Data truncated for column 'ANIO_NACIMIENTO' at row 1
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/connection_cext.py", line 772, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Data truncated for column 'ANIO_NACIMIENTO' at row 1
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/app/app.py", line 2025, in insertar_animal
+    c.execute(
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/cursor_cext.py", line 353, in execute
+    self._connection.cmd_query(
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/opentelemetry/context_propagation.py", line 97, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/site-packages/mysql/connector/connection_cext.py", line 781, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.DatabaseError: 1265 (01000): Data truncated for column 'ANIO_NACIMIENTO' at row 1
+
+[2026-04-27 10:11:13] WARNING  <<< POST /api/animales -> 500
+[2026-04-27 10:11:41] INFO     >>> GET /api/sexos
+[2026-04-27 10:11:41] DEBUG    get_conn fuera de app-context (no se registra en g): _db_conns
