@@ -91,6 +91,7 @@
             document.getElementById("inc-tipo").value = "";
             document.getElementById("inc-descripcion").value = "";
             if (fotoInput) fotoInput.value = "";
+            quitarFotoIncidencia();
             cargarIncidencias();
           } else {
             altEl.textContent = data.error || "Error al registrar.";
@@ -102,6 +103,30 @@
           altEl.textContent = "Error de conexión."; altEl.style.display = "block";
           logError(e.message, "registrarIncidencia", e.stack);
         }
+      }
+
+      function previewFotoIncidencia(inp) {
+        var wrap = document.getElementById("preview-foto-inc");
+        var img = document.getElementById("preview-foto-inc-img");
+        if (!inp.files || !inp.files.length) { wrap.style.display = "none"; img.src = ""; return; }
+        var f = inp.files[0];
+        if (!/^image\//.test(f.type)) {
+          wrap.style.display = "none";
+          inp.value = "";
+          alert("El archivo seleccionado no es una imagen.");
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(e) { img.src = e.target.result; wrap.style.display = ""; };
+        reader.readAsDataURL(f);
+      }
+      function quitarFotoIncidencia() {
+        var inp = document.getElementById("inc-foto");
+        if (inp) inp.value = "";
+        var wrap = document.getElementById("preview-foto-inc");
+        var img = document.getElementById("preview-foto-inc-img");
+        if (wrap) wrap.style.display = "none";
+        if (img) img.src = "";
       }
 
       async function cargarIncidencias() {

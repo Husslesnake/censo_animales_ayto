@@ -402,6 +402,11 @@
                 )
               : "") +
             sec("Seguros", htmlSeg);
+          var btnExp = document.getElementById("btn-export-ficha");
+          if (btnExp) {
+            btnExp.style.display = "";
+            btnExp.onclick = function() { exportarFichaPropietarioPDF(dni); };
+          }
         } catch (err) {
           logError(err?.message || "Error en ", "", err?.stack);
           body.innerHTML = `<div style="padding:1.5rem;color:var(--rojo);">Error: ${err.message}</div>`;

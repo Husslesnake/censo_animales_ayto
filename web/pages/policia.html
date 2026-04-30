@@ -59,7 +59,12 @@
       <div class="form-group" style="margin-bottom:1rem;">
         <label style="font-size:0.8rem;color:var(--gris4);">Foto del animal (opcional)</label>
         <input type="file" id="inc-foto" class="login-input" style="margin:0;"
-          accept="image/png,image/jpeg,image/gif,image/webp" />
+          accept="image/png,image/jpeg,image/gif,image/webp"
+          onchange="previewFotoIncidencia(this)" />
+        <div id="preview-foto-inc" style="margin-top:.5rem;display:none;">
+          <img id="preview-foto-inc-img" alt="Vista previa" style="max-width:160px;max-height:160px;border:1px solid var(--borde);padding:2px;background:#fff;display:block;" />
+          <button type="button" onclick="quitarFotoIncidencia()" style="margin-top:.3rem;background:none;border:1px solid var(--rojo);color:var(--rojo);padding:.15rem .5rem;font-size:.72rem;cursor:pointer;">Quitar foto</button>
+        </div>
       </div>
       <button class="btn btn-enviar" onclick="registrarIncidencia()">Registrar incidencia</button>
     </div>

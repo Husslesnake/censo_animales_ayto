@@ -56,6 +56,7 @@
             );
             const dni = data.DNI_PROPIETARIO || "";
             e.target.reset();
+            if (typeof quitarFotoAnimal === "function") quitarFotoAnimal();
             if (dni) {
               const inp = document.getElementById("anim-dni-prop");
               if (inp) {
@@ -579,6 +580,11 @@
       </div>
       ${htmlBaja}
     `;
+          var btnExp = document.getElementById("btn-export-ficha");
+          if (btnExp) {
+            btnExp.style.display = "";
+            btnExp.onclick = function() { exportarFichaAnimalPDF(chip); };
+          }
         } catch (err) {
           logError(err?.message || "Error en ", "", err?.stack);
           body.innerHTML = `<div style="padding:1.5rem;color:var(--rojo);">Error: ${err.message}</div>`;
@@ -586,4 +592,185 @@
       }
       function cerrarFicha() {
         document.getElementById("modal-ficha").style.display = "none";
+        var btnExp = document.getElementById("btn-export-ficha");
+        if (btnExp) { btnExp.style.display = "none"; btnExp.onclick = null; }
+      }
+      function previewFotoAnimal(inp) {
+        var wrap = document.getElementById("preview-foto-anim");
+        var img = document.getElementById("preview-foto-anim-img");
+        if (!inp.files || !inp.files.length) { wrap.style.display = "none"; img.src = ""; return; }
+        var f = inp.files[0];
+        if (!/^image\//.test(f.type)) {
+          wrap.style.display = "none";
+          mostrarAlerta("alert-anim", "error", "El archivo seleccionado no es una imagen.");
+          inp.value = "";
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(e) { img.src = e.target.result; wrap.style.display = ""; };
+        reader.readAsDataURL(f);
+      }
+      function quitarFotoAnimal() {
+        var inp = document.getElementById("inp-foto-anim");
+        if (inp) inp.value = "";
+        var wrap = document.getElementById("preview-foto-anim");
+        var img = document.getElementById("preview-foto-anim-img");
+        if (wrap) wrap.style.display = "none";
+        if (img) img.src = "";
+      }
+      // ── Exportación de informe PDF ────────────────────────────────────────
+      function _abrirVentanaInforme(titulo, htmlContenido) {
+        var w = window.open("", "_blank", "width=820,height=900");
+        if (!w) {
+          alert("El navegador ha bloqueado la ventana del informe. Permita las ventanas emergentes para esta página.");
+          return;
+        }
+        var hoy = new Date().toLocaleString("es-ES");
+        w.document.open();
+        w.document.write(
+          '<!doctype html><html lang="es"><head><meta charset="utf-8"><title>' + titulo + '</title>' +
+          '<style>' +
+          '@page { size: A4; margin: 18mm; }' +
+          'body { font-family: Arial, Helvetica, sans-serif; color: #222; font-size: 11pt; }' +
+          'h1 { font-size: 16pt; margin: 0 0 .2rem 0; color: #7B2D40; }' +
+          'h2 { font-size: 12pt; margin: 1.2rem 0 .3rem 0; padding-bottom: .15rem; border-bottom: 1.5px solid #7B2D40; color: #7B2D40; text-transform: uppercase; letter-spacing: .04em; }' +
+          '.cabecera { display:flex; justify-content:space-between; align-items:flex-start; border-bottom: 2px solid #7B2D40; padding-bottom: .5rem; margin-bottom: 1rem; }' +
+          '.cabecera small { color:#555; font-size:9pt; }' +
+          'table { width:100%; border-collapse: collapse; margin-bottom:.5rem; }' +
+          'th, td { padding: .25rem .5rem; vertical-align: top; font-size: 10.5pt; }' +
+          'th { text-align:left; background:#f2f2f2; width: 32%; font-weight:600; }' +
+          'td { border-bottom: 1px solid #ddd; }' +
+          'img.foto-animal { max-width: 180px; max-height: 180px; border:1px solid #999; padding:2px; background:#fff; }' +
+          '.firma { margin-top: 3rem; display:flex; justify-content:space-between; }' +
+          '.firma div { width: 45%; border-top: 1px solid #555; padding-top: .3rem; font-size:9pt; text-align:center; color:#555; }' +
+          '.no-print { margin-bottom:1rem; }' +
+          '@media print { .no-print { display:none; } }' +
+          '</style></head><body>' +
+          '<div class="no-print" style="background:#f0f0f0;padding:.5rem .8rem;display:flex;gap:.6rem;">' +
+          '<button onclick="window.print()" style="background:#7B2D40;color:#fff;border:none;padding:.4rem 1rem;font-weight:700;cursor:pointer;">Imprimir / Guardar PDF</button>' +
+          '<button onclick="window.close()" style="background:none;border:1px solid #999;padding:.4rem 1rem;cursor:pointer;">Cerrar</button>' +
+          '</div>' +
+          '<div class="cabecera">' +
+            '<div><h1>Censo Municipal de Animales</h1><small>Ayuntamiento de Navalcarnero</small></div>' +
+            '<div style="text-align:right;font-size:9pt;color:#555;">Informe generado<br>' + hoy + '</div>' +
+          '</div>' +
+          htmlContenido +
+          '<div class="firma"><div>Firma del agente / responsable</div><div>Sello / Fecha</div></div>' +
+          '</body></html>'
+        );
+        w.document.close();
+        // Lanzar el diálogo de impresión cuando cargue
+        w.onload = function() { try { w.focus(); w.print(); } catch (e) {} };
+      }
+      function _filasInforme(pares) {
+        return '<table>' + pares.map(function(p){
+          return '<tr><th>' + p[0] + '</th><td>' + (p[1] === undefined || p[1] === null || p[1] === "" ? "—" : p[1]) + '</td></tr>';
+        }).join("") + '</table>';
+      }
+      async function exportarFichaAnimalPDF(chip) {
+        try {
+          var json = await (await fetch(API + "/ficha_animal/" + encodeURIComponent(chip))).json();
+          if (!json.ok) { alert("No se pudo cargar la ficha: " + (json.error || "")); return; }
+          var a = json.animal || {};
+          var p = json.propietario || null;
+          var foto = a.FOTO ? '<div style="text-align:center;margin-bottom:.8rem;"><img src="' + a.FOTO + '" class="foto-animal" alt="Foto"></div>' : '';
+          var datosAnim = _filasInforme([
+            ["N.º chip", a["Nº_CHIP"] || a["N_CHIP"] || chip],
+            ["N.º censo", a.N_CENSO || a["Nº_CENSO"] || ""],
+            ["Nombre", a.NOMBRE],
+            ["Especie", a.ESPECIE],
+            ["Raza", a.RAZA],
+            ["Sexo", a.SEXO],
+            ["Color", a.COLOR],
+            ["Año/Fecha nacimiento", a.FECHA_NACIMIENTO || a.AÑO_DE_NACIMIENTO || a.ANIO_NACIMIENTO],
+            ["Esterilizado", String(a.ESTERILIZADO) === "1" ? "Sí" : "No"],
+            ["Potencialmente peligroso", String(a.PELIGROSO) === "1" ? "Sí" : "No"],
+            ["Última vacuna antirrábica", (a.FECHA_ULTIMA_VACUNA_ANTIRRABICA || a.FECHA_ULTIMA_VACUNACION_ANTIRRABICA || "").toString().substring(0,10)],
+          ]);
+          var datosProp = "";
+          if (p) {
+            var nomP = [p.NOMBRE, p.PRIMER_APELLIDO, p.SEGUNDO_APELLIDO].filter(Boolean).join(" ");
+            datosProp = _filasInforme([
+              ["DNI / NIE", p.DNI],
+              ["Nombre completo", nomP],
+              ["Teléfono", [p.TELEFONO1, p.TELEFONO2].filter(Boolean).join(" / ")],
+              ["Email", p.EMAIL],
+              ["Domicilio", p.DOMICILIO],
+              ["C.P. / Municipio", [p.CP, p.MINICIPIO].filter(Boolean).join(" ")],
+            ]);
+          } else {
+            datosProp = '<p style="color:#777;font-style:italic;">Sin propietario registrado.</p>';
+          }
+          var seguros = "";
+          if (json.seguros && json.seguros.length) {
+            seguros = '<table><tr><th>Compañía</th><th>Póliza</th></tr>' +
+              json.seguros.map(function(s){ return '<tr><td>' + (s.SEGURO_COMPANIA || "—") + '</td><td>' + (s.SEGURO_POLIZA || "—") + '</td></tr>'; }).join("") +
+              '</table>';
+          } else {
+            seguros = '<p style="color:#777;font-style:italic;">Sin pólizas registradas.</p>';
+          }
+          var bajas = "";
+          if (json.bajas && json.bajas.length) {
+            bajas = '<h2>Historial de bajas</h2><table><tr><th>N.º</th><th>Fecha</th><th>Motivo</th></tr>' +
+              json.bajas.map(function(b){
+                return '<tr><td>' + (b.N_BAJA || "—") + '</td><td>' + ((b.FECHA_BAJA||"").toString().substring(0,10)) + '</td><td>' + (b.MOTIVO_DESC || b.MOTIVO || "—") + (b.OBSERVACIONES ? "<br><small>" + b.OBSERVACIONES + "</small>" : "") + '</td></tr>';
+              }).join("") +
+              '</table>';
+          }
+          var nombre = a.NOMBRE || "(sin nombre)";
+          var contenido =
+            '<h2>Datos del animal</h2>' + foto + datosAnim +
+            '<h2>Propietario</h2>' + datosProp +
+            '<h2>Seguros</h2>' + seguros +
+            bajas;
+          _abrirVentanaInforme("Informe de animal · " + nombre + " · " + chip, contenido);
+        } catch (e) {
+          logError(e?.message || "Error al exportar PDF", "exportarFichaAnimalPDF", e?.stack);
+          alert("Error al generar el informe.");
+        }
+      }
+      async function exportarFichaPropietarioPDF(dni) {
+        try {
+          var json = await (await fetch(API + "/ficha_propietario/" + encodeURIComponent(dni))).json();
+          if (!json.ok) { alert("No se pudo cargar la ficha: " + (json.error || "")); return; }
+          var p = json.propietario || {};
+          var nom = [p.NOMBRE, p.PRIMER_APELLIDO, p.SEGUNDO_APELLIDO].filter(Boolean).join(" ");
+          var datosProp = _filasInforme([
+            ["DNI / NIE", p.DNI],
+            ["Nombre", p.NOMBRE],
+            ["Primer apellido", p.PRIMER_APELLIDO],
+            ["Segundo apellido", p.SEGUNDO_APELLIDO],
+            ["Teléfono 1", p.TELEFONO1],
+            ["Teléfono 2", p.TELEFONO2],
+            ["Email", p.EMAIL],
+          ]);
+          var dirs = json.direcciones || [];
+          var htmlDirs = dirs.length
+            ? '<table><tr><th>Domicilio</th><th>C.P.</th><th>Municipio</th></tr>' +
+              dirs.map(function(d){ return '<tr><td>' + (d.DOMICILIO||"—") + '</td><td>' + (d.CP||"—") + '</td><td>' + (d.MINICIPIO||"—") + '</td></tr>'; }).join("") +
+              '</table>'
+            : '<p style="color:#777;font-style:italic;">Sin domicilios registrados.</p>';
+          var animales = json.animales || [];
+          var htmlAnim = animales.length
+            ? '<table><tr><th>Chip</th><th>Nombre</th><th>Especie</th><th>Raza</th><th>Estado</th></tr>' +
+              animales.map(function(a){
+                return '<tr><td>' + (a.N_CHIP||"—") + '</td><td>' + (a.NOMBRE||"—") + '</td><td>' + (a.ESPECIE||"—") + '</td><td>' + (a.RAZA||"—") + '</td><td>' + (a.DADO_DE_BAJA ? "Baja" : "Activo") + '</td></tr>';
+              }).join("") +
+              '</table>'
+            : '<p style="color:#777;font-style:italic;">Sin animales registrados.</p>';
+          var htmlSeg = (json.seguros && json.seguros.length)
+            ? '<table><tr><th>Chip</th><th>Animal</th><th>Compañía</th><th>Póliza</th></tr>' +
+              json.seguros.map(function(s){ return '<tr><td>' + (s.N_CHIP||"—") + '</td><td>' + (s.NOMBRE_ANIMAL||"—") + '</td><td>' + (s.SEGURO_COMPANIA||"—") + '</td><td>' + (s.SEGURO_POLIZA||"—") + '</td></tr>'; }).join("") +
+              '</table>'
+            : '<p style="color:#777;font-style:italic;">Sin pólizas registradas.</p>';
+          var contenido =
+            '<h2>Datos del propietario</h2>' + datosProp +
+            '<h2>Domicilios (' + dirs.length + ')</h2>' + htmlDirs +
+            '<h2>Animales (' + animales.length + ')</h2>' + htmlAnim +
+            '<h2>Seguros</h2>' + htmlSeg;
+          _abrirVentanaInforme("Informe de propietario · " + (nom || dni), contenido);
+        } catch (e) {
+          logError(e?.message || "Error al exportar PDF propietario", "exportarFichaPropietarioPDF", e?.stack);
+          alert("Error al generar el informe.");
+        }
       }
