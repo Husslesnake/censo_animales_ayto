@@ -84,3 +84,10 @@
 [2026-04-30 08:41:47] OK   ip=172.19.0.1           rol=empleado   evento=login
 [2026-04-30 08:41:54] OK   ip=172.19.0.1           rol=empleado   evento=login
 [2026-04-30 08:42:04] OK   ip=172.19.0.1           rol=empleado   evento=login
+[2026-04-30 09:38:05] OK   ip=172.19.0.1           rol=empleado   evento=cambio_password
+[2026-04-30 09:43:44] OK   ip=172.19.0.1           rol=policia    evento=login
+[2026-04-30 09:53:00] OK   ip=172.19.0.1           rol=empleado   evento=login
+[2026-05-04 09:01:04] OK   ip=172.19.0.1           rol=empleado   evento=login
+[2026-05-05 12:31:14] OK   ip=172.19.0.1           rol=empleado   evento=login
+[2026-05-07 09:29:24] OK   ip=172.19.0.1           rol=admin      evento=setup_password
+[2026-05-07 09:40:59] OK   ip=172.19.0.1           rol=empleado   evento=login

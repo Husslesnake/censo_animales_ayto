@@ -23,3 +23,5 @@
 {"fecha": "2026-04-27 10:14:41", "ip": "172.19.0.1", "rol": "empleado", "usuario": "anónimo", "accion": "crear_animal", "exito": false, "detalle": {"N_CHIP": "7895456", "error": "1265 (01000): Data truncated for column 'ANIO_NACIMIENTO' at row 1"}}
 {"fecha": "2026-04-27 10:19:39", "ip": "172.19.0.1", "rol": "empleado", "usuario": "anónimo", "accion": "crear_animal", "exito": true, "detalle": {"N_CHIP": "8974556", "nombre": "Lolo", "especie": "Gato", "DNI_propietario": "96876534M", "N_CENSO": "CEN-001"}}
 {"fecha": "2026-04-30 08:41:41", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "actualizar_cuenta_empleado", "exito": true, "detalle": {"username": "adrianbravo", "cambios": ["contraseña"]}}
+{"fecha": "2026-04-30 09:39:50", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "backup_manual", "exito": true, "detalle": {"archivo": "backup_2026-04-30_093950.sql.gz", "tamano": 68125, "tablas": 16, "filas": 3884}}
+{"fecha": "2026-04-30 09:39:55", "ip": "172.19.0.1", "rol": "admin", "usuario": "admin", "accion": "backup_eliminar", "exito": true, "detalle": {"archivo": "backup_2026-04-30_093950.sql.gz"}}
