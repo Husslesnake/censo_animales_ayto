@@ -67,7 +67,29 @@ pip install -r api/requirements-dev.txt
 python -m pytest
 ```
 
-## Documentación de uso
+## Documentación
 
-- [Manual del administrador](Manual_Administrador.md)
-- [Manual del empleado y policía](Manual_Empleado.md)
+Toda la documentación está en PDF. Para regenerarla tras editar las fuentes:
+
+```bash
+python scripts/generar_manuales.py        # Manual_Administrador / _Empleado
+python scripts/generar_docs_tecnicos.py   # docs/*.pdf, CHANGELOG, CONTRIBUTING, Manual_Policia
+```
+
+### Manuales de usuario
+- [Manual del administrador](Manual_Administrador.pdf)
+- [Manual del empleado](Manual_Empleado.pdf)
+- [Manual del agente de policía](Manual_Policia.pdf)
+
+### Técnica
+- [Arquitectura](docs/ARQUITECTURA.pdf)
+- [Referencia de la API](docs/API.pdf)
+- [Base de datos y migraciones](docs/BASE_DE_DATOS.pdf)
+- [Despliegue](docs/DESPLIEGUE.pdf)
+- [Guía de desarrollo](docs/DESARROLLO.pdf)
+- [Seguridad y privacidad](docs/SEGURIDAD.pdf)
+
+### Proyecto
+- [Changelog](CHANGELOG.pdf)
+- [Cómo contribuir](CONTRIBUTING.pdf)
+- [README sin Docker](README_SIN_DOCKER.md)
